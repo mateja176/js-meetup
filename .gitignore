@@ -1,5 +1,5 @@
 **/node_modules
 **/dist
 **/.env
-.node-dev.json
-.DS_Store
+**/.node-dev.json
+**/.DS_Store

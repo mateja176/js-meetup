@@ -1,4 +1,4 @@
-import { Event } from '../models';
+import { Event } from '../../../common/models';
 const uuid = require('uuid/v4');
 
 export default {

@@ -1,4 +1,4 @@
-import { User } from '../models';
+import { User } from '../../../common/models';
 const uuid = require('uuid/v4');
 
 export default {
