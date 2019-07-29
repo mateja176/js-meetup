@@ -1,8 +1,8 @@
 {
-  "name": "graphql-be",
+  "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.js",
+  "main": "src/server.ts",
   "scripts": {
     "dev": "tsnd src/server.ts",
     "codegen-init": "graphql-codegen init",
@@ -21,6 +21,7 @@
     "@graphql-codegen/cli": "^1.4.0",
     "@graphql-codegen/introspection": "1.4.0",
     "@graphql-codegen/typescript": "1.4.0",
+    "@types/graphql": "^14.2.3",
     "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "^3.5.3"
   }
