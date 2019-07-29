@@ -12,6 +12,6 @@ const server = new ApolloServer({
   context: db
 });
 
-server.listen().then(({ url }) => {
+server.listen(4000).then(({ url }) => {
   console.log(`Server ready at ${url}`);
 });
