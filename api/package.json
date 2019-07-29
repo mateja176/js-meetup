@@ -1,0 +1,29 @@
+{
+  "name": "graphql-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "tsnd src/server.ts",
+    "codegen-init": "graphql-codegen init",
+    "codegen": "graphql-codegen --config codegen.yml"
+  },
+  "author": "Milos Tomsik",
+  "license": "ISC",
+  "dependencies": {
+    "alasql": "^0.4.11",
+    "apollo-server": "^2.7.2",
+    "graphql": "^14.4.2",
+    "lokijs": "^1.5.7",
+    "merge-graphql-schemas": "^1.6.2-bdaf070.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^1.4.0",
+    "@graphql-codegen/introspection": "1.4.0",
+    "@graphql-codegen/typescript": "1.4.0",
+    "@types/lokijs": "^1.5.2",
+    "ts-node-dev": "^1.0.0-pre.40",
+    "typescript": "^3.5.3"
+  }
+}

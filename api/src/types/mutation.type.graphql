@@ -1,0 +1,9 @@
+type Mutation {
+  createUser(
+    name: String!
+    lastname: String!
+  ): User
+  createEvent(
+    name: String!
+  ): Event
+}
