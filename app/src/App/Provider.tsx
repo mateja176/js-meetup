@@ -1,3 +1,4 @@
+import 'antd/dist/antd.css';
 import ApolloClient from 'apollo-boost';
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
