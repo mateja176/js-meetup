@@ -1,4 +1,4 @@
-import { Col, List, Row, Typography } from 'antd';
+import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { User } from 'common/models';
 import * as React from 'react';
@@ -19,9 +19,7 @@ export interface UsersProps {}
 const Users: React.FC<UsersProps> = () => (
   <Query<{ users: User[] }> query={usersQuery}>
     {({ loading, error, data }) => {
-      if (loading) {
-        return 'Loading';
-      } else if (data) {
+      if (data) {
         const { users } = data;
 
         return (
@@ -52,8 +50,12 @@ const Users: React.FC<UsersProps> = () => (
             )}
           />
         );
+      } else if (error) {
+        const { message, name } = error;
+
+        return <Alert message={name} description={message} type="error" />;
       } else {
-        return JSON.stringify(error);
+        return <Spin size="large" />;
       }
     }}
   </Query>

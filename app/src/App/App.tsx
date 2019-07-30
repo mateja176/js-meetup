@@ -1,4 +1,5 @@
 import React from 'react';
+import { hot } from 'react-hot-loader';
 import Users from '../Users';
 import Provider from './Provider';
 
@@ -8,4 +9,4 @@ const App: React.FC = () => (
   </Provider>
 );
 
-export default App;
+export default hot(module)(App);
