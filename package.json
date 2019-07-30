@@ -1,0 +1,36 @@
+{
+  "name": "graphql",
+  "private": true,
+  "version": "1.0.0",
+  "description": "GraphQL Demo App",
+  "scripts": {
+    "start:api": "npm run dev --prefix api",
+    "start:app": "npm run start --prefix app",
+    "start": "run-p start:*",
+    "playground": "ts-node scripts/openPlayground"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mateja176/js-meetup.git"
+  },
+  "keywords": [
+    "graphql",
+    "react",
+    "apollo"
+  ],
+  "contributors": [
+    "Milos Tomsik <milostomsik1@gmail.com> (https://github.com/milostomsik1)",
+    "Mateja Petrovic <mateja176@gmail.com> (https://github.com/mateja176)"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mateja176/js-meetup/issues"
+  },
+  "homepage": "https://github.com/mateja176/js-meetup#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "open": "^6.4.0",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  }
+}
