@@ -1,7 +1,8 @@
-import { Alert, List, Spin, Typography } from 'antd';
+import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { Njam, User } from 'common/models';
 import faker from 'faker';
+import { capitalize } from 'lodash';
 import { keys as getKeys, range } from 'ramda';
 import React from 'react';
 import { Query } from 'react-apollo';
@@ -30,7 +31,7 @@ const generateNjam = (): Njam => {
 
   return {
     id: faker.random.uuid(),
-    location: faker.random.word(),
+    location: faker.address.streetName(),
     time: faker.date.recent(-7).toDateString(),
     ordered: faker.random.boolean(),
     organizer,
@@ -45,7 +46,9 @@ const njams = generateNjams();
 
 const filterKeys: Partial<keyof Njam>[] = ['id', 'participants', 'description'];
 
-const keys = getKeys(generateNjam()).filter(key => !filterKeys.includes(key));
+const keys = getKeys(generateNjam())
+  .filter(key => !filterKeys.includes(key))
+  .map(capitalize);
 
 const njamsQuery = gql`
   query {
@@ -86,13 +89,17 @@ const Njams: React.FC<NjamsProps> = () => (
         return (
           <List
             header={
-              <div style={containerStyles}>
-                {keys.map(key => (
-                  <Typography.Title key={key} level={2} style={{ margin: 0 }}>
-                    {key}
-                  </Typography.Title>
-                ))}
-              </div>
+              <Row>
+                {keys.map(key => {
+                  return (
+                    <Col span={6} key={key}>
+                      <Typography.Title level={2} style={{ margin: 0 }}>
+                        {key}
+                      </Typography.Title>
+                    </Col>
+                  );
+                })}
+              </Row>
             }
             bordered
             dataSource={njams}
@@ -105,15 +112,18 @@ const Njams: React.FC<NjamsProps> = () => (
               ...njam
             }) => {
               return (
-                <List.Item onClick={() => console.log(njam)}>
-                  <div style={{ ...containerStyles, width: '100%' }}>
-                    {Object.values(njam)
-                      .concat(ordered ? 'yes' : 'no')
-                      .concat(organizer.name)
-                      .map((value, i) => (
-                        <Typography.Text key={i}>{value}</Typography.Text>
-                      ))}
-                  </div>
+                <List.Item
+                  onClick={() => console.log(njam)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {Object.values(njam)
+                    .concat(ordered ? 'yes' : 'no')
+                    .concat(organizer.name)
+                    .map((value, i) => (
+                      <Col span={6} key={i}>
+                        <Typography.Text>{value}</Typography.Text>
+                      </Col>
+                    ))}
                 </List.Item>
               );
             }}
