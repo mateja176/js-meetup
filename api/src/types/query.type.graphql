@@ -1,6 +1,6 @@
 type Query {
   users: [User]
   user(id: ID!): User
-  events: [Event]
-  event(id: ID!): Event
+  njams: [Njam]
+  njam(id: ID!): Njam
 }

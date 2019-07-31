@@ -3,7 +3,7 @@ type Mutation {
     name: String!
     lastname: String!
   ): User
-  createEvent(
+  createNjam(
     name: String!
-  ): Event
+  ): Njam
 }

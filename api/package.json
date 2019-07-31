@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/server.ts",
+  "private": true,
   "scripts": {
     "dev": "tsnd src/server.ts",
     "codegen-init": "graphql-codegen init",
@@ -12,9 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "alasql": "^0.4.11",
-    "apollo-server": "^2.7.2",
+    "apollo-server": "^2.8.0",
     "graphql": "^14.4.2",
-    "merge-graphql-schemas": "^1.6.2-bdaf070.0",
+    "merge-graphql-schemas": "^1.6.2-3705b28.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@graphql-codegen/introspection": "1.4.0",
     "@graphql-codegen/typescript": "1.4.0",
     "@types/graphql": "^14.2.3",
+    "@types/uuid": "^3.4.5",
     "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "^3.5.3"
   }

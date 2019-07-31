@@ -41,19 +41,19 @@
             "deprecationReason": null
           },
           {
-            "name": "events",
+            "name": "njams",
             "description": null,
             "args": [],
             "type": {
               "kind": "LIST",
               "name": null,
-              "ofType": { "kind": "OBJECT", "name": "Event", "ofType": null }
+              "ofType": { "kind": "OBJECT", "name": "Njam", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "event",
+            "name": "njam",
             "description": null,
             "args": [
               {
@@ -67,7 +67,7 @@
                 "defaultValue": null
               }
             ],
-            "type": { "kind": "OBJECT", "name": "Event", "ofType": null },
+            "type": { "kind": "OBJECT", "name": "Njam", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -138,7 +138,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Event",
+        "name": "Njam",
         "description": null,
         "fields": [
           {
@@ -157,16 +157,64 @@
             "name": "name",
             "description": null,
             "args": [],
-            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "users",
+            "name": "location",
             "description": null,
             "args": [],
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "time",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "participants",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "organizer",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
               "name": null,
               "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
             },
@@ -222,7 +270,7 @@
             "deprecationReason": null
           },
           {
-            "name": "createEvent",
+            "name": "createNjam",
             "description": null,
             "args": [
               {
@@ -240,7 +288,7 @@
                 "defaultValue": null
               }
             ],
-            "type": { "kind": "OBJECT", "name": "Event", "ofType": null },
+            "type": { "kind": "OBJECT", "name": "Njam", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }

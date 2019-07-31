@@ -1,5 +1,5 @@
 import { User } from '../../../common/models';
-const uuid = require('uuid/v4');
+import { v4 as uuid } from 'uuid';
 
 export default {
   Query: {

@@ -1,5 +1,0 @@
-type Event {
-  id: ID!
-  name: String
-  users: [User]
-}
