@@ -18,7 +18,7 @@ export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = () => (
   <Query<{ users: User[] }> query={usersQuery}>
-    {({ loading, error, data }) => {
+    {({ error, data }) => {
       if (data) {
         const { users } = data;
 
