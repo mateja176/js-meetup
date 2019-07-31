@@ -1,7 +1,7 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { User } from 'common/models';
-import * as React from 'react';
+import React from 'react';
 import { Query } from 'react-apollo';
 
 const usersQuery = gql`
