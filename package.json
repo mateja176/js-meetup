@@ -6,7 +6,7 @@
   "scripts": {
     "start:api": "npm run dev --prefix api",
     "start:app": "npm run start --prefix app",
-    "start": "run-p start:*",
+    "start": "run-p start:* playground",
     "playground": "ts-node scripts/openPlayground"
   },
   "repository": {
