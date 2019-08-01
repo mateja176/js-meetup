@@ -1,8 +1,7 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import Layout from '../Layout';
-import Njams from '../Njams';
 import Provider from './Provider';
 
 const App: React.FC = () => {
@@ -10,9 +9,6 @@ const App: React.FC = () => {
     <BrowserRouter>
       <Provider>
         <Layout />
-        <Switch>
-          <Route path="/" component={Njams} />
-        </Switch>
       </Provider>
     </BrowserRouter>
   );
