@@ -1,6 +1,6 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
-import { Njam, User } from 'common/models';
+import { Njam, User } from '../../api/src/models';
 import faker from 'faker';
 import { capitalize } from 'lodash';
 import { keys as getKeys, range } from 'ramda';

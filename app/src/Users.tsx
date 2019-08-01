@@ -1,6 +1,6 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
-import { User } from 'common/models';
+import { User } from '../../api/src/models';
 import React from 'react';
 import { Query } from 'react-apollo';
 

@@ -1,4 +1,4 @@
-import { User } from 'common/models';
+import { User } from '../models';
 import { v4 as uuid } from 'uuid';
 
 export default {
