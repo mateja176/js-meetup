@@ -1,11 +1,12 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
-import { Njam, User } from '../../api/src/models';
 import faker from 'faker';
 import { capitalize } from 'lodash';
 import { keys as getKeys, range } from 'ramda';
 import React from 'react';
 import { Query } from 'react-apollo';
+import { Optional } from 'utility-types';
+import { Njam, User } from '../../api/src/models';
 
 const generateUser = (): User => ({
   id: faker.random.uuid(),
@@ -13,17 +14,21 @@ const generateUser = (): User => ({
   lastname: faker.name.lastName(),
 });
 
-const generateCollection = <C extends User | Njam>(generator: () => C) => (
-  min: number,
-) => (max: number) => () =>
-  range(min)(
-    faker.random.number({
-      min,
-      max,
-    }),
-  ).map(generator);
+type Constraints = Optional<
+  Exclude<Required<Parameters<typeof faker.random.number>[0]>, undefined>,
+  'precision'
+>;
 
-const generateUsers = generateCollection(generateUser)(1)(5);
+const generateCollection = <C extends User | Njam>(generator: () => C) => ({
+  min,
+  max,
+}: Constraints) => () => {
+  const length = faker.random.number({ min, max });
+  const generatedRange = range(0)(length);
+  return generatedRange.map(generator);
+};
+
+const generateUsers = generateCollection(generateUser)({ min: 1, max: 5 });
 
 const generateNjam = (): Njam => {
   const organizer = generateUser();
@@ -40,7 +45,7 @@ const generateNjam = (): Njam => {
   };
 };
 
-const generateNjams = generateCollection(generateNjam)(5)(10);
+const generateNjams = generateCollection(generateNjam)({ min: 5, max: 10 });
 
 const njams = generateNjams();
 
