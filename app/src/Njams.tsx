@@ -72,12 +72,6 @@ const njamsQuery = gql`
   }
 `;
 
-const containerStyles: React.CSSProperties = {
-  display: 'grid',
-  gridAutoFlow: 'column',
-  alignItems: 'center',
-};
-
 export interface NjamsProps {}
 
 const Njams: React.FC<NjamsProps> = () => (
