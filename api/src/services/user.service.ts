@@ -1,4 +1,4 @@
-import { User } from "common/models";
+import { User } from "../models";
 
 export class UserService {
   constructor(private db: any) { }

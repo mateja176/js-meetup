@@ -3,6 +3,6 @@
     "target": "es5",
     "module": "commonjs",
     "esModuleInterop": true,
-    "baseUrl": ".",
+    "baseUrl": "./src"
   }
 }

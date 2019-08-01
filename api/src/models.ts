@@ -20,7 +20,9 @@ export type MutationCreateUserArgs = {
 };
 
 export type MutationCreateNjamArgs = {
-  name: Scalars["String"];
+  location: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
+  time: Scalars["String"];
 };
 
 export type Njam = {
@@ -31,7 +33,7 @@ export type Njam = {
   time: Scalars["String"];
   participants: Array<User>;
   organizer: User;
-  ordered?: Maybe<Scalars["Boolean"]>;
+  ordered: Scalars["Boolean"];
 };
 
 export type Query = {
