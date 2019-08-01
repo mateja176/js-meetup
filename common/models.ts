@@ -26,11 +26,12 @@ export type MutationCreateNjamArgs = {
 export type Njam = {
   __typename?: "Njam";
   id: Scalars["ID"];
-  name: Scalars["String"];
   location: Scalars["String"];
+  description?: Maybe<Scalars["String"]>;
   time: Scalars["String"];
   participants: Array<User>;
   organizer: User;
+  ordered?: Maybe<Scalars["Boolean"]>;
 };
 
 export type Query = {

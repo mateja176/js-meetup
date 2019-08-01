@@ -1,7 +1,7 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { User } from 'common/models';
-import * as React from 'react';
+import React from 'react';
 import { Query } from 'react-apollo';
 
 const usersQuery = gql`
@@ -18,7 +18,7 @@ export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = () => (
   <Query<{ users: User[] }> query={usersQuery}>
-    {({ loading, error, data }) => {
+    {({ error, data }) => {
       if (data) {
         const { users } = data;
 

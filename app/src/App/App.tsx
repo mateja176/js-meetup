@@ -1,11 +1,11 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import Users from '../Users';
+import Njams from '../Njams';
 import Provider from './Provider';
 
 const App: React.FC = () => (
   <Provider>
-    <Users />
+    <Njams />
   </Provider>
 );
 
