@@ -13,9 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "alasql": "^0.4.11",
-    "apollo-server": "^2.8.0",
+    "apollo-server": "^2.8.1",
     "graphql": "^14.4.2",
-    "merge-graphql-schemas": "^1.6.2-3705b28.0",
+    "merge-graphql-schemas": "^1.7.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
