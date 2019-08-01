@@ -5,5 +5,5 @@ type Njam {
   time: String!
   participants: [User!]!
   organizer: User!
-  ordered: Boolean
+  ordered: Boolean!
 }

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "GraphQL Demo App",
   "scripts": {
-    "start:api": "npm run dev --prefix api",
+    "start:api": "npm run start --prefix api",
     "start:app": "npm run start --prefix app",
     "start": "run-p start:*",
     "playground": "ts-node scripts/openPlayground"

@@ -4,6 +4,8 @@ type Mutation {
     lastname: String!
   ): User
   createNjam(
-    name: String!
+    location: String!
+    description: String
+    time: String!
   ): Njam
 }

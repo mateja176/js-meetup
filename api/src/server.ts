@@ -1,16 +1,18 @@
+const alasql = require('alasql');
+import { UserService, NjamService } from './services';
 import { ApolloServer } from 'apollo-server';
 import schema from './schema';
-const alasql = require('alasql');
+import { Seed } from './seeder';
 
 const db = new alasql.Database();
-db.exec("CREATE TABLE users (id STRING PRIMARY KEY, name STRING, lastname STRING)");
-db.exec("CREATE TABLE events (id STRING PRIMARY KEY, name STRING)");
-db.exec("CREATE TABLE users_events (id STRING PRIMARY KEY, userId STRING FOREIGN KEY REFERENCES users(id), eventId STRING FOREIGN KEY REFERENCES events(id))");
+Seed(db);
 
-const server = new ApolloServer({
-  schema,
-  context: db
-});
+const context = {
+  'userService': new UserService(db),
+  'njamService': new NjamService(db)
+}
+
+const server = new ApolloServer({schema, context});
 
 server.listen(4000).then(({ url }) => {
   console.log(`Server ready at ${url}`);
