@@ -1,4 +1,4 @@
-import open from 'open';
+import * as open from 'open';
 
 const playgroundPort = 4000;
 
