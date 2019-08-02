@@ -12,6 +12,10 @@ export class UserService {
   }
 
   async getUsers(): Promise<User[]> {
-    return await this.db.exec("SELECT * FROM users");
+    return await this.db.exec(`SELECT * FROM users`);
+  }
+
+  async getParticipantsForNjam(njamId: string): Promise<User[]> {
+    return await this.db.exec(`SELECT * FROM participants WHERE njamId='${njamId}'`);
   }
 }

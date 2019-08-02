@@ -1,13 +1,10 @@
 import { v4 as uuid } from 'uuid';
+import { Njam, User } from 'models';
 
 export default {
   Query: {
-    njams: (root, args, context, info) => {
-
-    },
-    njam: (root, args, context, info) => {
-
-    }
+    njams: async (root, args, context, info) => await context.njamService.getNjams(),
+    njam: async (root, args, context, info) => await context.njamService.getNjamsById(args.id)
   },
   Mutation: {
     createNjam: (root, args, context, info) => {
@@ -15,11 +12,12 @@ export default {
     }
   },
   Njam: {
-    participants: (root, args, context, info) => {
+    participants: async (root, args, context, info) => {
+      let participants = await context.userService.getParticipantsForNjam(root.id);
+      participants = participants.map(async participant => context.userService.getUserById(participant.userId));
 
+      return participants;
     },
-    organizer: (root, args, context, info) => {
-
-    }
+    organizer: async (root, args, context, info) => await context.userService.getUserById(root.organizer)
   }
 }
