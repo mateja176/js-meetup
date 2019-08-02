@@ -6,6 +6,8 @@ import { capitalize } from 'lodash';
 import { keys as getKeys, range } from 'ramda';
 import React from 'react';
 import { Query } from 'react-apollo';
+import { NavLink, RouteComponentProps } from 'react-router-dom';
+import urlJoin from 'url-join';
 import { Optional } from 'utility-types';
 import { Njam, User } from '../../api/src/models';
 
@@ -96,9 +98,9 @@ const StatusCircle: React.FC<{ color: React.CSSProperties['color'] }> = ({
   </>
 );
 
-export interface NjamsProps {}
+export interface NjamsProps extends RouteComponentProps {}
 
-const Njams: React.FC<NjamsProps> = () => (
+const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
   <Query<{ njams: Njam[] }> query={njamsQuery}>
     {({ error, data }) => {
       if (data) {
@@ -130,30 +132,31 @@ const Njams: React.FC<NjamsProps> = () => (
               ...njam
             }) => {
               return (
-                <List.Item
-                  onClick={() => console.log(njam)}
-                  className={css`
-                    cursor: pointer;
-                    &:hover {
-                      background: #eee;
-                    }
-                  `}
-                >
-                  {Object.values(njam)
-                    .concat(
-                      ordered ? (
-                        <StatusCircle color="lightgreen">Yes</StatusCircle>
-                      ) : (
-                        <StatusCircle color="lightcoral">No</StatusCircle>
-                      ),
-                    )
-                    .concat(organizer.name)
-                    .map((value, i) => (
-                      <Col span={6} key={i}>
-                        <Typography.Text>{value}</Typography.Text>
-                      </Col>
-                    ))}
-                </List.Item>
+                <NavLink to={urlJoin(path, id)}>
+                  <List.Item
+                    className={css`
+                      cursor: pointer;
+                      &:hover {
+                        background: #eee;
+                      }
+                    `}
+                  >
+                    {Object.values(njam)
+                      .concat(
+                        ordered ? (
+                          <StatusCircle color="lightgreen">Yes</StatusCircle>
+                        ) : (
+                          <StatusCircle color="lightcoral">No</StatusCircle>
+                        ),
+                      )
+                      .concat(organizer.name)
+                      .map((value, i) => (
+                        <Col span={6} key={i}>
+                          <Typography.Text>{value}</Typography.Text>
+                        </Col>
+                      ))}
+                  </List.Item>
+                </NavLink>
               );
             }}
           />

@@ -11,6 +11,7 @@ import {
   withRouter,
 } from 'react-router-dom';
 import env from './env';
+import Njam from './Njam';
 import Njams from './Njams';
 
 type Icon = React.ComponentType<Omit<IconProps, 'type'>>;
@@ -19,7 +20,7 @@ interface IRoute {
   text: string;
   path: string;
   Icon: Icon;
-  Component: React.ComponentType;
+  Component: React.ComponentType<RouteComponentProps>;
 }
 
 const routeTexts = ['njams'] as const;
@@ -77,13 +78,14 @@ const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
       </Drawer>
       <Switch>
         <Route
+          exact
           path="/"
           render={() => <Redirect to={`/${routeText.njams}`} />}
-          exact
         />
         {routes.map(({ path, Component }) => (
-          <Route key={path} path={path} component={Component} />
+          <Route exact key={path} path={path} component={Component} />
         ))}
+        <Route path={`/${routeText.njams}/:id`} component={Njam} />
       </Switch>
     </>
   );
