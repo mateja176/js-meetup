@@ -1,4 +1,4 @@
-import { Alert, Col, List, Row, Spin, Typography } from 'antd';
+import { Alert, Avatar, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import faker from 'faker';
@@ -77,6 +77,25 @@ const njamsQuery = gql`
   }
 `;
 
+const statusCircleSize = 10;
+
+const StatusCircle: React.FC<{ color: React.CSSProperties['color'] }> = ({
+  color,
+  children,
+}) => (
+  <>
+    <Avatar
+      style={{
+        background: color,
+        height: statusCircleSize,
+        width: statusCircleSize,
+        marginRight: 5,
+      }}
+    />
+    {children}
+  </>
+);
+
 export interface NjamsProps {}
 
 const Njams: React.FC<NjamsProps> = () => (
@@ -121,7 +140,13 @@ const Njams: React.FC<NjamsProps> = () => (
                   `}
                 >
                   {Object.values(njam)
-                    .concat(ordered ? 'yes' : 'no')
+                    .concat(
+                      ordered ? (
+                        <StatusCircle color="lightgreen">Yes</StatusCircle>
+                      ) : (
+                        <StatusCircle color="lightcoral">No</StatusCircle>
+                      ),
+                    )
                     .concat(organizer.name)
                     .map((value, i) => (
                       <Col span={6} key={i}>
