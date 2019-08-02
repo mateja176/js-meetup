@@ -1,5 +1,6 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
+import { css } from 'emotion';
 import faker from 'faker';
 import { capitalize } from 'lodash';
 import { keys as getKeys, range } from 'ramda';
@@ -19,11 +20,10 @@ type Constraints = Optional<
   'precision'
 >;
 
-const generateCollection = <C extends User | Njam>(generator: () => C) => ({
-  min,
-  max,
-}: Constraints) => () => {
-  const length = faker.random.number({ min, max });
+const generateCollection = <C extends User | Njam>(generator: () => C) => (
+  constraints: Constraints,
+) => () => {
+  const length = faker.random.number(constraints);
   const generatedRange = range(0)(length);
   return generatedRange.map(generator);
 };
@@ -113,7 +113,12 @@ const Njams: React.FC<NjamsProps> = () => (
               return (
                 <List.Item
                   onClick={() => console.log(njam)}
-                  style={{ cursor: 'pointer' }}
+                  className={css`
+                    cursor: pointer;
+                    &:hover {
+                      background: #eee;
+                    }
+                  `}
                 >
                   {Object.values(njam)
                     .concat(ordered ? 'yes' : 'no')
