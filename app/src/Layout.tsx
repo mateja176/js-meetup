@@ -79,9 +79,10 @@ const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
         <Route
           path="/"
           render={() => <Redirect to={`/${routeText.njams}`} />}
+          exact
         />
         {routes.map(({ path, Component }) => (
-          <Route path={path} component={Component} />
+          <Route key={path} path={path} component={Component} />
         ))}
       </Switch>
     </>
