@@ -1,5 +1,6 @@
 import { Drawer, Icon as AntIcon, Menu, PageHeader, Row } from 'antd';
 import { IconProps } from 'antd/lib/icon';
+import { capitalize } from 'lodash';
 import React from 'react';
 import {
   NavLink,
@@ -23,16 +24,23 @@ interface IRoute {
 
 const routeTexts = ['njams'] as const;
 
+type RouteText = typeof routeTexts[number];
+
+const routeText = routeTexts.reduce(
+  (_routeText, text) => ({ ..._routeText, [text]: text }),
+  {} as { [text in RouteText]: text },
+);
+
 const routes: IRoute[] = [
   {
-    text: 'Njams',
+    text: routeText.njams,
     Icon: (props => <AntIcon {...props} type="unordered-list" />) as Icon,
     Component: Njams,
   },
-].map(route => {
-  const { text } = route;
+].map(({ text, ...route }) => {
   return {
     ...route,
+    text: capitalize(text),
     path: `/${text.toLowerCase()}`,
   };
 });
@@ -68,7 +76,10 @@ const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
         </Menu>
       </Drawer>
       <Switch>
-        <Route path="/" render={() => <Redirect to="/njams" />} />
+        <Route
+          path="/"
+          render={() => <Redirect to={`/${routeText.njams}`} />}
+        />
         {routes.map(({ path, Component }) => (
           <Route path={path} component={Component} />
         ))}
