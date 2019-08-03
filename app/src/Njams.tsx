@@ -1,4 +1,4 @@
-import { Alert, Avatar, Col, List, Row, Spin, Typography } from 'antd';
+import { Avatar, Col, List, Row, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import faker from 'faker';
@@ -10,6 +10,7 @@ import { NavLink, RouteComponentProps } from 'react-router-dom';
 import urlJoin from 'url-join';
 import { Optional } from 'utility-types';
 import { Njam, User } from '../../api/src/models';
+import { Err, Loading } from './components';
 
 const generateUser = (): User => ({
   id: faker.random.uuid(),
@@ -162,11 +163,9 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
           />
         );
       } else if (error) {
-        const { message, name } = error;
-
-        return <Alert message={name} description={message} type="error" />;
+        return <Err {...error} />;
       } else {
-        return <Spin size="large" />;
+        return <Loading />;
       }
     }}
   </Query>
