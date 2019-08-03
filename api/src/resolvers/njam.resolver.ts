@@ -1,23 +1,37 @@
 import { v4 as uuid } from 'uuid';
-import { Njam, User } from 'models';
 
 export default {
   Query: {
     njams: async (root, args, context, info) => await context.njamService.getNjams(),
-    njam: async (root, args, context, info) => await context.njamService.getNjamsById(args.id)
+    njam: async (root, args, context, info) => await context.njamService.getNjamById(args.id)
   },
   Mutation: {
-    createNjam: (root, args, context, info) => {
+    createNjam: async (root, args, context, info) => {
+      if (!args.organizerId) {
+        throw new Error('Missing parameter: organizerId');
+      }
 
-    }
+      const njam = {
+        id: uuid(),
+        location: args.location,
+        description: args.description,
+        time: args.time,
+        ordered: false,
+        organizer: args.organizerId,
+        participants: [args.organizerId]
+      };
+
+      return await context.njamService.createNjam(njam);
+    },
+    orderNjam: async (root, args, context, info) => await context.njamService.orderNjam(args.njamId)
   },
   Njam: {
     participants: async (root, args, context, info) => {
-      let participants = await context.userService.getParticipantsForNjam(root.id);
-      participants = participants.map(async participant => context.userService.getUserById(participant.userId));
-
-      return participants;
+      const participants = await context.userService.getParticipantsForNjam(root.id);
+      return participants.map(async participant => context.userService.getUserById(participant.userId));
     },
-    organizer: async (root, args, context, info) => await context.userService.getUserById(root.organizer)
+    organizer: async (root, args, context, info) => {
+      return await context.userService.getUserById(root.organizer);
+    }
   }
 }

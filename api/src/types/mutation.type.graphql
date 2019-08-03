@@ -3,9 +3,15 @@ type Mutation {
     name: String!
     lastname: String!
   ): User
+
   createNjam(
     location: String!
     description: String
     time: String!
+    organizerId: ID!
+  ): Njam
+
+  orderNjam(
+    njamId: ID!
   ): Njam
 }
