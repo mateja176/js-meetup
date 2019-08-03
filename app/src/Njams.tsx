@@ -9,7 +9,7 @@ import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
 import { Err, Loading, StatusCircle } from './components';
 
-const keys: Array<keyof Njam> = ['location', 'time', 'ordered', 'organizer'];
+const keys: Array<keyof Njam> = ['location', 'time', 'organizer', 'ordered'];
 const columns = keys.map(capitalize);
 
 const njamsQuery = gql`
@@ -70,6 +70,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
                   >
                     <Column>{location}</Column>
                     <Column>{time}</Column>
+                    <Column>{organizer.name}</Column>
                     <Column>
                       {ordered ? (
                         <StatusCircle color="lightgreen">Yes</StatusCircle>
@@ -77,7 +78,6 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
                         <StatusCircle color="lightcoral">No</StatusCircle>
                       )}
                     </Column>
-                    <Column>{organizer.name}</Column>
                   </List.Item>
                 </NavLink>
               );
