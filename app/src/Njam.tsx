@@ -1,41 +1,54 @@
+import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import React from 'react';
-import { withApollo, WithApolloClient } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Njam as NjamModel } from '../../api/src/models';
+import { Err, Loading } from './components';
 
 const query = gql`
-  query {
-    njam {
+  query($id: ID!) {
+    njam(id: $id) {
       id
       location
-      description
       time
-      participants {
-        id
-        name
-        lastname
-      }
+      ordered
       organizer {
         id
         name
         lastname
       }
-      ordered
+      description
+      participants {
+        id
+        name
+        lastname
+      }
     }
   }
 `;
 
-interface NjamProps extends NjamModel, RouteComponentProps<{ id: string }> {}
+interface NjamProps
+  extends NjamModel,
+    Pick<RouteComponentProps<{ id: string }>, 'match'> {}
 
-const Njam: React.FC<WithApolloClient<NjamProps>> = ({
+const Njam: React.FC<NjamProps> = ({
   match: {
     params: { id },
   },
-  client,
 }) => {
-  const njam = client.readQuery({ query, variables: { id } });
+  const { data, error } = useQuery(query, {
+    variables: { id },
+    fetchPolicy: 'cache-first',
+  });
 
-  return <pre>{JSON.stringify(njam, null, 2)}</pre>;
+  if (data) {
+    const { njam } = data;
+
+    return <pre>{JSON.stringify(njam, null, 2)}</pre>;
+  } else if (error) {
+    return <Err {...error} />;
+  } else {
+    return <Loading />;
+  }
 };
-export default withApollo(Njam);
+export default Njam;
