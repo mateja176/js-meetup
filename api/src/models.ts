@@ -12,6 +12,7 @@ export type Mutation = {
   __typename?: "Mutation";
   createUser?: Maybe<User>;
   createNjam?: Maybe<Njam>;
+  orderNjam?: Maybe<Njam>;
 };
 
 export type MutationCreateUserArgs = {
@@ -23,6 +24,11 @@ export type MutationCreateNjamArgs = {
   location: Scalars["String"];
   description?: Maybe<Scalars["String"]>;
   time: Scalars["String"];
+  organizerId: Scalars["ID"];
+};
+
+export type MutationOrderNjamArgs = {
+  njamId: Scalars["ID"];
 };
 
 export type Njam = {
