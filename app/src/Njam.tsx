@@ -1,8 +1,8 @@
-import { useQuery } from '@apollo/react-hooks';
 import { Form, Input, Select, Switch } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import { FormComponentProps, ValidationRule } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
 import React from 'react';
+import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Njam as NjamModel } from '../../api/src/models';
 import { Err, Loading } from './components';
@@ -30,8 +30,7 @@ const query = gql`
 `;
 
 interface NjamProps
-  extends NjamModel,
-    Pick<RouteComponentProps<{ id: string }>, 'match'>,
+  extends Pick<RouteComponentProps<{ id: string }>, 'match'>,
     FormComponentProps {}
 
 const Njam: React.FC<NjamProps> = ({
@@ -40,58 +39,66 @@ const Njam: React.FC<NjamProps> = ({
   },
   form: { getFieldDecorator },
 }) => {
-  const { data, error } = useQuery(query, {
-    variables: { id },
-    fetchPolicy: 'cache-first',
-  });
+  const [readOnly, setReadOnly] = React.useState(true);
 
-  if (data) {
-    const { njam } = data;
+  const required: ValidationRule = readOnly
+    ? {}
+    : {
+        required: true,
+        message: 'Field is required',
+      };
 
-    return (
-      <Form
-        onSubmit={e => {
-          e.preventDefault();
-          console.log('submitted');
-        }}
-      >
-        <Form.Item label="Location">
-          {getFieldDecorator('location', {
-            rules: [
-              {
-                required: true,
-                message: 'Please input a location',
-              },
-            ],
-          })(<Input />)}
-        </Form.Item>
-        <Form.Item label="Time">
-          {getFieldDecorator('time', {
-            rules: [
-              {
-                required: true,
-                message: 'Please select a time',
-              },
-            ],
-          })(<Input />)}
-        </Form.Item>
-        <Form.Item label="Ordered">
-          {getFieldDecorator('ordered', {
-            rules: [{ type: 'boolean' }],
-          })(<Switch />)}
-        </Form.Item>
-        <Form.Item label="Description">
-          {getFieldDecorator('description')(<Input />)}
-        </Form.Item>
-        <Form.Item label="Invite friends">
-          {getFieldDecorator('participants')(<Select />)}
-        </Form.Item>
-      </Form>
-    );
-  } else if (error) {
-    return <Err {...error} />;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <Query<{ njam: NjamModel }> query={query} variables={{ id }}>
+      {({ data, error, loading }) => {
+        if (loading) {
+          return <Loading />;
+        }
+        if (error) {
+          return <Err {...error} />;
+        } else {
+          const { njam } = data!;
+
+          const { location, time, ordered, description, participants } = njam;
+
+          return (
+            <Form
+              onSubmit={e => {
+                e.preventDefault();
+                console.log('submitted');
+              }}
+            >
+              <Form.Item label="Location">
+                {getFieldDecorator('location', {
+                  initialValue: location,
+                  rules: [required],
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="Time">
+                {getFieldDecorator('time', {
+                  initialValue: time,
+                  rules: [required],
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="Ordered">
+                {getFieldDecorator('ordered', {
+                  initialValue: ordered,
+                  rules: [{ type: 'boolean' }],
+                })(<Switch />)}
+              </Form.Item>
+              <Form.Item label="Description">
+                {getFieldDecorator('description', {
+                  initialValue: description,
+                })(<Input />)}
+              </Form.Item>
+              <Form.Item label="Invite friends">
+                {getFieldDecorator('participants')(<Select />)}
+              </Form.Item>
+            </Form>
+          );
+        }
+      }}
+    </Query>
+  );
 };
 export default Form.create({ name: 'njam' })(Njam);
