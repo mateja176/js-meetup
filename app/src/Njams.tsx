@@ -36,7 +36,15 @@ export interface NjamsProps extends RouteComponentProps {}
 
 const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
   <Query<{ njams: Njam[] }> query={njamsQuery}>
-    {({ error, data }) => {
+    {({ error, data, loading }) => {
+      if (loading) {
+        return <Loading />;
+      }
+
+      if (error) {
+        return <Err {...error} />;
+      }
+
       if (data) {
         const { njams } = data;
 
@@ -84,10 +92,6 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
             }}
           />
         );
-      } else if (error) {
-        return <Err {...error} />;
-      } else {
-        return <Loading />;
       }
     }}
   </Query>
