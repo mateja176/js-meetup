@@ -6,7 +6,7 @@ import {
   Switch,
   TimePicker,
 } from 'antd';
-import { FormComponentProps, ValidationRule } from 'antd/lib/form';
+import { FormComponentProps } from 'antd/lib/form';
 import { InputProps } from 'antd/lib/input';
 import { gql } from 'apollo-boost';
 import moment from 'moment';
@@ -52,12 +52,7 @@ const Njam: React.FC<NjamProps> = ({
   const [readOnly, setReadOnly] = React.useState(true);
   const toggleReadOnly = () => setReadOnly(!readOnly);
 
-  const required: ValidationRule = readOnly
-    ? {}
-    : {
-        required: true,
-        message: 'Field is required',
-      };
+  const required = !readOnly;
 
   const readOnlyStyle: React.CSSProperties = {
     pointerEvents: readOnly ? 'none' : 'initial',
@@ -125,7 +120,7 @@ const Njam: React.FC<NjamProps> = ({
                 <Form.Item label="Location">
                   {form.getFieldDecorator('location', {
                     initialValue: location,
-                    rules: [required],
+                    rules: [{ required }],
                   })(<Input />)}
                 </Form.Item>
                 <Form.Item label="Time">
@@ -133,17 +128,17 @@ const Njam: React.FC<NjamProps> = ({
                     initialValue: moment(time),
                     rules: [
                       {
-                        ...required,
+                        required,
                         type: 'object',
                       },
                     ],
-                  })(<TimePicker />)}
+                  })(<TimePicker inputReadOnly style={readOnlyStyle} />)}
                 </Form.Item>
                 <Form.Item label="Ordered">
                   {form.getFieldDecorator('ordered', {
                     initialValue: ordered,
                     rules: [{ type: 'boolean' }],
-                  })(<Switch style={{ ...readOnlyStyle }} />)}
+                  })(<Switch style={readOnlyStyle} />)}
                 </Form.Item>
                 <Form.Item label="Description">
                   {form.getFieldDecorator('description', {
@@ -154,7 +149,7 @@ const Njam: React.FC<NjamProps> = ({
                   {form.getFieldDecorator('participants', {
                     initialValue: participants.map(({ id }) => id),
                   })(
-                    <Select mode="multiple" style={{ ...readOnlyStyle }}>
+                    <Select mode="multiple" style={readOnlyStyle}>
                       {participants.map(({ id, name, lastname }) => (
                         <Select.Option key={id} value={id}>
                           {name} {lastname}
