@@ -54,8 +54,7 @@ const Njam: React.FC<NjamProps> = ({
       {({ data, error, loading }) => {
         if (loading) {
           return <Loading />;
-        }
-        if (error) {
+        } else if (error) {
           return <Err {...error} />;
         } else {
           const { njam } = data!;
