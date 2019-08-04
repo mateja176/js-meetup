@@ -139,7 +139,13 @@ const Njam: React.FC<NjamProps> = ({
                         type: 'object',
                       },
                     ],
-                  })(<TimePicker inputReadOnly style={readOnlyStyle} />)}
+                  })(
+                    <TimePicker
+                      inputReadOnly
+                      style={readOnlyStyle}
+                      format="hh:mm"
+                    />,
+                  )}
                 </Form.Item>
                 <Form.Item label="Ordered">
                   {form.getFieldDecorator('ordered', {
