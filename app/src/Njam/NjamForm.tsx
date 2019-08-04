@@ -29,6 +29,12 @@ const NjamForm: React.FC<NjamFormProps> = ({
     pointerEvents: readOnly ? 'none' : 'initial',
   };
 
+  const allParticipants = participants.map(({ id, name, lastname }) => (
+    <Select.Option key={id} value={id}>
+      {name} {lastname}
+    </Select.Option>
+  ));
+
   return (
     <Form
       onSubmit={e => {
@@ -70,18 +76,14 @@ const NjamForm: React.FC<NjamFormProps> = ({
           initialValue: participants.map(({ id }) => id),
         })(
           <Select mode="multiple" style={readOnlyStyle}>
-            {participants.map(({ id, name, lastname }) => (
-              <Select.Option key={id} value={id}>
-                {name} {lastname}
-              </Select.Option>
-            ))}
+            {allParticipants}
           </Select>,
         )}
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizer', {
-          initialValue: `${organizer.name} ${organizer.lastname}`,
-        })(<Input readOnly={readOnly} />)}
+          initialValue: organizer.id,
+        })(<Select style={readOnlyStyle}>{allParticipants}</Select>)}
       </Form.Item>
     </Form>
   );
