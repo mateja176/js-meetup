@@ -72,9 +72,16 @@ const Njam: React.FC<NjamProps> = ({
         if (error) {
           return <Err {...error} />;
         } else {
-          const { njam } = data!;
-
-          const { location, time, ordered, description, participants } = njam;
+          const {
+            njam: {
+              location,
+              time,
+              ordered,
+              description,
+              participants,
+              organizer,
+            },
+          } = data!;
 
           const Input = React.forwardRef<any, Omit<InputProps, 'readOnly'>>(
             (props, ref) => (
@@ -157,6 +164,11 @@ const Njam: React.FC<NjamProps> = ({
                       ))}
                     </Select>,
                   )}
+                </Form.Item>
+                <Form.Item label="Organizer">
+                  {form.getFieldDecorator('organizer', {
+                    initialValue: `${organizer.name} ${organizer.lastname}`,
+                  })(<AntInput readOnly />)}
                 </Form.Item>
               </Form>
             </Box>
