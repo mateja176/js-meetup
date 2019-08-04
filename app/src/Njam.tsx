@@ -1,7 +1,15 @@
-import { Form, Icon, Input as AntInput, Select, Switch } from 'antd';
+import {
+  Form,
+  Icon,
+  Input as AntInput,
+  Select,
+  Switch,
+  TimePicker,
+} from 'antd';
 import { FormComponentProps, ValidationRule } from 'antd/lib/form';
 import { InputProps } from 'antd/lib/input';
 import { gql } from 'apollo-boost';
+import moment from 'moment';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
@@ -39,7 +47,7 @@ const Njam: React.FC<NjamProps> = ({
   match: {
     params: { id },
   },
-  form: { getFieldDecorator, resetFields },
+  form,
 }) => {
   const [readOnly, setReadOnly] = React.useState(true);
   const toggleReadOnly = () => setReadOnly(!readOnly);
@@ -56,7 +64,8 @@ const Njam: React.FC<NjamProps> = ({
   };
 
   const save = () => {
-    console.log('submitted');
+    const { time, ...values } = form.getFieldsValue();
+    console.log({ ...values, time: time.utc().toString() });
   };
 
   return (
@@ -72,8 +81,10 @@ const Njam: React.FC<NjamProps> = ({
 
           const { location, time, ordered, description, participants } = njam;
 
-          const Input: React.FC<Omit<InputProps, 'readOnly'>> = props => (
-            <AntInput {...props} readOnly={readOnly} />
+          const Input = React.forwardRef<any, Omit<InputProps, 'readOnly'>>(
+            (props, ref) => (
+              <AntInput ref={ref} {...props} readOnly={readOnly} />
+            ),
           );
 
           return (
@@ -89,7 +100,7 @@ const Njam: React.FC<NjamProps> = ({
                         onClick={() => {
                           toggleReadOnly();
 
-                          resetFields();
+                          form.resetFields();
                         }}
                         style={{ marginRight: 15 }}
                       />
@@ -112,31 +123,44 @@ const Njam: React.FC<NjamProps> = ({
                 }}
               >
                 <Form.Item label="Location">
-                  {getFieldDecorator('location', {
+                  {form.getFieldDecorator('location', {
                     initialValue: location,
                     rules: [required],
                   })(<Input />)}
                 </Form.Item>
                 <Form.Item label="Time">
-                  {getFieldDecorator('time', {
-                    initialValue: time,
-                    rules: [required],
-                  })(<Input />)}
+                  {form.getFieldDecorator('time', {
+                    initialValue: moment(time),
+                    rules: [
+                      {
+                        ...required,
+                        type: 'object',
+                      },
+                    ],
+                  })(<TimePicker />)}
                 </Form.Item>
                 <Form.Item label="Ordered">
-                  {getFieldDecorator('ordered', {
+                  {form.getFieldDecorator('ordered', {
                     initialValue: ordered,
                     rules: [{ type: 'boolean' }],
                   })(<Switch style={{ ...readOnlyStyle }} />)}
                 </Form.Item>
                 <Form.Item label="Description">
-                  {getFieldDecorator('description', {
+                  {form.getFieldDecorator('description', {
                     initialValue: description,
                   })(<Input />)}
                 </Form.Item>
                 <Form.Item label="Invite friends">
-                  {getFieldDecorator('participants')(
-                    <Select mode="multiple" style={{ ...readOnlyStyle }} />,
+                  {form.getFieldDecorator('participants', {
+                    initialValue: participants.map(({ id }) => id),
+                  })(
+                    <Select mode="multiple" style={{ ...readOnlyStyle }}>
+                      {participants.map(({ id, name, lastname }) => (
+                        <Select.Option key={id} value={id}>
+                          {name} {lastname}
+                        </Select.Option>
+                      ))}
+                    </Select>,
                   )}
                 </Form.Item>
               </Form>
