@@ -1,9 +1,11 @@
-import { Form, Input, Select, Switch } from 'antd';
+import { Form, Icon, Input as AntInput, Select, Switch } from 'antd';
 import { FormComponentProps, ValidationRule } from 'antd/lib/form';
+import { InputProps } from 'antd/lib/input';
 import { gql } from 'apollo-boost';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
+import { Box, Flex } from 'rebass';
 import { Njam as NjamModel } from '../../api/src/models';
 import { Err, Loading } from './components';
 
@@ -37,9 +39,10 @@ const Njam: React.FC<NjamProps> = ({
   match: {
     params: { id },
   },
-  form: { getFieldDecorator },
+  form: { getFieldDecorator, resetFields },
 }) => {
   const [readOnly, setReadOnly] = React.useState(true);
+  const toggleReadOnly = () => setReadOnly(!readOnly);
 
   const required: ValidationRule = readOnly
     ? {}
@@ -47,6 +50,14 @@ const Njam: React.FC<NjamProps> = ({
         required: true,
         message: 'Field is required',
       };
+
+  const readOnlyStyle: React.CSSProperties = {
+    pointerEvents: readOnly ? 'none' : 'initial',
+  };
+
+  const save = () => {
+    console.log('submitted');
+  };
 
   return (
     <Query<{ njam: NjamModel }> query={query} variables={{ id }}>
@@ -61,40 +72,75 @@ const Njam: React.FC<NjamProps> = ({
 
           const { location, time, ordered, description, participants } = njam;
 
+          const Input: React.FC<Omit<InputProps, 'readOnly'>> = props => (
+            <AntInput {...props} readOnly={readOnly} />
+          );
+
           return (
-            <Form
-              onSubmit={e => {
-                e.preventDefault();
-                console.log('submitted');
-              }}
-            >
-              <Form.Item label="Location">
-                {getFieldDecorator('location', {
-                  initialValue: location,
-                  rules: [required],
-                })(<Input />)}
-              </Form.Item>
-              <Form.Item label="Time">
-                {getFieldDecorator('time', {
-                  initialValue: time,
-                  rules: [required],
-                })(<Input />)}
-              </Form.Item>
-              <Form.Item label="Ordered">
-                {getFieldDecorator('ordered', {
-                  initialValue: ordered,
-                  rules: [{ type: 'boolean' }],
-                })(<Switch />)}
-              </Form.Item>
-              <Form.Item label="Description">
-                {getFieldDecorator('description', {
-                  initialValue: description,
-                })(<Input />)}
-              </Form.Item>
-              <Form.Item label="Invite friends">
-                {getFieldDecorator('participants')(<Select />)}
-              </Form.Item>
-            </Form>
+            <Box>
+              <Flex justifyContent="flex-end">
+                <Box mr={4}>
+                  {readOnly ? (
+                    <Icon type="edit" onClick={toggleReadOnly} />
+                  ) : (
+                    <Box>
+                      <Icon
+                        type="close"
+                        onClick={() => {
+                          toggleReadOnly();
+
+                          resetFields();
+                        }}
+                        style={{ marginRight: 15 }}
+                      />
+                      <Icon
+                        type="check"
+                        onClick={() => {
+                          toggleReadOnly();
+
+                          save();
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              </Flex>
+              <Form
+                onSubmit={e => {
+                  e.preventDefault();
+                  save();
+                }}
+              >
+                <Form.Item label="Location">
+                  {getFieldDecorator('location', {
+                    initialValue: location,
+                    rules: [required],
+                  })(<Input />)}
+                </Form.Item>
+                <Form.Item label="Time">
+                  {getFieldDecorator('time', {
+                    initialValue: time,
+                    rules: [required],
+                  })(<Input />)}
+                </Form.Item>
+                <Form.Item label="Ordered">
+                  {getFieldDecorator('ordered', {
+                    initialValue: ordered,
+                    rules: [{ type: 'boolean' }],
+                  })(<Switch style={{ ...readOnlyStyle }} />)}
+                </Form.Item>
+                <Form.Item label="Description">
+                  {getFieldDecorator('description', {
+                    initialValue: description,
+                  })(<Input />)}
+                </Form.Item>
+                <Form.Item label="Invite friends">
+                  {getFieldDecorator('participants')(
+                    <Select mode="multiple" style={{ ...readOnlyStyle }} />,
+                  )}
+                </Form.Item>
+              </Form>
+            </Box>
           );
         }
       }}
