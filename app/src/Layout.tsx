@@ -1,6 +1,6 @@
 import { Drawer, Icon as AntIcon, Menu, PageHeader, Row } from 'antd';
 import { IconProps } from 'antd/lib/icon';
-import { capitalize } from 'lodash';
+import { startCase } from 'lodash';
 import React from 'react';
 import {
   NavLink,
@@ -38,10 +38,15 @@ const routes: IRoute[] = [
     Icon: (props => <AntIcon {...props} type="unordered-list" />) as Icon,
     Component: Njams,
   },
+  {
+    text: 'createNjam',
+    Icon: (props => <AntIcon {...props} type="plus-circle" />) as Icon,
+    Component: () => <>Create Njam</>,
+  },
 ].map(({ text, ...route }) => {
   return {
     ...route,
-    text: capitalize(text),
+    text: startCase(text),
     path: `/${text.toLowerCase()}`,
   };
 });
