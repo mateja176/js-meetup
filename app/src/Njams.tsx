@@ -39,14 +39,10 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => (
     {({ error, data, loading }) => {
       if (loading) {
         return <Loading />;
-      }
-
-      if (error) {
+      } else if (error) {
         return <Err {...error} />;
-      }
-
-      if (data) {
-        const { njams } = data;
+      } else {
+        const { njams } = data!;
 
         return (
           <List
