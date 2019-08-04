@@ -9,7 +9,7 @@ import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
 import { Err, Loading, StatusCircle } from './components';
 
-const keys: Array<keyof Njam> = ['location', 'time', 'organizer', 'ordered'];
+const keys = ['location', 'time', 'organizer', 'ordered'] as const;
 const columns = keys.map(capitalize);
 
 const njamsQuery = gql`
