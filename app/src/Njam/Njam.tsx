@@ -1,12 +1,14 @@
 import { Form, Icon } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
+import moment from 'moment';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { Njam as NjamModel, User } from '../../../api/src/models';
 import { Err, Loading } from '../components';
+import { routeText } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -62,7 +64,10 @@ const Njam: React.FC<NjamProps> = ({
         } else if (error) {
           return <Err {...error} />;
         } else {
-          const { njam, users } = data!;
+          const {
+            njam: { time, organizer, participants, ...njam },
+            users,
+          } = data!;
 
           return (
             <Box mx={4}>
@@ -96,7 +101,12 @@ const Njam: React.FC<NjamProps> = ({
               <NjamForm
                 readOnly={readOnly}
                 form={form}
-                initialValues={njam}
+                initialValues={{
+                  ...njam,
+                  time: moment(time),
+                  organizerId: organizer.id,
+                  participantIds: participants.map(({ id }) => id),
+                }}
                 onSubmit={save}
                 users={users}
               />
@@ -107,4 +117,4 @@ const Njam: React.FC<NjamProps> = ({
     </Query>
   );
 };
-export default Form.create({ name: 'njam' })(Njam);
+export default Form.create({ name: routeText.njams })(Njam);

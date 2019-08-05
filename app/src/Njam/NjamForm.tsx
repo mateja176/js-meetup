@@ -2,10 +2,11 @@ import { Form, Input, Select, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import React from 'react';
-import { Njam, User } from '../../../api/src/models';
+import { User } from '../../../api/src/models';
+import { NjamFormValues } from '../models';
 
 export interface NjamFormProps extends FormComponentProps {
-  initialValues: Njam;
+  initialValues: NjamFormValues;
   readOnly: boolean;
   onSubmit: () => void;
   users: User[];
@@ -19,8 +20,8 @@ const NjamForm: React.FC<NjamFormProps> = ({
     location,
     time,
     description,
-    organizer,
-    participants,
+    organizerId,
+    participantIds,
     ordered,
   },
   users,
@@ -75,7 +76,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
       </Form.Item>
       <Form.Item label="Invite friends">
         {form.getFieldDecorator('participants', {
-          initialValue: participants.map(({ id }) => id),
+          initialValue: participantIds,
         })(
           <Select mode="multiple" style={readOnlyStyle}>
             {usersOptions}
@@ -84,7 +85,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizer', {
-          initialValue: organizer.id,
+          initialValue: organizerId,
         })(<Select style={readOnlyStyle}>{usersOptions}</Select>)}
       </Form.Item>
     </Form>

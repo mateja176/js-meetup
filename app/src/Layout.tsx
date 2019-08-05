@@ -11,6 +11,7 @@ import {
   withRouter,
 } from 'react-router-dom';
 import env from './env';
+import { routeText } from './models';
 import Njam from './Njam';
 import Njams from './Njams';
 
@@ -22,15 +23,6 @@ interface IRoute {
   Icon: Icon;
   Component: React.ComponentType<RouteComponentProps>;
 }
-
-const routeTexts = ['njams'] as const;
-
-type RouteText = typeof routeTexts[number];
-
-const routeText = routeTexts.reduce(
-  (_routeText, text) => ({ ..._routeText, [text]: text }),
-  {} as { [text in RouteText]: text },
-);
 
 const routes: IRoute[] = [
   {
