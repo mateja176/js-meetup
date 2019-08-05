@@ -1,17 +1,17 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import { gql } from 'apollo-boost';
-import { User } from '../../api/src/models';
 import React from 'react';
 import { Query } from 'react-apollo';
+import { User } from '../../api/src/models';
+import { CompleteUser } from './apollo';
 
 const usersQuery = gql`
   {
     users {
-      id
-      name
-      lastname
+      ...CompleteUser
     }
   }
+  ${CompleteUser}
 `;
 
 export interface UsersProps {}

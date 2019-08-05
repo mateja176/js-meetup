@@ -7,6 +7,7 @@ import { Query } from 'react-apollo';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
+import { NjamSummary } from './apollo';
 import { Err, Loading, StatusCircle } from './components';
 
 const keys = ['location', 'time', 'organizer', 'ordered'] as const;
@@ -15,15 +16,10 @@ const columns = keys.map(capitalize);
 const njamsQuery = gql`
   query {
     njams {
-      id
-      location
-      time
-      organizer {
-        name
-      }
-      ordered
+      ...NjamSummary
     }
   }
+  ${NjamSummary}
 `;
 
 const Column: React.FC = ({ children }) => (

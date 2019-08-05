@@ -7,7 +7,7 @@ import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { Njam as NjamModel, User } from '../../../api/src/models';
-import { CompleteUser } from '../apollo';
+import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeText } from '../models';
 import NjamForm from './NjamForm';
@@ -15,27 +15,14 @@ import NjamForm from './NjamForm';
 const query = gql`
   query($id: ID!) {
     njam(id: $id) {
-      id
-      location
-      time
-      ordered
-      organizer {
-        id
-        name
-        lastname
-      }
-      description
-      participants {
-        id
-        name
-        lastname
-      }
+      ...CompleteNjam
     }
     users {
       ...CompleteUser
     }
   }
   ${CompleteUser}
+  ${CompleteNjam}
 `;
 
 interface NjamProps

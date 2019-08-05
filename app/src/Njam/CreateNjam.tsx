@@ -6,7 +6,7 @@ import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Njam, User } from '../../../api/src/models';
-import { CompleteUser } from '../apollo';
+import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeText } from '../models';
 import NjamForm from './NjamForm';
@@ -33,23 +33,10 @@ const mutation = gql`
       time: $time
       organizerId: $organizerId
     ) {
-      id
-      location
-      description
-      time
-      participants {
-        id
-        name
-        lastname
-      }
-      organizer {
-        id
-        name
-        lastname
-      }
-      ordered
+      ...CompleteNjam
     }
   }
+  ${CompleteNjam}
 `;
 
 const initialValues: NjamFormValues = {
