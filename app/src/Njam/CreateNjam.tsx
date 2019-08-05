@@ -46,6 +46,7 @@ const initialValues: NjamFormValues = {
   time: moment(new Date()),
   organizerId: '',
   participantIds: [],
+  description: '',
 };
 
 export interface CreateNjamProps
@@ -53,6 +54,9 @@ export interface CreateNjamProps
     RouteComponentProps {}
 
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
+  const { time, ...values} = form.getFieldsValue();
+  const variables = { ...values, time: time.utc().toString() };
+
   return (
     <FormContainer>
       <Query<UsersQuery> query={query}>
@@ -74,10 +78,7 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
           }
         }}
       </Query>
-      <Mutation<{ createNjam: Njam }>
-        mutation={mutation}
-        variables={form.getFieldsValue()}
-      >
+      <Mutation<{ createNjam: Njam }> mutation={mutation} variables={variables}>
         {(createNjam, { data, loading, error }) => {
           const createNjamButton = (
             <Button
