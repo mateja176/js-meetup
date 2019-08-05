@@ -28,10 +28,6 @@ const NjamForm: React.FC<NjamFormProps> = ({
     pointerEvents: readOnly ? 'none' : 'initial',
   };
 
-  const { name = '', lastname = '' } = users.find(
-    ({ id }) => id === organizerId,
-  )!;
-
   return (
     <Form
       onSubmit={e => {
@@ -75,8 +71,8 @@ const NjamForm: React.FC<NjamFormProps> = ({
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizerId', {
-          initialValue: `${name} ${lastname}`,
-        })(<Input readOnly />)}
+          initialValue: organizerId,
+        })(<UserSelect style={{ pointerEvents: 'none' }} users={users} />)}
       </Form.Item>
     </Form>
   );
