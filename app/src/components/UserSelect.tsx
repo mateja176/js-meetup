@@ -9,8 +9,12 @@ export interface UserSelectProps extends SelectProps<User['id']> {
   users: Users;
 }
 
-const UserSelect: React.FC<UserSelectProps> = ({ users, ...props }) => (
-  <Select {...props}>{users.map(UserOption)}</Select>
+const UserSelect = React.forwardRef<any, UserSelectProps>(
+  ({ users, ...props }, ref) => (
+    <Select ref={ref} {...props}>
+      {users.map(UserOption)}
+    </Select>
+  ),
 );
 
 export default UserSelect;
