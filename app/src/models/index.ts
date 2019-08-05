@@ -15,14 +15,14 @@ export const routeNames = ['njams', 'createNjam'] as const;
 
 export type routeName = typeof routeNames[number];
 
-type RouteObject = { [name in routeName]: name };
+const routeObject = {} as { [name in routeName]: name };
 
 export const routeName = routeNames.reduce(
-  (_routeName, name) => ({ ..._routeName, [name]: name }),
-  {} as RouteObject,
+  (route, name) => ({ ...route, [name]: name }),
+  routeObject,
 );
 
 export const routePath = routeNames.reduce(
-  (_routeName, name) => ({ ..._routeName, [name]: urlJoin('/', name) }),
-  {} as RouteObject,
+  (route, name) => ({ ...route, [name]: urlJoin('/', name) }),
+  routeObject,
 );
