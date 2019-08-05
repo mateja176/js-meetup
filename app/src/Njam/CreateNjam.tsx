@@ -44,7 +44,7 @@ const mutation = gql`
 const initialValues: NjamFormValues = {
   location: '',
   ordered: false,
-  time: moment(new Date()),
+  time: moment(),
   organizerId: '',
   participantIds: [],
   description: '',
