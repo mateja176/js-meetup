@@ -5,10 +5,10 @@ import moment from 'moment';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
-import { Njam, User } from '../../../api/src/models';
+import { Njam } from '../../../api/src/models';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, routeText } from '../models';
+import { NjamFormValues, routeText, UsersQuery } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -54,7 +54,7 @@ export interface CreateNjamProps
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
   return (
     <FormContainer>
-      <Query<{ users: User[] }> query={query}>
+      <Query<UsersQuery> query={query}>
         {({ data, loading, error }) => {
           if (loading) {
             return <Loading />;

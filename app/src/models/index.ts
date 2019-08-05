@@ -1,6 +1,8 @@
 import moment from 'moment';
 import { Njam, Scalars } from '../../../api/src/models';
 
+export * from './queries';
+
 export interface NjamFormValues
   extends Omit<Njam, 'id' | 'time' | 'organizer' | 'participants'> {
   time: moment.Moment;

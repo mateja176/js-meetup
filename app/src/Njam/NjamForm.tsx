@@ -2,13 +2,12 @@ import { Form, Input, Select, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import React from 'react';
-import { User } from '../../../api/src/models';
-import { NjamFormValues } from '../models';
+import { NjamFormValues, Users } from '../models';
 
 export interface NjamFormProps extends FormComponentProps {
   initialValues: NjamFormValues;
   readOnly: boolean;
-  users: User[];
+  users: Users;
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({

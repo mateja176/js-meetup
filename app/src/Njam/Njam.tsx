@@ -6,10 +6,9 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import { Njam as NjamModel, User } from '../../../api/src/models';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, routeText } from '../models';
+import { NjamFormValues, NjamQuery, routeText, UsersQuery } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -44,7 +43,7 @@ const Njam: React.FC<NjamProps> = ({
   };
 
   return (
-    <Query<{ njam: NjamModel; users: User[] }> query={query} variables={{ id }}>
+    <Query<UsersQuery & NjamQuery> query={query} variables={{ id }}>
       {({ data, error, loading }) => {
         if (loading) {
           return <Loading />;
