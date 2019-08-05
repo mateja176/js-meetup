@@ -7,10 +7,6 @@ export default {
   },
   Mutation: {
     createNjam: async (root, args, context, info) => {
-      if (!args.organizerId) {
-        throw new Error('Missing parameter: organizerId');
-      }
-
       const njam = {
         id: uuid(),
         location: args.location,
@@ -23,7 +19,8 @@ export default {
 
       return await context.njamService.createNjam(njam);
     },
-    orderNjam: async (root, args, context, info) => await context.njamService.orderNjam(args.njamId)
+    orderNjam: async (root, args, context, info) => await context.njamService.orderNjam(args.njamId),
+    deleteNjam: async (root, args, context, info) => await context.njamService.deleteNjam(args.njamId)
   },
   Njam: {
     participants: async (root, args, context, info) => {

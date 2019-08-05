@@ -14,4 +14,8 @@ type Mutation {
   orderNjam(
     njamId: ID!
   ): Njam
+
+  deleteNjam(
+    njamId: ID!
+  ): Njam
 }

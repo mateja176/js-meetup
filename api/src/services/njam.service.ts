@@ -25,4 +25,13 @@ export class NjamService {
     await this.db.exec(`UPDATE njams SET ordered=true WHERE id='${njamId}'`);
     return await this.getNjamById(njamId);
   }
+
+  async deleteNjam(njamId: string): Promise<Njam> {
+    const njam: Njam = await this.getNjamById(njamId);
+    if (!njam) {
+      throw new Error(`Could not find njam with id: ${njamId}`);
+    }
+    await this.db.exec(`DELETE FROM njams WHERE id='${njamId}'`);
+    return njam;
+  }
 }
