@@ -68,7 +68,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
       <Form.Item label="Description">
         {form.getFieldDecorator('description', {
           initialValue: description,
-        })(<Input readOnly={readOnly} />)}
+        })(<Input.TextArea readOnly={readOnly} />)}
       </Form.Item>
       <Form.Item label="Invite friends">
         {form.getFieldDecorator('participants', {
