@@ -6,7 +6,7 @@ import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Njam, User } from '../../../api/src/models';
-import { CompleteUser } from '../apollo/queries/fragments';
+import { CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeText } from '../models';
 import NjamForm from './NjamForm';
