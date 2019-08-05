@@ -107,7 +107,6 @@ const Njam: React.FC<NjamProps> = ({
                   organizerId: organizer.id,
                   participantIds: participants.map(({ id }) => id),
                 }}
-                onSubmit={save}
                 users={users}
               />
             </Box>

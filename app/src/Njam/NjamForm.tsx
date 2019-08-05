@@ -8,13 +8,11 @@ import { NjamFormValues } from '../models';
 export interface NjamFormProps extends FormComponentProps {
   initialValues: NjamFormValues;
   readOnly: boolean;
-  onSubmit: () => void;
   users: User[];
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
   readOnly,
-  onSubmit,
   form,
   initialValues: {
     location,
@@ -42,8 +40,6 @@ const NjamForm: React.FC<NjamFormProps> = ({
     <Form
       onSubmit={e => {
         e.preventDefault();
-
-        onSubmit();
       }}
     >
       <Form.Item label="Location">
