@@ -5,7 +5,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import { Njam as NjamModel } from '../../../api/src/models';
+import { Njam as NjamModel, User } from '../../../api/src/models';
 import { Err, Loading } from '../components';
 import NjamForm from './NjamForm';
 
@@ -27,6 +27,11 @@ const query = gql`
         name
         lastname
       }
+    }
+    users {
+      id
+      name
+      lastname
     }
   }
 `;
@@ -50,17 +55,17 @@ const Njam: React.FC<NjamProps> = ({
   };
 
   return (
-    <Query<{ njam: NjamModel }> query={query} variables={{ id }}>
+    <Query<{ njam: NjamModel; users: User[] }> query={query} variables={{ id }}>
       {({ data, error, loading }) => {
         if (loading) {
           return <Loading />;
         } else if (error) {
           return <Err {...error} />;
         } else {
-          const { njam } = data!;
+          const { njam, users } = data!;
 
           return (
-            <Box>
+            <Box mx={4}>
               <Flex justifyContent="flex-end">
                 <Box mr={4}>
                   {readOnly ? (
@@ -93,6 +98,7 @@ const Njam: React.FC<NjamProps> = ({
                 form={form}
                 initialValues={njam}
                 onSubmit={save}
+                users={users}
               />
             </Box>
           );

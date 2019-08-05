@@ -2,12 +2,13 @@ import { Form, Input, Select, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import React from 'react';
-import { Njam } from '../../../api/src/models';
+import { Njam, User } from '../../../api/src/models';
 
 export interface NjamFormProps extends FormComponentProps {
   initialValues: Njam;
   readOnly: boolean;
   onSubmit: () => void;
+  users: User[];
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
@@ -22,6 +23,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
     participants,
     ordered,
   },
+  users,
 }) => {
   const required = !readOnly;
 
@@ -29,7 +31,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
     pointerEvents: readOnly ? 'none' : 'initial',
   };
 
-  const allParticipants = participants.map(({ id, name, lastname }) => (
+  const usersOptions = users.map(({ id, name, lastname }) => (
     <Select.Option key={id} value={id}>
       {name} {lastname}
     </Select.Option>
@@ -76,14 +78,14 @@ const NjamForm: React.FC<NjamFormProps> = ({
           initialValue: participants.map(({ id }) => id),
         })(
           <Select mode="multiple" style={readOnlyStyle}>
-            {allParticipants}
+            {usersOptions}
           </Select>,
         )}
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizer', {
           initialValue: organizer.id,
-        })(<Select style={readOnlyStyle}>{allParticipants}</Select>)}
+        })(<Select style={readOnlyStyle}>{usersOptions}</Select>)}
       </Form.Item>
     </Form>
   );
