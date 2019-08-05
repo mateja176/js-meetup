@@ -2,6 +2,7 @@ import { Alert, Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
 import moment from 'moment';
+import { any } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
@@ -54,8 +55,9 @@ export interface CreateNjamProps
     RouteComponentProps {}
 
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
-  const { time, ...values} = form.getFieldsValue();
-  const variables = { ...values, time: time.utc().toString() };
+  const disabled =
+    !form.isFieldsTouched() ||
+    any(Boolean)(Object.values(form.getFieldsError()));
 
   return (
     <FormContainer>
@@ -77,12 +79,22 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
           }
         }}
       </Query>
-      <Mutation<{ createNjam: Njam }> mutation={mutation} variables={variables}>
+      <Mutation<{ createNjam: Njam }> mutation={mutation}>
         {(createNjam, { data, loading, error }) => {
           const createNjamButton = (
             <Button
+              disabled={disabled}
               onClick={() => {
-                createNjam();
+                form.validateFieldsAndScroll((error, { time, ...values }) => {
+                  if (!error) {
+                    const variables = {
+                      ...values,
+                      time: time.utc().toString(),
+                    };
+
+                    createNjam({ variables });
+                  }
+                });
               }}
             >
               Create Njam
@@ -95,6 +107,8 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
             return (
               <>
                 {createNjamButton}
+                <br />
+                <br />
                 <Alert type="error" message="Please retry" />
               </>
             );

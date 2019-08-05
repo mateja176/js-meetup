@@ -69,8 +69,9 @@ const NjamForm: React.FC<NjamFormProps> = ({
         })(<Input.TextArea readOnly={readOnly} />)}
       </Form.Item>
       <Form.Item label="Invite friends">
-        {form.getFieldDecorator('participants', {
+        {form.getFieldDecorator('participantIds', {
           initialValue: participantIds,
+          rules: [{ required: true }],
         })(
           <Select mode="multiple" style={readOnlyStyle}>
             {usersOptions}
@@ -78,8 +79,9 @@ const NjamForm: React.FC<NjamFormProps> = ({
         )}
       </Form.Item>
       <Form.Item label="Organizer">
-        {form.getFieldDecorator('organizer', {
+        {form.getFieldDecorator('organizerId', {
           initialValue: organizerId,
+          rules: [{ required: true }],
         })(<Select style={readOnlyStyle}>{usersOptions}</Select>)}
       </Form.Item>
     </Form>
