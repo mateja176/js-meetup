@@ -69,7 +69,6 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
             const { users } = data!;
             return (
               <NjamForm
-                readOnly={false}
                 initialValues={initialValues}
                 form={form}
                 users={users}

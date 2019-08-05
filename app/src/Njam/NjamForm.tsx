@@ -6,12 +6,12 @@ import { NjamFormValues, Users } from '../models';
 
 export interface NjamFormProps extends FormComponentProps {
   initialValues: NjamFormValues;
-  readOnly: boolean;
+  readOnly?: boolean;
   users: Users;
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
-  readOnly,
+  readOnly = false,
   form,
   initialValues: {
     location,
