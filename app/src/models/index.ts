@@ -1,4 +1,5 @@
 import moment from 'moment';
+import urlJoin from 'url-join';
 import { Njam, Scalars } from '../../../api/src/models';
 
 export * from './queries';
@@ -10,11 +11,18 @@ export interface NjamFormValues
   participantIds: Scalars['ID'][];
 }
 
-export const routeTexts = ['njams'] as const;
+export const routeNames = ['njams', 'createNjam'] as const;
 
-export type RouteText = typeof routeTexts[number];
+export type routeName = typeof routeNames[number];
 
-export const routeText = routeTexts.reduce(
-  (_routeText, text) => ({ ..._routeText, [text]: text }),
-  {} as { [text in RouteText]: text },
+type RouteObject = { [name in routeName]: name };
+
+export const routeName = routeNames.reduce(
+  (_routeName, name) => ({ ..._routeName, [name]: name }),
+  {} as RouteObject,
+);
+
+export const routePath = routeNames.reduce(
+  (_routeName, name) => ({ ..._routeName, [name]: urlJoin('/', name) }),
+  {} as RouteObject,
 );

@@ -8,7 +8,7 @@ import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, NjamQuery, routeText, UsersQuery } from '../models';
+import { NjamFormValues, NjamQuery, routeName, UsersQuery } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -102,4 +102,4 @@ const Njam: React.FC<NjamProps> = ({
     </Query>
   );
 };
-export default Form.create({ name: routeText.njams })(Njam);
+export default Form.create({ name: routeName.njams })(Njam);

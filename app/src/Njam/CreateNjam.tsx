@@ -4,11 +4,12 @@ import { gql } from 'apollo-boost';
 import moment from 'moment';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
-import { RouteComponentProps } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
+import urlJoin from 'url-join';
 import { Njam } from '../../../api/src/models';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, routeText, UsersQuery } from '../models';
+import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -97,6 +98,13 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
                 <Alert type="error" message="Please retry" />
               </>
             );
+          }
+          if (data) {
+            const {
+              createNjam: { id },
+            } = data;
+
+            return <Redirect to={urlJoin(routePath.njams, id)} />;
           } else {
             return createNjamButton;
           }
@@ -105,4 +113,4 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
     </FormContainer>
   );
 };
-export default Form.create({ name: routeText.njams })(CreateNjam);
+export default Form.create({ name: routeName.createNjam })(CreateNjam);

@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 import urlJoin from 'url-join';
 import env from './env';
-import { routeText } from './models';
+import { routeName, routePath } from './models';
 import Njam, { CreateNjam } from './Njam';
 import Njams from './Njams';
 
@@ -27,12 +27,12 @@ interface IRoute {
 
 const routes: IRoute[] = [
   {
-    text: routeText.njams,
+    text: routeName.njams,
     Icon: (props => <AntIcon {...props} type="unordered-list" />) as Icon,
     Component: Njams,
   },
   {
-    text: 'createNjam',
+    text: routeName.createNjam,
     Icon: (props => <AntIcon {...props} type="plus-circle" />) as Icon,
     Component: CreateNjam as any,
   },
@@ -78,12 +78,12 @@ const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
         <Route
           exact
           path="/"
-          render={() => <Redirect to={`/${routeText.njams}`} />}
+          render={() => <Redirect to={routePath.njams} />}
         />
         {routes.map(({ path, Component }) => (
           <Route exact key={path} path={path} component={Component} />
         ))}
-        <Route path={`/${routeText.njams}/:id`} component={Njam} />
+        <Route path={urlJoin(routePath.njams, ':id')} component={Njam} />
       </Switch>
     </>
   );
