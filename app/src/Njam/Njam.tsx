@@ -7,8 +7,9 @@ import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { Njam as NjamModel, User } from '../../../api/src/models';
-import { Err, Loading } from '../components';
-import { routeText } from '../models';
+import { CompleteUser } from '../apollo/queries/fragments';
+import { Err, FormContainer, Loading } from '../components';
+import { NjamFormValues, routeText } from '../models';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -31,16 +32,15 @@ const query = gql`
       }
     }
     users {
-      id
-      name
-      lastname
+      ...CompleteUser
     }
   }
+  ${CompleteUser}
 `;
 
 interface NjamProps
   extends Pick<RouteComponentProps<{ id: string }>, 'match'>,
-    FormComponentProps {}
+    FormComponentProps<NjamFormValues> {}
 
 const Njam: React.FC<NjamProps> = ({
   match: {
@@ -70,7 +70,7 @@ const Njam: React.FC<NjamProps> = ({
           } = data!;
 
           return (
-            <Box mx={4}>
+            <FormContainer>
               <Flex justifyContent="flex-end">
                 <Box mr={4}>
                   {readOnly ? (
@@ -109,7 +109,7 @@ const Njam: React.FC<NjamProps> = ({
                 }}
                 users={users}
               />
-            </Box>
+            </FormContainer>
           );
         }
       }}

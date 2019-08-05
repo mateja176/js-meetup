@@ -1,6 +1,6 @@
 import { Drawer, Icon as AntIcon, Menu, PageHeader, Row } from 'antd';
 import { IconProps } from 'antd/lib/icon';
-import { startCase } from 'lodash';
+import { kebabCase, startCase } from 'lodash';
 import React from 'react';
 import {
   NavLink,
@@ -10,9 +10,10 @@ import {
   Switch,
   withRouter,
 } from 'react-router-dom';
+import urlJoin from 'url-join';
 import env from './env';
 import { routeText } from './models';
-import Njam from './Njam';
+import Njam, { CreateNjam } from './Njam';
 import Njams from './Njams';
 
 type Icon = React.ComponentType<Omit<IconProps, 'type'>>;
@@ -33,13 +34,13 @@ const routes: IRoute[] = [
   {
     text: 'createNjam',
     Icon: (props => <AntIcon {...props} type="plus-circle" />) as Icon,
-    Component: () => <>Create Njam</>,
+    Component: CreateNjam as any,
   },
 ].map(({ text, ...route }) => {
   return {
     ...route,
     text: startCase(text),
-    path: `/${text.toLowerCase()}`,
+    path: urlJoin('/', kebabCase(text)),
   };
 });
 
