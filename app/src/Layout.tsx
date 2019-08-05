@@ -15,6 +15,7 @@ import env from './env';
 import { routeName, routePath } from './models';
 import Njam, { CreateNjam } from './Njam';
 import Njams from './Njams';
+import SignIn from './SignIn';
 
 type Icon = React.ComponentType<Omit<IconProps, 'type'>>;
 
@@ -44,10 +45,20 @@ const routes: IRoute[] = [
   };
 });
 
-const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
+const Layout: React.FC<RouteComponentProps> = ({
+  location: { pathname },
+  history,
+}) => {
   const [open, setOpen] = React.useState(false);
-
   const toggleOpen = () => setOpen(!open);
+
+  React.useEffect(() => {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      history.push('/sign-in');
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -75,6 +86,7 @@ const Layout: React.FC<RouteComponentProps> = ({ location: { pathname } }) => {
         </Menu>
       </Drawer>
       <Switch>
+        <Route path="/sign-in" component={SignIn} />
         <Route
           exact
           path="/"

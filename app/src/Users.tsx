@@ -1,18 +1,8 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
-import { gql } from 'apollo-boost';
 import React from 'react';
 import { Query } from 'react-apollo';
-import { CompleteUser } from './apollo';
+import { usersQuery } from './apollo';
 import { UsersQuery } from './models';
-
-const usersQuery = gql`
-  {
-    users {
-      ...CompleteUser
-    }
-  }
-  ${CompleteUser}
-`;
 
 export interface UsersProps {}
 

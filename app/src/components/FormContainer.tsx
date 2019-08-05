@@ -1,6 +1,10 @@
 import React from 'react';
-import { Box } from 'rebass';
+import { Box, BoxProps } from 'rebass';
 
-const FormContainer: React.FC = ({ children }) => <Box mx={4}>{children}</Box>;
+const FormContainer: React.FC<BoxProps> = ({ children, ...props }) => (
+  <Box {...props} mx={4}>
+    {children}
+  </Box>
+);
 
 export default FormContainer;

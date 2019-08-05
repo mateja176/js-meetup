@@ -8,19 +8,10 @@ import { Mutation, Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import urlJoin from 'url-join';
 import { Njam } from '../../../api/src/models';
-import { CompleteNjam, CompleteUser } from '../apollo';
+import { CompleteNjam, usersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
 import NjamForm from './NjamForm';
-
-const query = gql`
-  query {
-    users {
-      ...CompleteUser
-    }
-  }
-  ${CompleteUser}
-`;
 
 const mutation = gql`
   mutation(
@@ -41,27 +32,27 @@ const mutation = gql`
   ${CompleteNjam}
 `;
 
-const initialValues: NjamFormValues = {
-  location: '',
-  ordered: false,
-  time: moment(),
-  organizerId: '',
-  participantIds: [],
-  description: '',
-};
-
 export interface CreateNjamProps
   extends FormComponentProps<NjamFormValues>,
     RouteComponentProps {}
 
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
+  const [userId, setUserId] = React.useState('');
+
+  React.useEffect(() => {
+    const id = localStorage.getItem('userId');
+    if (id) {
+      setUserId(id);
+    }
+  }, []);
+
   const disabled =
     !form.isFieldsTouched() ||
     any(Boolean)(Object.values(form.getFieldsError()));
 
   return (
     <FormContainer>
-      <Query<UsersQuery> query={query}>
+      <Query<UsersQuery> query={usersQuery}>
         {({ data, loading, error }) => {
           if (loading) {
             return <Loading />;
@@ -71,7 +62,14 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
             const { users } = data!;
             return (
               <NjamForm
-                initialValues={initialValues}
+                initialValues={{
+                  location: '',
+                  ordered: false,
+                  time: moment(),
+                  organizerId: userId,
+                  participantIds: [],
+                  description: '',
+                }}
                 form={form}
                 users={users}
               />
@@ -85,16 +83,19 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
             <Button
               disabled={disabled}
               onClick={() => {
-                form.validateFieldsAndScroll((error, { time, ...values }) => {
-                  if (!error) {
-                    const variables = {
-                      ...values,
-                      time: time.utc().toString(),
-                    };
+                form.validateFieldsAndScroll(
+                  (error, { time, participantIds, ...values }) => {
+                    if (!error) {
+                      const variables = {
+                        ...values,
+                        time: time.utc().toString(),
+                        participantIds: participantIds.concat(userId),
+                      };
 
-                    createNjam({ variables });
-                  }
-                });
+                      createNjam({ variables });
+                    }
+                  },
+                );
               }}
             >
               Create Njam

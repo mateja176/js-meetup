@@ -1,7 +1,8 @@
-import { Form, Input, Select, Switch, TimePicker } from 'antd';
+import { Form, Input, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import React from 'react';
+import { UserSelect } from '../components';
 import { NjamFormValues, Users } from '../models';
 
 export interface NjamFormProps extends FormComponentProps {
@@ -27,11 +28,9 @@ const NjamForm: React.FC<NjamFormProps> = ({
     pointerEvents: readOnly ? 'none' : 'initial',
   };
 
-  const usersOptions = users.map(({ id, name, lastname }) => (
-    <Select.Option key={id} value={id}>
-      {name} {lastname}
-    </Select.Option>
-  ));
+  const { name = '', lastname = '' } = users.find(
+    ({ id }) => id === organizerId,
+  )!;
 
   return (
     <Form
@@ -72,17 +71,12 @@ const NjamForm: React.FC<NjamFormProps> = ({
         {form.getFieldDecorator('participantIds', {
           initialValue: participantIds,
           rules: [{ required: true }],
-        })(
-          <Select mode="multiple" style={readOnlyStyle}>
-            {usersOptions}
-          </Select>,
-        )}
+        })(<UserSelect mode="multiple" style={readOnlyStyle} users={users} />)}
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizerId', {
-          initialValue: organizerId,
-          rules: [{ required: true }],
-        })(<Select style={readOnlyStyle}>{usersOptions}</Select>)}
+          initialValue: `${name} ${lastname}`,
+        })(<Input readOnly />)}
       </Form.Item>
     </Form>
   );
