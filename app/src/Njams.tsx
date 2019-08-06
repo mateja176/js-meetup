@@ -78,16 +78,15 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
 
           return (
             <Box>
-              <Tabs>
+              <Tabs
+                onChange={filterName =>
+                  setFilter(
+                    filterTypes.find(({ name }) => filterName === name)!.filter,
+                  )
+                }
+              >
                 {filterTypes.map(({ name, filter }) => (
-                  <Tabs.TabPane
-                    key={name}
-                    tab={
-                      <Box onClick={() => setFilter(filter)}>
-                        {startCase(name)}
-                      </Box>
-                    }
-                  />
+                  <Tabs.TabPane key={name} tab={startCase(name)} />
                 ))}
               </Tabs>
               <List
