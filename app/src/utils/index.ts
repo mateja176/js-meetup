@@ -6,7 +6,7 @@ import { MutationCreateNjamArgs, Njam, User } from '../../../api/src/models';
 import { NjamFormValues } from '../models';
 
 // https://stackoverflow.com/questions/39969570/deprecation-warning-in-moment-js/51238958
-export const createMoment = (time: string) => moment(new Date());
+export const createMoment = (time: string) => moment(new Date(time));
 
 export const mapNjamFormValues = (userId: User['id']) => ({
   time,
@@ -15,7 +15,7 @@ export const mapNjamFormValues = (userId: User['id']) => ({
 }: NjamFormValues) => {
   return {
     ...values,
-    time: time.utc().toString(),
+    time: time.toDate().toString(),
     participantIds: participantIds.filter(id => id !== userId),
   } as MutationCreateNjamArgs;
 };

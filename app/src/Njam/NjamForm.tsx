@@ -6,6 +6,8 @@ import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
 import { NjamFormValues, Users } from '../models';
 
+const momentFormat = 'HH:mm';
+
 export interface NjamFormProps extends FormComponentProps {
   initialValues: NjamFormValues;
   readOnly?: boolean;
@@ -61,7 +63,13 @@ const NjamForm: React.FC<NjamFormProps> = ({
               type: 'object',
             },
           ],
-        })(<TimePicker inputReadOnly style={readOnlyStyle} format="HH:mm" />)}
+        })(
+          <TimePicker
+            inputReadOnly
+            style={readOnlyStyle}
+            format={momentFormat}
+          />,
+        )}
       </Form.Item>
       <Form.Item label="Ordered">
         {form.getFieldDecorator('ordered', {
