@@ -1,5 +1,4 @@
 import { Col, List, Row, Tabs, Typography } from 'antd';
-import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
@@ -10,20 +9,11 @@ import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
-import { NjamSummary } from './apollo';
+import { njamsQuery } from './apollo';
 import { Err, Loading, StatusCircle } from './components';
 
 const keys = ['location', 'time', 'organizer', 'ordered'] as const;
 const columns = keys.map(capitalize);
-
-const njamsQuery = gql`
-  query {
-    njams {
-      ...NjamSummary
-    }
-  }
-  ${NjamSummary}
-`;
 
 const Column: React.FC = ({ children }) => (
   <Col span={6}>
@@ -75,7 +65,10 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   ];
 
   return (
-    <Query<{ njams: Njam[] }> query={njamsQuery}>
+    <Query<{ njams: Njam[] }>
+      query={njamsQuery}
+      // fetchPolicy="cache-and-network"
+    >
       {({ error, data, loading }) => {
         if (loading) {
           return <Loading />;
