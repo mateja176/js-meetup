@@ -11,6 +11,7 @@ import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
 import { njamsQuery } from './apollo';
 import { Err, Loading, StatusCircle } from './components';
+import { NjamsQuery } from './models';
 
 const keys = ['location', 'time', 'organizer', 'ordered'] as const;
 const columns = keys.map(capitalize);
@@ -65,9 +66,9 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   ];
 
   return (
-    <Query<{ njams: Njam[] }>
+    <Query<NjamsQuery>
       query={njamsQuery}
-      // fetchPolicy="cache-and-network"
+      fetchPolicy="cache-and-network"
     >
       {({ error, data, loading }) => {
         if (loading) {
