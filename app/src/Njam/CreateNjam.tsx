@@ -1,4 +1,4 @@
-import { Alert, Button, Form } from 'antd';
+import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
 import moment from 'moment';
@@ -105,7 +105,7 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
                 {createNjamButton}
                 <br />
                 <br />
-                <Alert type="error" message="Please retry" />
+                <Err {...error} />
               </>
             );
           }

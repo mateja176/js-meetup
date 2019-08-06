@@ -40,20 +40,20 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   });
   const setFilter = (filter: NjamFilter) => _setFilter({ filter });
 
-  const oneHourFromNow = moment().add(1, 'hour');
+  const oneHourInThePast = moment().subtract(1, 'hour');
 
   const filterTypes: FilterType[] = [
     { name: 'all', filter: initialFilter },
     {
       name: 'upcoming',
-      filter: ({ time }) => createMoment(time).isAfter(oneHourFromNow),
+      filter: ({ time }) => createMoment(time).isAfter(moment()),
     },
     {
       name: 'inProgress',
       filter: ({ time }) => {
         const momentTime = createMoment(time);
 
-        return momentTime.isBetween(momentTime, momentTime.add(1, 'hour'));
+        return momentTime.isBetween(oneHourInThePast, moment());
       },
     },
     {
@@ -61,7 +61,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
       filter: ({ time }) => {
         const momentTime = createMoment(time);
 
-        return momentTime.isBefore(oneHourFromNow);
+        return momentTime.isBefore(oneHourInThePast);
       },
     },
   ];
