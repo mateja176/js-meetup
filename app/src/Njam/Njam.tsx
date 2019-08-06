@@ -37,8 +37,17 @@ const Njam: React.FC<NjamProps> = ({
   const [readOnly, setReadOnly] = React.useState(true);
   const toggleReadOnly = () => setReadOnly(!readOnly);
 
+  const [userId, setUserId] = React.useState('');
+
+  React.useEffect(() => {
+    const id = localStorage.getItem('userId') || '';
+
+    setUserId(id);
+  }, []);
+
   const save = () => {
     const { time, ...values } = form.getFieldsValue();
+    // TODO replace with patch njam api call
     console.log({ ...values, time: time.utc().toString() });
   };
 
@@ -58,31 +67,33 @@ const Njam: React.FC<NjamProps> = ({
           return (
             <FormContainer>
               <Flex justifyContent="flex-end">
-                <Box mr={4}>
-                  {readOnly ? (
-                    <Icon type="edit" onClick={toggleReadOnly} />
-                  ) : (
-                    <Box>
-                      <Icon
-                        type="close"
-                        onClick={() => {
-                          toggleReadOnly();
+                {organizer.id === userId && (
+                  <Box mr={4}>
+                    {readOnly ? (
+                      <Icon type="edit" onClick={toggleReadOnly} />
+                    ) : (
+                      <Box>
+                        <Icon
+                          type="close"
+                          onClick={() => {
+                            toggleReadOnly();
 
-                          form.resetFields();
-                        }}
-                        style={{ marginRight: 15 }}
-                      />
-                      <Icon
-                        type="check"
-                        onClick={() => {
-                          toggleReadOnly();
+                            form.resetFields();
+                          }}
+                          style={{ marginRight: 15 }}
+                        />
+                        <Icon
+                          type="check"
+                          onClick={() => {
+                            toggleReadOnly();
 
-                          save();
-                        }}
-                      />
-                    </Box>
-                  )}
-                </Box>
+                            save();
+                          }}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                )}
               </Flex>
               <NjamForm
                 readOnly={readOnly}

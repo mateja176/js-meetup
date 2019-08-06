@@ -65,7 +65,7 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
                 initialValues={{
                   location: '',
                   ordered: false,
-                  time: moment(),
+                  time: moment().add(1, 'hour'),
                   organizerId: userId,
                   participantIds: [],
                   description: '',
