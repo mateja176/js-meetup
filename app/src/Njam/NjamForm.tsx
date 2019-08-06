@@ -2,6 +2,7 @@ import { Form, Input, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import React from 'react';
+import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
 import { NjamFormValues, Users } from '../models';
 
@@ -24,6 +25,16 @@ const NjamForm: React.FC<NjamFormProps> = ({
   },
   users,
 }) => {
+  const [userId, setUserId] = React.useState('');
+
+  React.useEffect(() => {
+    const id = localStorage.getItem('userId') || '';
+
+    setUserId(id);
+  }, []);
+
+  const singedIn = (id: User['id']) => id !== userId;
+
   const readOnlyStyle: React.CSSProperties = {
     pointerEvents: readOnly ? 'none' : 'initial',
   };
@@ -63,11 +74,17 @@ const NjamForm: React.FC<NjamFormProps> = ({
           initialValue: description,
         })(<Input.TextArea readOnly={readOnly} />)}
       </Form.Item>
-      <Form.Item label="Invite friends">
+      <Form.Item label="Participants">
         {form.getFieldDecorator('participantIds', {
-          initialValue: participantIds,
+          initialValue: participantIds.filter(singedIn),
           rules: [{ required: true }],
-        })(<UserSelect mode="multiple" style={readOnlyStyle} users={users} />)}
+        })(
+          <UserSelect
+            mode="multiple"
+            style={readOnlyStyle}
+            users={users.filter(({ id }) => singedIn(id))}
+          />,
+        )}
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizerId', {

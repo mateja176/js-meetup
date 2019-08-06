@@ -9,6 +9,7 @@ import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, NjamQuery, routeName, UsersQuery } from '../models';
+import { mapNjamFormValues } from '../utils';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -46,9 +47,9 @@ const Njam: React.FC<NjamProps> = ({
   }, []);
 
   const save = () => {
-    const { time, ...values } = form.getFieldsValue();
+    const values = form.getFieldsValue() as NjamFormValues;
     // TODO replace with patch njam api call
-    console.log({ ...values, time: time.utc().toString() });
+    console.log(mapNjamFormValues(userId)(values));
   };
 
   return (

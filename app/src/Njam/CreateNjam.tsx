@@ -11,6 +11,7 @@ import { Njam } from '../../../api/src/models';
 import { CompleteNjam, usersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
+import { mapNjamFormValues } from '../utils';
 import NjamForm from './NjamForm';
 
 const mutation = gql`
@@ -83,19 +84,13 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
             <Button
               disabled={disabled}
               onClick={() => {
-                form.validateFieldsAndScroll(
-                  (error, { time, participantIds, ...values }) => {
-                    if (!error) {
-                      const variables = {
-                        ...values,
-                        time: time.utc().toString(),
-                        participantIds: participantIds.concat(userId),
-                      };
+                form.validateFieldsAndScroll((error, values) => {
+                  if (!error) {
+                    const variables = mapNjamFormValues(userId)(values);
 
-                      createNjam({ variables });
-                    }
-                  },
-                );
+                    createNjam({ variables });
+                  }
+                });
               }}
             >
               Create Njam

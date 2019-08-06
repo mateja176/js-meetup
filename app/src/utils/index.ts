@@ -1,7 +1,20 @@
 import faker from 'faker';
 import { range } from 'ramda';
 import { Optional } from 'utility-types';
-import { Njam, User } from '../../../api/src/models';
+import { MutationCreateNjamArgs, Njam, User } from '../../../api/src/models';
+import { NjamFormValues } from '../models';
+
+export const mapNjamFormValues = (userId: User['id']) => ({
+  time,
+  participantIds,
+  ...values
+}: NjamFormValues) => {
+  return {
+    ...values,
+    time: time.utc().toString(),
+    participantIds: participantIds.filter(id => id !== userId),
+  } as MutationCreateNjamArgs;
+};
 
 export const generateUser = (): User => ({
   id: faker.random.uuid(),
