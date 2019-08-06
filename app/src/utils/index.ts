@@ -1,8 +1,12 @@
 import faker from 'faker';
+import moment from 'moment';
 import { range } from 'ramda';
 import { Optional } from 'utility-types';
 import { MutationCreateNjamArgs, Njam, User } from '../../../api/src/models';
 import { NjamFormValues } from '../models';
+
+// https://stackoverflow.com/questions/39969570/deprecation-warning-in-moment-js/51238958
+export const createMoment = (time: string) => moment(new Date());
 
 export const mapNjamFormValues = (userId: User['id']) => ({
   time,

@@ -1,7 +1,6 @@
 import { Form, Icon } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
-import moment from 'moment';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
@@ -9,7 +8,7 @@ import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, NjamQuery, routeName, UsersQuery } from '../models';
-import { mapNjamFormValues } from '../utils';
+import { createMoment, mapNjamFormValues } from '../utils';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -101,7 +100,7 @@ const Njam: React.FC<NjamProps> = ({
                 form={form}
                 initialValues={{
                   ...njam,
-                  time: moment(time),
+                  time: createMoment(time),
                   organizerId: organizer.id,
                   participantIds: participants.map(({ id }) => id),
                 }}

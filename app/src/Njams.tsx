@@ -12,6 +12,7 @@ import { Njam } from '../../api/src/models';
 import { njamsQuery } from './apollo';
 import { Err, Loading, StatusCircle } from './components';
 import { NjamsQuery } from './models';
+import { createMoment } from './utils';
 
 const keys = ['location', 'time', 'organizer', 'ordered'] as const;
 const columns = keys.map(capitalize);
@@ -45,12 +46,12 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
     { name: 'all', filter: initialFilter },
     {
       name: 'upcoming',
-      filter: ({ time }) => moment(time).isAfter(oneHourFromNow),
+      filter: ({ time }) => createMoment(time).isAfter(oneHourFromNow),
     },
     {
       name: 'inProgress',
       filter: ({ time }) => {
-        const momentTime = moment(time);
+        const momentTime = createMoment(time);
 
         return momentTime.isBetween(momentTime, momentTime.add(1, 'hour'));
       },
@@ -58,7 +59,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
     {
       name: 'past',
       filter: ({ time }) => {
-        const momentTime = moment(time);
+        const momentTime = createMoment(time);
 
         return momentTime.isBefore(oneHourFromNow);
       },
@@ -66,10 +67,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   ];
 
   return (
-    <Query<NjamsQuery>
-      query={njamsQuery}
-      fetchPolicy="cache-and-network"
-    >
+    <Query<NjamsQuery> query={njamsQuery} fetchPolicy="cache-and-network">
       {({ error, data, loading }) => {
         if (loading) {
           return <Loading />;
