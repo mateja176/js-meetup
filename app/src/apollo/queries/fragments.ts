@@ -21,6 +21,7 @@ export const NjamSummary = gql`
   fragment NjamSummary on Njam {
     ...NjamBase
     organizer {
+      id
       name
     }
   }
