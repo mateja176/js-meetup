@@ -1,6 +1,7 @@
 import { Form, Input, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
+import { range } from 'ramda';
 import React from 'react';
 import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
@@ -68,6 +69,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
             inputReadOnly
             style={readOnlyStyle}
             format={momentFormat}
+            disabledHours={() => range(0)(23).filter(n => n < moment().hours())}
           />,
         )}
       </Form.Item>
