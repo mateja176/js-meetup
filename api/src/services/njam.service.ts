@@ -34,4 +34,15 @@ export class NjamService {
     await this.db.exec(`DELETE FROM njams WHERE id='${njamId}'`);
     return njam;
   }
+
+  async getMyNjams(userId: string): Promise<Njam[]> {
+    const users = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
+    if (!users) {
+      throw new Error(`Could not find user with id: ${userId}`);
+    }
+    const user = users[0];
+
+    const myNjams: Njam[] = await this.db.exec(`SELECT * FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}'`);
+    return myNjams;
+  }
 }

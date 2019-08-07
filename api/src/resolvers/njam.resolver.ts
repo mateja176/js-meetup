@@ -3,7 +3,8 @@ import { v4 as uuid } from 'uuid';
 export default {
   Query: {
     njams: async (root, args, context, info) => await context.njamService.getNjams(),
-    njam: async (root, args, context, info) => await context.njamService.getNjamById(args.id)
+    njam: async (root, args, context, info) => await context.njamService.getNjamById(args.id),
+    myNjams: async (root, args, context, info) => await context.njamService.getMyNjams(args.userId)
   },
   Mutation: {
     createNjam: async (root, args, context, info) => {

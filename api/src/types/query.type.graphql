@@ -3,4 +3,5 @@ type Query {
   user(id: ID!): User
   njams: [Njam]
   njam(id: ID!): Njam
+  myNjams(userId: ID!): [Njam]
 }
