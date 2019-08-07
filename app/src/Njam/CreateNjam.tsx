@@ -1,37 +1,23 @@
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { gql } from 'apollo-boost';
 import moment from 'moment';
 import { any } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import urlJoin from 'url-join';
-import { Njam } from '../../../api/src/models';
-import { CompleteNjam, usersQuery } from '../apollo';
+import { usersQuery } from '../apollo';
+import { createNjamMutation } from '../apollo/mutations';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
+import {
+  CreateNjam,
+  NjamFormValues,
+  routeName,
+  routePath,
+  UsersQuery,
+} from '../models';
 import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
-
-const mutation = gql`
-  mutation(
-    $location: String!
-    $description: String
-    $time: String!
-    $organizerId: ID!
-  ) {
-    createNjam(
-      location: $location
-      description: $description
-      time: $time
-      organizerId: $organizerId
-    ) {
-      ...CompleteNjam
-    }
-  }
-  ${CompleteNjam}
-`;
 
 export interface CreateNjamProps
   extends FormComponentProps<NjamFormValues>,
@@ -72,7 +58,7 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
           }
         }}
       </Query>
-      <Mutation<{ createNjam: Njam }> mutation={mutation}>
+      <Mutation<CreateNjam> mutation={createNjamMutation}>
         {(createNjam, { data, loading, error }) => {
           const createNjamButton = (
             <Button
