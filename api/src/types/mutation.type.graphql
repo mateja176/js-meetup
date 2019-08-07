@@ -18,4 +18,9 @@ type Mutation {
   deleteNjam(
     njamId: ID!
   ): Njam
+
+  joinNjam(
+    userId: ID!
+    njamId: ID!
+  ): Njam
 }

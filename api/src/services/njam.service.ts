@@ -44,4 +44,24 @@ export class NjamService {
     const myNjams: Njam[] = await this.db.exec(`SELECT * FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}'`);
     return myNjams;
   }
+
+  async joinNjam(userId: string, njamId: string): Promise<Njam> {
+    const users: User[] = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
+    if (users.length === 0) {
+      throw new Error(`Could not find user with id: ${userId}`);
+    }
+
+    const njam: Njam = await this.getNjamById(njamId);
+    if (!njam) {
+      throw new Error(`Could not find njam with id: ${njamId}`);
+    }
+
+    const participants = this.db.exec(`SELECT TOP 1 * FROM participants WHERE userId='${userId}' AND njamId='${njamId}'`);
+    if (participants.length > 0) {
+      throw new Error(`User with id: ${userId} is already a participant in Njam with id: ${njamId}`);
+    }
+
+    await this.db.exec(`INSERT INTO participants(id, userId, njamId) VALUES ('${uuid()}', '${userId}', '${njamId}')`);
+    return await this.getNjamById(njamId);
+  }
 }
