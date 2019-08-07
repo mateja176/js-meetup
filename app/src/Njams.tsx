@@ -9,10 +9,76 @@ import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
-import { JoinNjam, joinNjamMutation, LeaveNjam, leaveNjamMutation, njamsQuery } from './apollo';
+import {
+  joinNjamMutation,
+  JoinNjamResult,
+  leaveNjamMutation,
+  LeaveNjamResult,
+  NjamActionParams,
+  njamsQuery,
+} from './apollo';
 import { Err, Loading, MutationResult, StatusCircle } from './components';
 import { NjamsQuery } from './models';
 import { createMoment, useUserId } from './utils';
+
+const LeaveNjam: React.FC<NjamActionParams> = props => {
+  return (
+    <Mutation<LeaveNjamResult> mutation={leaveNjamMutation}>
+      {(leaveNjam, mutationResult) => {
+        const base = (
+          <Button
+            onClick={e => {
+              e.preventDefault();
+
+              leaveNjam({
+                variables: props,
+              });
+            }}
+          >
+            Leave
+          </Button>
+        );
+        return (
+          <MutationResult
+            {...mutationResult}
+            Data={() => <JoinNjam {...props} />}
+          >
+            {base}
+          </MutationResult>
+        );
+      }}
+    </Mutation>
+  );
+};
+
+const JoinNjam: React.FC<NjamActionParams> = props => (
+  <Mutation<JoinNjamResult> mutation={joinNjamMutation}>
+    {(joinNjam, mutationResult) => {
+      const base = (
+        <Button
+          onClick={e => {
+            e.preventDefault();
+
+            joinNjam({
+              variables: props,
+            });
+          }}
+        >
+          Join
+        </Button>
+      );
+
+      return (
+        <MutationResult
+          {...mutationResult}
+          Data={() => <LeaveNjam {...props} />}
+        >
+          {base}
+        </MutationResult>
+      );
+    }}
+  </Mutation>
+);
 
 const keys = ['location', 'time', 'organizer', 'ordered', 'you'] as const;
 const columns = keys.map(capitalize);
@@ -147,45 +213,9 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                           ) : participants
                               .map(({ id }) => id)
                               .includes(userId) ? (
-                            <Mutation<LeaveNjam> mutation={leaveNjamMutation}>
-                              {(leaveNjam, mutationResult) => (
-                                <MutationResult {...mutationResult}>
-                                  {() => (
-                                    <Button
-                                      onClick={e => {
-                                        e.preventDefault();
-
-                                        leaveNjam({
-                                          variables: { userId, njamId: id },
-                                        });
-                                      }}
-                                    >
-                                      Leave
-                                    </Button>
-                                  )}
-                                </MutationResult>
-                              )}
-                            </Mutation>
+                            <LeaveNjam userId={userId} njamId={id} />
                           ) : (
-                            <Mutation<JoinNjam> mutation={joinNjamMutation}>
-                              {(joinNjam, mutationResult) => (
-                                <MutationResult {...mutationResult}>
-                                  {() => (
-                                    <Button
-                                      onClick={e => {
-                                        e.preventDefault();
-
-                                        joinNjam({
-                                          variables: { userId, njamId: id },
-                                        });
-                                      }}
-                                    >
-                                      Join
-                                    </Button>
-                                  )}
-                                </MutationResult>
-                              )}
-                            </Mutation>
+                            <JoinNjam userId={userId} njamId={id} />
                           )}
                         </Col>
                       </List.Item>

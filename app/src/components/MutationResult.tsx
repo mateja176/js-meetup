@@ -5,21 +5,30 @@ import Err from './Err';
 
 export interface MutationResultProps<D>
   extends Pick<ApolloMutationResult<D>, 'loading' | 'error' | 'data'> {
-  children: React.ComponentType<D>;
+  children: React.ReactNode;
+  Data: React.ComponentType<D>;
 }
 
 const MutationResult = <D extends {}>({
   loading,
   error,
   data,
-  children: Data,
+  children,
+  Data,
 }: MutationResultProps<D>) => {
   if (loading) {
     return <Button loading />;
   } else if (error) {
-    return <Err {...error} />;
+    return (
+      <>
+        {children}
+        <Err {...error} />
+      </>
+    );
+  } else if (data) {
+    return <Data {...data} />;
   } else {
-    return <Data {...data!} />;
+    return children;
   }
 };
 

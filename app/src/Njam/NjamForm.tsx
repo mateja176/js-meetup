@@ -3,10 +3,8 @@ import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import { range } from 'ramda';
 import React from 'react';
-import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
 import { NjamFormValues, Users } from '../models';
-import { useUserId } from '../utils';
 
 const momentFormat = 'HH:mm';
 
@@ -31,10 +29,6 @@ const NjamForm: React.FC<NjamFormProps> = ({
   users,
   hideOrdered = false,
 }) => {
-  const userId = useUserId();
-
-  const singedIn = (id: User['id']) => id !== userId;
-
   const readOnlyStyle: React.CSSProperties = {
     pointerEvents: readOnly ? 'none' : 'initial',
   };
@@ -86,15 +80,9 @@ const NjamForm: React.FC<NjamFormProps> = ({
       </Form.Item>
       <Form.Item label="Participants">
         {form.getFieldDecorator('participantIds', {
-          initialValue: participantIds.filter(singedIn),
+          initialValue: participantIds,
           rules: [{ required: true }],
-        })(
-          <UserSelect
-            mode="multiple"
-            style={readOnlyStyle}
-            users={users.filter(({ id }) => singedIn(id))}
-          />,
-        )}
+        })(<UserSelect mode="multiple" style={readOnlyStyle} users={users} />)}
       </Form.Item>
       <Form.Item label="Organizer">
         {form.getFieldDecorator('organizerId', {
