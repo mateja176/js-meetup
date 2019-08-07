@@ -23,6 +23,7 @@ export default {
     orderNjam: async (root, args, context, info) => await context.njamService.orderNjam(args.njamId),
     deleteNjam: async (root, args, context, info) => await context.njamService.deleteNjam(args.njamId),
     joinNjam: async (root, args, context, info) => await context.njamService.joinNjam(args.userId, args.njamId),
+    leaveNjam: async (root, args, context, info) => await context.njamService.leaveNjam(args.userId, args.njamId),
   },
   Njam: {
     participants: async (root, args, context, info) => {

@@ -23,4 +23,9 @@ type Mutation {
     userId: ID!
     njamId: ID!
   ): Njam
+
+  leaveNjam(
+    userId: ID!
+    njamId: ID!
+  ): Njam
 }

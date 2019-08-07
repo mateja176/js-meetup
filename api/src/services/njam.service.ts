@@ -32,6 +32,8 @@ export class NjamService {
       throw new Error(`Could not find njam with id: ${njamId}`);
     }
     await this.db.exec(`DELETE FROM njams WHERE id='${njamId}'`);
+    await this.db.exec(`DELETE FROM participants WHERE njamId='${njamId}'`);
+
     return njam;
   }
 
@@ -62,6 +64,22 @@ export class NjamService {
     }
 
     await this.db.exec(`INSERT INTO participants(id, userId, njamId) VALUES ('${uuid()}', '${userId}', '${njamId}')`);
+    return await this.getNjamById(njamId);
+  }
+
+  async leaveNjam(userId: string, njamId: string): Promise<Njam> {
+    const users: User[] = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
+    if (users.length === 0) {
+      throw new Error(`Could not find user with id: ${userId}`);
+    }
+
+    const njam: Njam = await this.getNjamById(njamId);
+    if (!njam) {
+      throw new Error(`Could not find njam with id: ${njamId}`);
+    }
+
+    await this.db.exec(`DELETE FROM participants WHERE userId='${userId}' AND njamId='${njamId}'`);
+
     return await this.getNjamById(njamId);
   }
 }
