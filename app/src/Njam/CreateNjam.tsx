@@ -73,6 +73,7 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
                 }}
                 form={form}
                 users={users}
+                hideOrdered
               />
             );
           }

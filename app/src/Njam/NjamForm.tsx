@@ -13,6 +13,7 @@ export interface NjamFormProps extends FormComponentProps {
   initialValues: NjamFormValues;
   readOnly?: boolean;
   users: Users;
+  hideOrdered?: boolean;
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
@@ -27,6 +28,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
     ordered,
   },
   users,
+  hideOrdered = false,
 }) => {
   const [userId, setUserId] = React.useState('');
 
@@ -73,7 +75,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
           />,
         )}
       </Form.Item>
-      <Form.Item label="Ordered">
+      <Form.Item label="Ordered" style={{ display: hideOrdered ? 'none' : 'initial' }}>
         {form.getFieldDecorator('ordered', {
           initialValue: ordered,
           rules: [{ type: 'boolean' }],
