@@ -1,5 +1,5 @@
 import { Njam } from '../../../api/src/models';
 
-export interface CreateNjam {
+export interface CreateNjamMutation {
   createNjam: Njam;
 }
