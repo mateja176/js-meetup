@@ -6,6 +6,7 @@ import React from 'react';
 import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
 import { NjamFormValues, Users } from '../models';
+import { useUserId } from '../utils';
 
 const momentFormat = 'HH:mm';
 
@@ -30,13 +31,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
   users,
   hideOrdered = false,
 }) => {
-  const [userId, setUserId] = React.useState('');
-
-  React.useEffect(() => {
-    const id = localStorage.getItem('userId') || '';
-
-    setUserId(id);
-  }, []);
+  const userId = useUserId();
 
   const singedIn = (id: User['id']) => id !== userId;
 
@@ -75,7 +70,10 @@ const NjamForm: React.FC<NjamFormProps> = ({
           />,
         )}
       </Form.Item>
-      <Form.Item label="Ordered" style={{ display: hideOrdered ? 'none' : 'initial' }}>
+      <Form.Item
+        label="Ordered"
+        style={{ display: hideOrdered ? 'none' : 'initial' }}
+      >
         {form.getFieldDecorator('ordered', {
           initialValue: ordered,
           rules: [{ type: 'boolean' }],

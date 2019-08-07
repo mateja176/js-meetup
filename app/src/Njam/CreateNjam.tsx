@@ -11,7 +11,7 @@ import { Njam } from '../../../api/src/models';
 import { CompleteNjam, usersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
-import { mapNjamFormValues } from '../utils';
+import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
 
 const mutation = gql`
@@ -38,14 +38,7 @@ export interface CreateNjamProps
     RouteComponentProps {}
 
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
-  const [userId, setUserId] = React.useState('');
-
-  React.useEffect(() => {
-    const id = localStorage.getItem('userId');
-    if (id) {
-      setUserId(id);
-    }
-  }, []);
+  const userId = useUserId();
 
   const disabled =
     !form.isFieldsTouched() ||

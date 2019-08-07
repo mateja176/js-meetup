@@ -24,6 +24,9 @@ export const NjamSummary = gql`
       id
       name
     }
+    participants {
+      id
+    }
   }
   ${NjamBase}
 `;

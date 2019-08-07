@@ -8,7 +8,7 @@ import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
 import { NjamFormValues, NjamQuery, routeName, UsersQuery } from '../models';
-import { createMoment, mapNjamFormValues } from '../utils';
+import { createMoment, mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
 
 const query = gql`
@@ -37,13 +37,7 @@ const Njam: React.FC<NjamProps> = ({
   const [readOnly, setReadOnly] = React.useState(true);
   const toggleReadOnly = () => setReadOnly(!readOnly);
 
-  const [userId, setUserId] = React.useState('');
-
-  React.useEffect(() => {
-    const id = localStorage.getItem('userId') || '';
-
-    setUserId(id);
-  }, []);
+  const userId = useUserId();
 
   const save = () => {
     const values = form.getFieldsValue() as NjamFormValues;
