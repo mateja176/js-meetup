@@ -1,4 +1,4 @@
-import { Njam } from "../models";
+import { Njam, User } from "../models";
 import { v4 as uuid } from 'uuid';
 
 export class NjamService {
@@ -36,11 +36,10 @@ export class NjamService {
   }
 
   async getMyNjams(userId: string): Promise<Njam[]> {
-    const users = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
-    if (!users) {
+    const users: User[] = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
+    if (users.length === 0) {
       throw new Error(`Could not find user with id: ${userId}`);
     }
-    const user = users[0];
 
     const myNjams: Njam[] = await this.db.exec(`SELECT * FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}'`);
     return myNjams;
