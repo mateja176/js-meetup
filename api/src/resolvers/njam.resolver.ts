@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 
 export default {
   Query: {
-    njams: async (root, args, context, info) => await context.njamService.getNjams(),
+    njams: async (root, args, context, info) => await context.njamService.getNjams(args.page, args.pageSize),
     njam: async (root, args, context, info) => await context.njamService.getNjamById(args.id),
     myNjams: async (root, args, context, info) => await context.njamService.getMyNjams(args.userId)
   },

@@ -1,7 +1,10 @@
 type Query {
   users: [User]
   user(id: ID!): User
-  njams: [Njam]
+  njams(
+    page: Int
+    pageSize: Int
+  ): [Njam]
   njam(id: ID!): Njam
   myNjams(userId: ID!): [Njam]
 }

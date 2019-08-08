@@ -4,8 +4,8 @@ import { v4 as uuid } from 'uuid';
 export class NjamService {
   constructor(private db: any) { }
 
-  async getNjams(): Promise<Njam[]> {
-    return await this.db.exec(`SELECT * FROM njams`);
+  async getNjams(page: number = 1, pageSize: number = 10): Promise<Njam[]> {
+    return await this.db.exec(`SELECT * FROM njams OFFSET ${pageSize * (page -1)} ROWS FETCH NEXT ${pageSize} ROWS ONLY`);
   }
 
   async getNjamById(njamId: string): Promise<Njam> {
