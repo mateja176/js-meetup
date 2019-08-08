@@ -6,5 +6,9 @@ type Query {
     pageSize: Int
   ): [Njam]
   njam(id: ID!): Njam
-  myNjams(userId: ID!): [Njam]
+  myNjams(
+    userId: ID!
+    page: Int
+    pageSize: Int
+  ): [Njam]
 }

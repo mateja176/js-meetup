@@ -37,13 +37,13 @@ export class NjamService {
     return njam;
   }
 
-  async getMyNjams(userId: string): Promise<Njam[]> {
+  async getMyNjams(userId: string, page: number = 1, pageSize: number = 10): Promise<Njam[]> {
     const users: User[] = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
     if (users.length === 0) {
       throw new Error(`Could not find user with id: ${userId}`);
     }
 
-    const myNjams: Njam[] = await this.db.exec(`SELECT * FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}'`);
+    const myNjams: Njam[] = await this.db.exec(`SELECT * FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}' OFFSET ${pageSize * (page -1)} ROWS FETCH NEXT ${pageSize} ROWS ONLY`);
     return myNjams;
   }
 
