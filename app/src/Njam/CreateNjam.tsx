@@ -1,51 +1,29 @@
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { gql } from 'apollo-boost';
 import moment from 'moment';
 import { any } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import urlJoin from 'url-join';
-import { Njam } from '../../../api/src/models';
-import { CompleteNjam, usersQuery } from '../apollo';
+import { createNjamMutation, usersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
-import { mapNjamFormValues } from '../utils';
+import {
+  CreateNjamMutation,
+  NjamFormValues,
+  routeName,
+  routePath,
+  UsersQuery,
+} from '../models';
+import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
-
-const mutation = gql`
-  mutation(
-    $location: String!
-    $description: String
-    $time: String!
-    $organizerId: ID!
-  ) {
-    createNjam(
-      location: $location
-      description: $description
-      time: $time
-      organizerId: $organizerId
-    ) {
-      ...CompleteNjam
-    }
-  }
-  ${CompleteNjam}
-`;
 
 export interface CreateNjamProps
   extends FormComponentProps<NjamFormValues>,
     RouteComponentProps {}
 
 const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
-  const [userId, setUserId] = React.useState('');
-
-  React.useEffect(() => {
-    const id = localStorage.getItem('userId');
-    if (id) {
-      setUserId(id);
-    }
-  }, []);
+  const userId = useUserId();
 
   const disabled =
     !form.isFieldsTouched() ||
@@ -73,12 +51,13 @@ const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
                 }}
                 form={form}
                 users={users}
+                hideOrdered
               />
             );
           }
         }}
       </Query>
-      <Mutation<{ createNjam: Njam }> mutation={mutation}>
+      <Mutation<CreateNjamMutation> mutation={createNjamMutation}>
         {(createNjam, { data, loading, error }) => {
           const createNjamButton = (
             <Button
