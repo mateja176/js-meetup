@@ -46,7 +46,11 @@ const Njam: React.FC<NjamProps> = ({
   };
 
   return (
-    <Query<UsersQuery & NjamQuery> query={query} variables={{ id }}>
+    <Query<UsersQuery & NjamQuery>
+      query={query}
+      variables={{ id }}
+      pollInterval={1000}
+    >
       {({ data, error, loading }) => {
         if (loading) {
           return <Loading />;

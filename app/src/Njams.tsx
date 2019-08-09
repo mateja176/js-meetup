@@ -146,7 +146,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   ];
 
   return (
-    <Query<NjamsQuery> query={njamsQuery} fetchPolicy="cache-and-network">
+    <Query<NjamsQuery> query={njamsQuery} pollInterval={1000}>
       {({ error, data, loading }) => {
         if (loading) {
           return <Loading />;
