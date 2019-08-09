@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost';
-import { CompleteUser, NjamSummary } from './fragments';
+import { CompleteNjam, CompleteUser, NjamSummary } from './fragments';
 
 export * from './fragments';
 
@@ -28,4 +28,13 @@ export const myNjamsQuery = gql`
     }
   }
   ${NjamSummary}
+`;
+
+export const njamQuery = gql`
+  query($id: ID!) {
+    njam(id: $id) {
+      ...CompleteNjam
+    }
+  }
+  ${CompleteNjam}
 `;
