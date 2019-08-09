@@ -6,7 +6,7 @@ import { always } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
-import { Box } from 'rebass';
+import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
 import { Njam } from '../../api/src/models';
 import {
@@ -17,7 +17,7 @@ import {
   NjamActionParams,
   njamsQuery,
 } from './apollo';
-import { Err, Loading, MutationResult, StatusCircle } from './components';
+import { Err, MutationResult, StatusCircle } from './components';
 import { NjamsQuery } from './models';
 import { createMoment, useUserId } from './utils';
 
@@ -122,6 +122,8 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
 
   const userId = useUserId();
 
+  const [loadedAll, setLoadedAll] = React.useState(false);
+
   const filterTypes: FilterType[] = [
     { name: 'all', filter: initialFilter },
     {
@@ -155,92 +157,119 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   return (
     <Query<NjamsQuery> query={njamsQuery} pollInterval={1000}>
       {({ error, data, loading }) => {
-        if (loading) {
-          return <Loading />;
-        } else if (error) {
-          return <Err {...error} />;
-        } else {
-          const { njams } = data!;
+        return (
+          <Box>
+            <Tabs
+              onChange={filterName =>
+                setFilter(
+                  filterTypes.find(({ name }) => filterName === name)!.filter,
+                )
+              }
+            >
+              {filterTypes.map(({ name }) => (
+                <Tabs.TabPane
+                  key={name}
+                  tab={startCase(name)}
+                  disabled={loading}
+                />
+              ))}
+            </Tabs>
+            {(() => {
+              if (error) {
+                return <Err {...error} />;
+              } else {
+                const { njams = [] } = data!;
 
-          return (
-            <Box>
-              <Tabs
-                onChange={filterName =>
-                  setFilter(
-                    filterTypes.find(({ name }) => filterName === name)!.filter,
-                  )
-                }
-              >
-                {filterTypes.map(({ name, filter }) => (
-                  <Tabs.TabPane key={name} tab={startCase(name)} />
-                ))}
-              </Tabs>
-              <List
-                header={
-                  <Row>
-                    {columns.map((key, i) => {
-                      return (
-                        <Col
-                          span={i === 3 ? smallerSpan : largerSpan}
-                          key={key}
-                        >
-                          <Typography.Title level={2} style={{ margin: 0 }}>
-                            {key}
-                          </Typography.Title>
-                        </Col>
-                      );
-                    })}
-                  </Row>
-                }
-                bordered
-                dataSource={njams.filter(filter)}
-                renderItem={({
-                  id,
-                  location,
-                  time,
-                  ordered,
-                  organizer,
-                  participants,
-                }) => {
-                  return (
-                    <NavLink to={urlJoin(path, id)}>
-                      <List.Item
-                        className={css`
-                          cursor: pointer;
-                          &:hover {
-                            background: #eee;
-                          }
-                        `}
+                return (
+                  <List
+                    loading={loading}
+                    loadMore={
+                      <Flex
+                        justifyContent="center"
+                        alignItems="center"
+                        m={4}
+                        height={32}
                       >
-                        <Column>{location}</Column>
-                        <Column>{time}</Column>
-                        <Column>{organizer.name}</Column>
-                        <Col span={smallerSpan}>
-                          {ordered ? (
-                            <StatusCircle color="lightgreen">Yes</StatusCircle>
-                          ) : (
-                            <StatusCircle color="lightcoral">No</StatusCircle>
-                          )}
-                        </Col>
-                        <Col span={largerSpan}>
-                          {organizer.id === userId ? (
-                            <Typography.Text>Author</Typography.Text>
-                          ) : participants
-                              .map(({ id }) => id)
-                              .includes(userId) ? (
-                            <LeaveNjam userId={userId} njamId={id} />
-                          ) : (
-                            <JoinNjam userId={userId} njamId={id} />
-                          )}
-                        </Col>
-                      </List.Item>
-                    </NavLink>
-                  );
-                }}
-              />
-            </Box>
-          );
-        }
+                        {loadedAll ? (
+                          <Typography.Text>Loaded All</Typography.Text>
+                        ) : (
+                          <Button loading={loading}>Load More</Button>
+                        )}
+                      </Flex>
+                    }
+                    header={
+                      <Row>
+                        {columns.map((key, i) => {
+                          return (
+                            <Col
+                              span={i === 3 ? smallerSpan : largerSpan}
+                              key={key}
+                            >
+                              <Typography.Title level={2} style={{ margin: 0 }}>
+                                {key}
+                              </Typography.Title>
+                            </Col>
+                          );
+                        })}
+                      </Row>
+                    }
+                    bordered
+                    dataSource={njams.filter(filter)}
+                    renderItem={({
+                      id,
+                      location,
+                      time,
+                      ordered,
+                      organizer,
+                      participants,
+                    }) => {
+                      return (
+                        <NavLink to={urlJoin(path, id)}>
+                          <List.Item
+                            className={css`
+                              cursor: pointer;
+                              &:hover {
+                                background: #eee;
+                              }
+                            `}
+                          >
+                            <Column>{location}</Column>
+                            <Column>{time}</Column>
+                            <Column>{organizer.name}</Column>
+                            <Col span={smallerSpan}>
+                              {ordered ? (
+                                <StatusCircle color="lightgreen">
+                                  Yes
+                                </StatusCircle>
+                              ) : (
+                                <StatusCircle color="lightcoral">
+                                  No
+                                </StatusCircle>
+                              )}
+                            </Col>
+                            <Col span={largerSpan}>
+                              {organizer.id === userId ? (
+                                <Typography.Text style={{ margin: '0 15px' }}>
+                                  Author
+                                </Typography.Text>
+                              ) : participants
+                                  .map(({ id }) => id)
+                                  .includes(userId) ? (
+                                <LeaveNjam userId={userId} njamId={id} />
+                              ) : (
+                                <JoinNjam userId={userId} njamId={id} />
+                              )}
+                            </Col>
+                          </List.Item>
+                        </NavLink>
+                      );
+                    }}
+                  />
+                );
+              }
+            })()}
+          </Box>
+        );
       }}
     </Query>
   );
