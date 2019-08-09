@@ -2,7 +2,7 @@ import { Button, Col, List, Row, Tabs, Typography } from 'antd';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
-import { always } from 'ramda';
+import { always, equals } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
@@ -112,6 +112,9 @@ interface FilterType {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
+const initialPage = 1;
+const pageSize = 10;
+
 export interface NjamsProps extends RouteComponentProps {}
 
 const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
@@ -123,6 +126,13 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   const userId = useUserId();
 
   const [loadedAll, setLoadedAll] = React.useState(false);
+
+  const [loaded, setLoaded] = React.useState<
+    Record<string, NjamsQuery['njams'][0]>
+  >({});
+  const loadedNjams = Object.values(loaded);
+
+  const [page, setPage] = React.useState(initialPage);
 
   const filterTypes: FilterType[] = [
     { name: 'all', filter: initialFilter },
@@ -155,8 +165,12 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   ];
 
   return (
-    <Query<NjamsQuery> query={njamsQuery} pollInterval={1000}>
-      {({ error, data, loading }) => {
+    <Query<NjamsQuery>
+      query={njamsQuery}
+      pollInterval={1000}
+      variables={{ page, pageSize }}
+    >
+      {({ error, data, loading, refetch }) => {
         return (
           <Box>
             <Tabs
@@ -178,7 +192,27 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
               if (error) {
                 return <Err {...error} />;
               } else {
-                const { njams = [] } = data!;
+                const { njams } = data!;
+
+                if (equals(njams, [])) {
+                  setLoadedAll(true);
+                }
+
+                const newNjams = (njams || []).filter(
+                  ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
+                );
+
+                if (newNjams.length) {
+                  setLoaded(
+                    newNjams.reduce(
+                      (loadedNjams, njam) => ({
+                        ...loadedNjams,
+                        [njam.id]: njam,
+                      }),
+                      loaded,
+                    ),
+                  );
+                }
 
                 return (
                   <List
@@ -193,7 +227,18 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                         {loadedAll ? (
                           <Typography.Text>Loaded All</Typography.Text>
                         ) : (
-                          <Button loading={loading}>Load More</Button>
+                          <Button
+                            loading={loading}
+                            onClick={() => {
+                              const newPage = page + 1;
+
+                              refetch({ page: newPage, pageSize });
+
+                              setPage(newPage);
+                            }}
+                          >
+                            Load More
+                          </Button>
                         )}
                       </Flex>
                     }
@@ -214,7 +259,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                       </Row>
                     }
                     bordered
-                    dataSource={njams.filter(filter)}
+                    dataSource={loadedNjams.filter(filter)}
                     renderItem={({
                       id,
                       location,
