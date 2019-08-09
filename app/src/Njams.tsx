@@ -171,6 +171,28 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
       variables={{ page, pageSize }}
     >
       {({ error, data, loading, refetch }) => {
+        const { njams } = data!;
+
+        if (equals(njams, [])) {
+          setLoadedAll(true);
+        }
+
+        const newNjams = (njams || []).filter(
+          ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
+        );
+
+        if (newNjams.length) {
+          setLoaded(
+            newNjams.reduce(
+              (loadedNjams, njam) => ({
+                ...loadedNjams,
+                [njam.id]: njam,
+              }),
+              loaded,
+            ),
+          );
+        }
+
         return (
           <Box>
             <Tabs
@@ -188,131 +210,104 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                 />
               ))}
             </Tabs>
-            {(() => {
-              if (error) {
-                return <Err {...error} />;
-              } else {
-                const { njams } = data!;
+            <List
+              loading={loading}
+              loadMore={
+                <Flex
+                  justifyContent="center"
+                  alignItems="center"
+                  m={4}
+                  height={32}
+                >
+                  {loadedAll ? (
+                    <Typography.Text>Loaded All</Typography.Text>
+                  ) : (
+                    <Button
+                      loading={loading}
+                      onClick={() => {
+                        const newPage = page + 1;
 
-                if (equals(njams, [])) {
-                  setLoadedAll(true);
-                }
+                        refetch({ page: newPage, pageSize });
 
-                const newNjams = (njams || []).filter(
-                  ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
-                );
-
-                if (newNjams.length) {
-                  setLoaded(
-                    newNjams.reduce(
-                      (loadedNjams, njam) => ({
-                        ...loadedNjams,
-                        [njam.id]: njam,
-                      }),
-                      loaded,
-                    ),
-                  );
-                }
-
-                return (
-                  <List
-                    loading={loading}
-                    loadMore={
-                      <Flex
-                        justifyContent="center"
-                        alignItems="center"
-                        m={4}
-                        height={32}
-                      >
-                        {loadedAll ? (
-                          <Typography.Text>Loaded All</Typography.Text>
-                        ) : (
-                          <Button
-                            loading={loading}
-                            onClick={() => {
-                              const newPage = page + 1;
-
-                              refetch({ page: newPage, pageSize });
-
-                              setPage(newPage);
-                            }}
-                          >
-                            Load More
-                          </Button>
-                        )}
-                      </Flex>
-                    }
-                    header={
-                      <Row>
-                        {columns.map((key, i) => {
-                          return (
-                            <Col
-                              span={i === 3 ? smallerSpan : largerSpan}
-                              key={key}
-                            >
-                              <Typography.Title level={2} style={{ margin: 0 }}>
-                                {key}
-                              </Typography.Title>
-                            </Col>
-                          );
-                        })}
-                      </Row>
-                    }
-                    bordered
-                    dataSource={loadedNjams.filter(filter)}
-                    renderItem={({
-                      id,
-                      location,
-                      time,
-                      ordered,
-                      organizer,
-                      participants,
-                    }) => {
-                      return (
-                        <NavLink to={urlJoin(path, id)}>
-                          <List.Item
-                            className={css`
-                              cursor: pointer;
-                              &:hover {
-                                background: #eee;
-                              }
-                            `}
-                          >
-                            <Column>{location}</Column>
-                            <Column>{time}</Column>
-                            <Column>{organizer.name}</Column>
-                            <Col span={smallerSpan}>
-                              {ordered ? (
-                                <StatusCircle color="lightgreen">
-                                  Yes
-                                </StatusCircle>
-                              ) : (
-                                <StatusCircle color="lightcoral">
-                                  No
-                                </StatusCircle>
-                              )}
-                            </Col>
-                            <Col span={largerSpan}>
-                              {organizer.id === userId ? (
-                                <Typography.Text style={{ margin: '0 15px' }}>
-                                  Author
-                                </Typography.Text>
-                              ) : participants
-                                  .map(({ id }) => id)
-                                  .includes(userId) ? (
-                                <LeaveNjam userId={userId} njamId={id} />
-                              ) : (
-                                <JoinNjam userId={userId} njamId={id} />
-                              )}
-                            </Col>
-                          </List.Item>
-                        </NavLink>
-                      );
-                    }}
-                  />
-                );
+                        setPage(newPage);
+                      }}
+                    >
+                      Load More
+                    </Button>
+                  )}
+                </Flex>
               }
-            })()}
+              header={
+                <>
+                  {error && (
+                    <Box mt={2} mb={3}>
+                      <Err {...error} />
+                    </Box>
+                  )}
+                  <Row>
+                    {columns.map((key, i) => {
+                      return (
+                        <Col
+                          span={i === 3 ? smallerSpan : largerSpan}
+                          key={key}
+                        >
+                          <Typography.Title level={2} style={{ margin: 0 }}>
+                            {key}
+                          </Typography.Title>
+                        </Col>
+                      );
+                    })}
+                  </Row>
+                </>
+              }
+              bordered
+              dataSource={loadedNjams.filter(filter)}
+              renderItem={({
+                id,
+                location,
+                time,
+                ordered,
+                organizer,
+                participants,
+              }) => {
+                return (
+                  <NavLink to={urlJoin(path, id)}>
+                    <List.Item
+                      className={css`
+                        cursor: pointer;
+                        &:hover {
+                          background: #eee;
+                        }
+                      `}
+                    >
+                      <Column>{location}</Column>
+                      <Column>{time}</Column>
+                      <Column>{organizer.name}</Column>
+                      <Col span={smallerSpan}>
+                        {ordered ? (
+                          <StatusCircle color="lightgreen">Yes</StatusCircle>
+                        ) : (
+                          <StatusCircle color="lightcoral">No</StatusCircle>
+                        )}
+                      </Col>
+                      <Col span={largerSpan}>
+                        {organizer.id === userId ? (
+                          <Typography.Text style={{ margin: '0 15px' }}>
+                            Author
+                          </Typography.Text>
+                        ) : participants
+                            .map(({ id }) => id)
+                            .includes(userId) ? (
+                          <LeaveNjam userId={userId} njamId={id} />
+                        ) : (
+                          <JoinNjam userId={userId} njamId={id} />
+                        )}
+                      </Col>
+                    </List.Item>
+                  </NavLink>
+                );
+              }}
+            />
           </Box>
         );
       }}
