@@ -2,6 +2,8 @@ import { Njam, User } from '../../../api/src/models';
 
 export type Users = User[];
 
+export type Njams = Njam[];
+
 export interface UsersQuery {
   users: Users;
 }
@@ -11,5 +13,9 @@ export interface NjamQuery {
 }
 
 export interface NjamsQuery {
-  njams: Njam[];
+  njams: Njams;
+}
+
+export interface MyNjamsQuery {
+  myNjams: Njams;
 }

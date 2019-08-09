@@ -22,8 +22,8 @@ export const njamsQuery = gql`
 `;
 
 export const myNjamsQuery = gql`
-  query($page: Int, $pageSize: Int) {
-    njams(page: $page, pageSize: $pageSize) {
+  query($userId: ID!, $page: Int, $pageSize: Int) {
+    myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
       ...NjamSummary
     }
   }

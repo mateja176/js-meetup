@@ -1,4 +1,4 @@
-import { Button, Col, List, Row, Tabs, Typography } from 'antd';
+import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
@@ -14,11 +14,12 @@ import {
   JoinNjamResult,
   leaveNjamMutation,
   LeaveNjamResult,
+  myNjamsQuery,
   NjamActionParams,
   njamsQuery,
 } from './apollo';
 import { Err, MutationResult, StatusCircle } from './components';
-import { NjamsQuery } from './models';
+import { Njams as INjams, NjamsQuery } from './models';
 import { createMoment, useUserId } from './utils';
 
 const LeaveNjam: React.FC<NjamActionParams> = props => {
@@ -112,6 +113,10 @@ interface FilterType {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
+const initiallyLoadedAll = false;
+
+const initiallyLoaded: Record<string, NjamsQuery['njams'][0]> = {};
+
 const initialPage = 1;
 const pageSize = 10;
 
@@ -125,14 +130,20 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
 
   const userId = useUserId();
 
-  const [loadedAll, setLoadedAll] = React.useState(false);
+  const [loadedAll, setLoadedAll] = React.useState(initiallyLoadedAll);
 
-  const [loaded, setLoaded] = React.useState<
-    Record<string, NjamsQuery['njams'][0]>
-  >({});
+  const [loaded, setLoaded] = React.useState(initiallyLoaded);
   const loadedNjams = Object.values(loaded);
 
   const [page, setPage] = React.useState(initialPage);
+
+  const [query, _setQuery] = React.useState(njamsQuery);
+  const setQuery = (newQuery: Parameters<typeof _setQuery>[0]) => {
+    setLoadedAll(initiallyLoadedAll);
+    setLoaded(initiallyLoaded);
+    setPage(initialPage);
+    _setQuery(newQuery);
+  };
 
   const filterTypes: FilterType[] = [
     { name: 'all', filter: initialFilter },
@@ -166,12 +177,12 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
 
   return (
     <Query<NjamsQuery>
-      query={njamsQuery}
+      query={query}
       pollInterval={1000}
-      variables={{ page, pageSize }}
+      variables={{ userId, page, pageSize }}
     >
       {({ error, data, loading, refetch }) => {
-        const { njams } = data!;
+        const [njams] = Object.values(data!) as INjams[];
 
         if (equals(njams, [])) {
           setLoadedAll(true);
@@ -195,21 +206,33 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
 
         return (
           <Box>
-            <Tabs
-              onChange={filterName =>
-                setFilter(
-                  filterTypes.find(({ name }) => filterName === name)!.filter,
-                )
-              }
-            >
-              {filterTypes.map(({ name }) => (
-                <Tabs.TabPane
-                  key={name}
-                  tab={startCase(name)}
-                  disabled={loading}
+            <Flex>
+              <Tabs
+                onChange={filterName =>
+                  setFilter(
+                    filterTypes.find(({ name }) => filterName === name)!.filter,
+                  )
+                }
+              >
+                {filterTypes.map(({ name }) => (
+                  <Tabs.TabPane
+                    key={name}
+                    tab={startCase(name)}
+                    disabled={loading}
+                  />
+                ))}
+              </Tabs>
+              <Box ml={4} mt={10}>
+                <Switch
+                  loading={loading}
+                  checkedChildren="All Njams"
+                  unCheckedChildren="My Njams"
+                  onChange={() => {
+                    setQuery(myNjamsQuery);
+                  }}
                 />
-              ))}
-            </Tabs>
+              </Box>
+            </Flex>
             <List
               loading={loading}
               loadMore={
@@ -227,7 +250,7 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                       onClick={() => {
                         const newPage = page + 1;
 
-                        refetch({ page: newPage, pageSize });
+                        refetch({ userId, page: newPage, pageSize });
 
                         setPage(newPage);
                       }}
