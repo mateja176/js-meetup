@@ -39,6 +39,7 @@ const LeaveNjam: React.FC<NjamActionParams> = props => {
           </Button>
         );
         return (
+          // @ts-ignore
           <MutationResult
             {...mutationResult}
             Data={() => <JoinNjam {...props} />}
@@ -69,6 +70,7 @@ const JoinNjam: React.FC<NjamActionParams> = props => (
       );
 
       return (
+        // @ts-ignore
         <MutationResult
           {...mutationResult}
           Data={() => <LeaveNjam {...props} />}
@@ -103,30 +105,6 @@ interface FilterType {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
-const filterTypes: FilterType[] = [
-  { name: 'all', filter: initialFilter },
-  {
-    name: 'upcoming',
-    filter: ({ time }) => createMoment(time).isAfter(moment()),
-  },
-  {
-    name: 'inProgress',
-    filter: ({ time }) => {
-      const momentTime = createMoment(time);
-
-      return momentTime.isBetween(oneHourInThePast, moment());
-    },
-  },
-  {
-    name: 'past',
-    filter: ({ time }) => {
-      const momentTime = createMoment(time);
-
-      return momentTime.isBefore(oneHourInThePast);
-    },
-  },
-];
-
 export interface NjamsProps extends RouteComponentProps {}
 
 const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
@@ -136,6 +114,36 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
   const setFilter = (filter: NjamFilter) => _setFilter({ filter });
 
   const userId = useUserId();
+
+  const filterTypes: FilterType[] = [
+    { name: 'all', filter: initialFilter },
+    {
+      name: 'upcoming',
+      filter: ({ time }) => createMoment(time).isAfter(moment()),
+    },
+    {
+      name: 'inProgress',
+      filter: ({ time }) => {
+        const momentTime = createMoment(time);
+
+        return momentTime.isBetween(oneHourInThePast, moment());
+      },
+    },
+    {
+      name: 'myNjams',
+      filter: ({ organizer: { id } }) => {
+        return id === userId;
+      },
+    },
+    {
+      name: 'past',
+      filter: ({ time }) => {
+        const momentTime = createMoment(time);
+
+        return momentTime.isBefore(oneHourInThePast);
+      },
+    },
+  ];
 
   return (
     <Query<NjamsQuery> query={njamsQuery} fetchPolicy="cache-and-network">
