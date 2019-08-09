@@ -89,8 +89,15 @@ const smallerSpan = 4;
 const largerSpan = 5;
 
 const Column: React.FC = ({ children }) => (
-  <Col span={largerSpan}>
-    <Typography.Text ellipsis>{children}</Typography.Text>
+  <Col
+    span={largerSpan}
+    style={{
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+    }}
+  >
+    <Typography.Text>{children}</Typography.Text>
   </Col>
 );
 
