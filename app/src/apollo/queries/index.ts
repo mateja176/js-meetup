@@ -13,8 +13,17 @@ export const usersQuery = gql`
 `;
 
 export const njamsQuery = gql`
-  query {
-    njams {
+  query($page: Int, $pageSize: Int) {
+    njams(page: $page, pageSize: $pageSize) {
+      ...NjamSummary
+    }
+  }
+  ${NjamSummary}
+`;
+
+export const myNjamsQuery = gql`
+  query($page: Int, $pageSize: Int) {
+    njams(page: $page, pageSize: $pageSize) {
       ...NjamSummary
     }
   }
