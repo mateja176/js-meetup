@@ -29,9 +29,9 @@ export const njamsQuery = gql`
 
 export type NjamSummaries = NjamSummary[];
 
-export interface NjamsQuery {
-  njams: NjamSummaries;
-}
+type _NjamsQuery<Key extends string> = Record<Key, NjamSummaries>;
+
+export type NjamsQuery = _NjamsQuery<'njams'>;
 
 export const myNjamsQuery = gql`
   query($userId: ID!, $page: Int, $pageSize: Int) {
@@ -42,9 +42,7 @@ export const myNjamsQuery = gql`
   ${NjamSummary}
 `;
 
-export interface MyNjamsQuery {
-  myNjams: NjamSummaries;
-}
+export type MyNjamsQuery = _NjamsQuery<'myNjams'>;
 
 export const njamQuery = gql`
   query($id: ID!) {
