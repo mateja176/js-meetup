@@ -204,25 +204,27 @@ const Njams: React.FC<NjamsProps> = ({
 
   const [njams] = Object.values(data!) as INjams[];
 
-  if (equals(njams, [])) {
-    setLoadedAll(true);
-  }
+  React.useEffect(() => {
+    if (equals(njams, [])) {
+      setLoadedAll(true);
+    }
 
-  const newNjams = (njams || []).filter(
-    ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
-  );
-
-  if (newNjams.length) {
-    setLoaded(
-      newNjams.reduce(
-        (loadedNjams, njam) => ({
-          ...loadedNjams,
-          [njam.id]: njam,
-        }),
-        loaded,
-      ),
+    const newNjams = (njams || []).filter(
+      ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
     );
-  }
+
+    if (newNjams.length) {
+      setLoaded(
+        newNjams.reduce(
+          (loadedNjams, njam) => ({
+            ...loadedNjams,
+            [njam.id]: njam,
+          }),
+          loaded,
+        ),
+      );
+    }
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box>
