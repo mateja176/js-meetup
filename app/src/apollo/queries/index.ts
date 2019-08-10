@@ -1,6 +1,6 @@
 import { gql } from 'apollo-boost';
 import { Njam } from '../../../../api/src/models';
-import { Njams, Users } from '../../models';
+import { Users } from '../../models';
 import { CompleteNjam, CompleteUser, NjamSummary } from './fragments';
 
 export * from './fragments';
@@ -27,8 +27,10 @@ export const njamsQuery = gql`
   ${NjamSummary}
 `;
 
+export type NjamSummaries = NjamSummary[];
+
 export interface NjamsQuery {
-  njams: Njams;
+  njams: NjamSummaries;
 }
 
 export const myNjamsQuery = gql`
@@ -41,7 +43,7 @@ export const myNjamsQuery = gql`
 `;
 
 export interface MyNjamsQuery {
-  myNjams: Njams;
+  myNjams: NjamSummaries;
 }
 
 export const njamQuery = gql`

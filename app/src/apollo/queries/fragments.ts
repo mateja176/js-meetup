@@ -1,4 +1,5 @@
 import { gql } from 'apollo-boost';
+import { Njam } from '../../../../api/src/models';
 
 export const CompleteUser = gql`
   fragment CompleteUser on User {
@@ -17,6 +18,8 @@ export const NjamBase = gql`
   }
 `;
 
+export type NjamBase = Pick<Njam, 'id' | 'location' | 'time' | 'ordered'>;
+
 export const NjamSummary = gql`
   fragment NjamSummary on Njam {
     ...NjamBase
@@ -30,6 +33,11 @@ export const NjamSummary = gql`
   }
   ${NjamBase}
 `;
+
+export interface NjamSummary extends NjamBase {
+  organizer: Pick<Njam['organizer'], 'id' | 'name'>;
+  participants: Pick<Njam['participants'][0], 'id'>[];
+}
 
 export const CompleteNjam = gql`
   fragment CompleteNjam on Njam {
