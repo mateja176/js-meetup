@@ -1,8 +1,8 @@
-import { Form, Icon } from 'antd';
+import { useQuery } from '@apollo/react-hooks';
+import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
 import React from 'react';
-import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
@@ -41,74 +41,70 @@ const Njam: React.FC<NjamProps> = ({
 
   const save = () => {
     const values = form.getFieldsValue() as NjamFormValues;
-    // TODO replace with patch njam api call
+    // TODO replace with set njam api call
     console.log(mapNjamFormValues(userId)(values));
   };
 
-  return (
-    <Query<UsersQuery & NjamQuery>
-      query={query}
-      variables={{ id }}
-      pollInterval={1000}
-    >
-      {({ data, error, loading }) => {
-        if (loading) {
-          return <Loading />;
-        } else if (error) {
-          return <Err {...error} />;
-        } else {
-          const {
-            njam: { time, organizer, participants, ...njam },
-            users,
-          } = data!;
+  const { data, error, loading } = useQuery<NjamQuery & UsersQuery>(query, {
+    pollInterval: 1000,
+    variables: { id },
+  });
 
-          return (
-            <FormContainer>
-              <Flex justifyContent="flex-end">
-                {organizer.id === userId && (
-                  <Box mr={4}>
-                    {readOnly ? (
-                      <Icon type="edit" onClick={toggleReadOnly} />
-                    ) : (
-                      <Box>
-                        <Icon
-                          type="close"
-                          onClick={() => {
-                            toggleReadOnly();
+  if (loading) {
+    return <Loading />;
+  } else if (error) {
+    return <Err {...error} />;
+  } else {
+    const {
+      njam: { time, organizer, participants, ...njam },
+      users,
+    } = data!;
 
-                            form.resetFields();
-                          }}
-                          style={{ marginRight: 15 }}
-                        />
-                        <Icon
-                          type="check"
-                          onClick={() => {
-                            toggleReadOnly();
+    return (
+      <FormContainer>
+        <Flex justifyContent="flex-end">
+          {organizer.id === userId && (
+            <Box mr={4}>
+              {readOnly ? (
+                <Button icon="edit" onClick={toggleReadOnly} />
+              ) : (
+                <Box>
+                  <Button
+                    icon="close"
+                    onClick={() => {
+                      toggleReadOnly();
 
-                            save();
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                )}
-              </Flex>
-              <NjamForm
-                readOnly={readOnly}
-                form={form}
-                initialValues={{
-                  ...njam,
-                  time: createMoment(time),
-                  organizerId: organizer.id,
-                  participantIds: participants.map(({ id }) => id),
-                }}
-                users={users}
-              />
-            </FormContainer>
-          );
-        }
-      }}
-    </Query>
-  );
+                      form.resetFields();
+                    }}
+                    style={{ marginRight: 10 }}
+                  />
+                  <Button
+                    icon="check"
+                    onClick={() => {
+                      toggleReadOnly();
+
+                      save();
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          )}
+        </Flex>
+        <NjamForm
+          readOnly={readOnly}
+          form={form}
+          initialValues={{
+            ...njam,
+            time: createMoment(time),
+            organizerId: organizer.id,
+            participantIds: participants.map(({ id }) => id),
+          }}
+          users={users}
+        />
+      </FormContainer>
+    );
+  }
 };
+
 export default Form.create({ name: routeName.njams })(Njam);
