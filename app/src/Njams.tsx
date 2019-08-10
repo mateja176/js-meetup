@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
@@ -6,7 +6,6 @@ import moment from 'moment';
 import qs from 'query-string';
 import { always, equals } from 'ramda';
 import React from 'react';
-import { Query } from 'react-apollo';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
@@ -187,169 +186,148 @@ const Njams: React.FC<NjamsProps> = ({
 
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
+  const { error, data, loading, refetch } = useQuery<NjamsQuery>(query, {
+    pollInterval: 1000,
+    variables: { userId, page, pageSize },
+  });
+
+  const [njams] = Object.values(data!) as INjams[];
+
+  if (equals(njams, [])) {
+    setLoadedAll(true);
+  }
+
+  const newNjams = (njams || []).filter(
+    ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
+  );
+
+  if (newNjams.length) {
+    setLoaded(
+      newNjams.reduce(
+        (loadedNjams, njam) => ({
+          ...loadedNjams,
+          [njam.id]: njam,
+        }),
+        loaded,
+      ),
+    );
+  }
+
   return (
-    <Query<NjamsQuery>
-      query={query}
-      pollInterval={1000}
-      variables={{ userId, page, pageSize }}
-    >
-      {({ error, data, loading, refetch }) => {
-        const [njams] = Object.values(data!) as INjams[];
+    <Box>
+      <Flex>
+        <Tabs
+          activeKey={activeFilter}
+          onChange={filterName => {
+            history.push({
+              search: qs.stringify({ filter: filterName }),
+            });
+          }}
+        >
+          {filters.map(({ name }) => (
+            <Tabs.TabPane key={name} tab={startCase(name)} disabled={loading} />
+          ))}
+        </Tabs>
+        <Box ml={4} mt={10}>
+          <Switch
+            loading={loading}
+            checkedChildren="All Njams"
+            unCheckedChildren="My Njams"
+            onChange={on => {
+              setQuery(on ? myNjamsQuery : njamsQuery);
+            }}
+          />
+        </Box>
+      </Flex>
+      <List
+        loading={loading}
+        loadMore={
+          <Flex justifyContent="center" alignItems="center" m={4} height={32}>
+            {loadedAll ? (
+              <Typography.Text>Loaded All</Typography.Text>
+            ) : (
+              <Button
+                loading={loading}
+                onClick={() => {
+                  const newPage = page + 1;
 
-        if (equals(njams, [])) {
-          setLoadedAll(true);
-        }
+                  refetch({ userId, page: newPage, pageSize });
 
-        const newNjams = (njams || []).filter(
-          ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
-        );
-
-        if (newNjams.length) {
-          setLoaded(
-            newNjams.reduce(
-              (loadedNjams, njam) => ({
-                ...loadedNjams,
-                [njam.id]: njam,
-              }),
-              loaded,
-            ),
-          );
-        }
-
-        return (
-          <Box>
-            <Flex>
-              <Tabs
-                activeKey={activeFilter}
-                onChange={filterName => {
-                  history.push({
-                    search: qs.stringify({ filter: filterName }),
-                  });
+                  setPage(newPage);
                 }}
               >
-                {filters.map(({ name }) => (
-                  <Tabs.TabPane
-                    key={name}
-                    tab={startCase(name)}
-                    disabled={loading}
-                  />
-                ))}
-              </Tabs>
-              <Box ml={4} mt={10}>
-                <Switch
-                  loading={loading}
-                  checkedChildren="All Njams"
-                  unCheckedChildren="My Njams"
-                  onChange={on => {
-                    setQuery(on ? myNjamsQuery : njamsQuery);
-                  }}
-                />
+                Load More
+              </Button>
+            )}
+          </Flex>
+        }
+        header={
+          <>
+            {error && (
+              <Box mt={2} mb={3}>
+                <Err {...error} />
               </Box>
-            </Flex>
-            <List
-              loading={loading}
-              loadMore={
-                <Flex
-                  justifyContent="center"
-                  alignItems="center"
-                  m={4}
-                  height={32}
-                >
-                  {loadedAll ? (
-                    <Typography.Text>Loaded All</Typography.Text>
-                  ) : (
-                    <Button
-                      loading={loading}
-                      onClick={() => {
-                        const newPage = page + 1;
-
-                        refetch({ userId, page: newPage, pageSize });
-
-                        setPage(newPage);
-                      }}
-                    >
-                      Load More
-                    </Button>
-                  )}
-                </Flex>
-              }
-              header={
-                <>
-                  {error && (
-                    <Box mt={2} mb={3}>
-                      <Err {...error} />
-                    </Box>
-                  )}
-                  <Row>
-                    {columns.map((key, i) => {
-                      return (
-                        <Col
-                          span={i === 3 ? smallerSpan : largerSpan}
-                          key={key}
-                        >
-                          <Typography.Title level={2} style={{ margin: 0 }}>
-                            {key}
-                          </Typography.Title>
-                        </Col>
-                      );
-                    })}
-                  </Row>
-                </>
-              }
-              bordered
-              dataSource={loadedNjams.filter(
-                filters.find(({ name }) => name === activeFilter)!.value,
-              )}
-              renderItem={({
-                id,
-                location,
-                time,
-                ordered,
-                organizer,
-                participants,
-              }) => {
+            )}
+            <Row>
+              {columns.map((key, i) => {
                 return (
-                  <NavLink to={urlJoin(path, id)}>
-                    <List.Item
-                      className={css`
-                        cursor: pointer;
-                        &:hover {
-                          background: #eee;
-                        }
-                      `}
-                    >
-                      <Column>{location}</Column>
-                      <Column>{time}</Column>
-                      <Column>{organizer.name}</Column>
-                      <Col span={smallerSpan}>
-                        {ordered ? (
-                          <StatusCircle color="lightgreen">Yes</StatusCircle>
-                        ) : (
-                          <StatusCircle color="lightcoral">No</StatusCircle>
-                        )}
-                      </Col>
-                      <Col span={largerSpan}>
-                        {organizer.id === userId ? (
-                          <Typography.Text>
-                            Author
-                          </Typography.Text>
-                        ) : participants
-                            .map(({ id }) => id)
-                            .includes(userId) ? (
-                          <LeaveNjam userId={userId} njamId={id} />
-                        ) : (
-                          <JoinNjam userId={userId} njamId={id} />
-                        )}
-                      </Col>
-                    </List.Item>
-                  </NavLink>
+                  <Col span={i === 3 ? smallerSpan : largerSpan} key={key}>
+                    <Typography.Title level={2} style={{ margin: 0 }}>
+                      {key}
+                    </Typography.Title>
+                  </Col>
                 );
-              }}
-            />
-          </Box>
-        );
-      }}
-    </Query>
+              })}
+            </Row>
+          </>
+        }
+        bordered
+        dataSource={loadedNjams.filter(
+          filters.find(({ name }) => name === activeFilter)!.value,
+        )}
+        renderItem={({
+          id,
+          location,
+          time,
+          ordered,
+          organizer,
+          participants,
+        }) => {
+          return (
+            <NavLink to={urlJoin(path, id)}>
+              <List.Item
+                className={css`
+                  cursor: pointer;
+                  &:hover {
+                    background: #eee;
+                  }
+                `}
+              >
+                <Column>{location}</Column>
+                <Column>{time}</Column>
+                <Column>{organizer.name}</Column>
+                <Col span={smallerSpan}>
+                  {ordered ? (
+                    <StatusCircle color="lightgreen">Yes</StatusCircle>
+                  ) : (
+                    <StatusCircle color="lightcoral">No</StatusCircle>
+                  )}
+                </Col>
+                <Col span={largerSpan}>
+                  {organizer.id === userId ? (
+                    <Typography.Text>Author</Typography.Text>
+                  ) : participants.map(({ id }) => id).includes(userId) ? (
+                    <LeaveNjam userId={userId} njamId={id} />
+                  ) : (
+                    <JoinNjam userId={userId} njamId={id} />
+                  )}
+                </Col>
+              </List.Item>
+            </NavLink>
+          );
+        }}
+      />
+    </Box>
   );
 };
 
