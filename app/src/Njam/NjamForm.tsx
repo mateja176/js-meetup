@@ -8,7 +8,7 @@ import { NjamFormValues, Users } from '../models';
 
 const momentFormat = 'HH:mm';
 
-export interface NjamFormProps extends FormComponentProps {
+export interface NjamFormProps extends FormComponentProps<NjamFormValues> {
   initialValues: NjamFormValues;
   readOnly?: boolean;
   users: Users;
