@@ -6,7 +6,8 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
-import { Err, FormContainer, Loading } from '../components';
+import { Err, FormContainer } from '../components';
+import LoadingOverlay from '../components/LoadingOverlay';
 import { NjamFormValues, routeName } from '../models';
 import { createMoment, mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
@@ -51,6 +52,7 @@ const Njam: React.FC<NjamProps> = ({
   });
 
   const {
+    // ? default value is not type checked
     njam: { time, organizer, participants, ...njam } = {
       time: '0',
       organizer: { id: '' },
@@ -65,7 +67,7 @@ const Njam: React.FC<NjamProps> = ({
 
   return (
     <FormContainer>
-      {loading && <Loading />}
+      {loading && <LoadingOverlay />}
       {error && (
         <Box my={3}>
           <Err {...error} />

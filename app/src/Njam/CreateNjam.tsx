@@ -13,7 +13,8 @@ import {
   usersQuery,
   UsersQuery,
 } from '../apollo';
-import { Err, FormContainer, Loading, Retry } from '../components';
+import { Err, FormContainer, Retry } from '../components';
+import LoadingOverlay from '../components/LoadingOverlay';
 import { NjamFormValues, routeName, routePath } from '../models';
 import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
@@ -41,7 +42,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
 
   return (
     <FormContainer>
-      {usersQueryResult.loading && <Loading />}
+      {usersQueryResult.loading && <LoadingOverlay />}
       {usersQueryResult.error && (
         <Box mb={3}>
           <Retry
