@@ -52,8 +52,6 @@ const Njam: React.FC<NjamProps> = ({
 
   if (loading) {
     return <Loading />;
-  } else if (error) {
-    return <Err {...error} />;
   } else {
     const {
       njam: { time, organizer, participants, ...njam },
@@ -62,6 +60,11 @@ const Njam: React.FC<NjamProps> = ({
 
     return (
       <FormContainer>
+        {error && (
+          <Box my={3}>
+            <Err {...error} />
+          </Box>
+        )}
         <Flex justifyContent="flex-end">
           {organizer.id === userId && (
             <Box mr={4}>
