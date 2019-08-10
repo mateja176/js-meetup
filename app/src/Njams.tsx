@@ -330,7 +330,7 @@ const Njams: React.FC<NjamsProps> = ({
                       </Col>
                       <Col span={largerSpan}>
                         {organizer.id === userId ? (
-                          <Typography.Text style={{ margin: '0 15px' }}>
+                          <Typography.Text>
                             Author
                           </Typography.Text>
                         ) : participants
