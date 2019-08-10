@@ -48,7 +48,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
       </Form.Item>
       <Form.Item label="Time">
         {form.getFieldDecorator('time', {
-          initialValue: moment(time),
+          initialValue: time,
           rules: [
             {
               required: true,
