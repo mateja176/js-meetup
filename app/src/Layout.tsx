@@ -64,7 +64,7 @@ const Layout: React.FC<RouteComponentProps> = ({
     <>
       <PageHeader
         onBack={toggleOpen}
-        title={env.appName}
+        title={<NavLink to="/">{env.appName}</NavLink>}
         backIcon={<AntIcon type="menu" />}
       />
       <Drawer
