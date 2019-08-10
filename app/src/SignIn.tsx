@@ -36,14 +36,13 @@ const SignIn: React.FC<SignInProps> = ({ history }) => {
             );
           }
         })()}
-        <br />
-        <br />
         <Button
           disabled={!userId}
           onClick={() => {
             localStorage.setItem('userId', userId);
             history.push('/');
           }}
+          style={{ marginTop: 15 }}
         >
           Sign in
         </Button>

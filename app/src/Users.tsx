@@ -2,22 +2,22 @@ import { useQuery } from '@apollo/react-hooks';
 import { Col, List, Row, Typography } from 'antd';
 import React from 'react';
 import { usersQuery, UsersQuery } from './apollo';
-import { Err, Loading } from './components';
+import { Err } from './components';
 
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = () => {
-  const { data, loading, error } = useQuery<UsersQuery>(usersQuery);
+  const { data, loading, error } = useQuery<UsersQuery>(usersQuery, {
+    pollInterval: 1000,
+  });
 
-  if (loading) {
-    return <Loading />;
-  } else if (error) {
-    return <Err {...error} />;
-  } else {
-    const { users } = data!;
+  const { users = [] } = data!;
 
-    return (
+  return (
+    <>
+      {error && <Err {...error} />}
       <List
+        loading={loading}
         header={
           <div>
             <Row>
@@ -43,7 +43,7 @@ const Users: React.FC<UsersProps> = () => {
           </List.Item>
         )}
       />
-    );
-  }
+    </>
+  );
 };
 export default Users;
