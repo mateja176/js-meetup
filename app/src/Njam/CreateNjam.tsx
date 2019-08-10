@@ -13,7 +13,7 @@ import {
   usersQuery,
   UsersQuery,
 } from '../apollo';
-import { Err, FormContainer, Loading } from '../components';
+import { Err, FormContainer, Loading, Retry } from '../components';
 import { NjamFormValues, routeName, routePath } from '../models';
 import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
@@ -44,8 +44,12 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
       {usersQueryResult.loading && <Loading />}
       {usersQueryResult.error && (
         <Box mb={3}>
-          <Err {...usersQueryResult.error} />
-          <Button onClick={() => usersQueryResult.refetch()}>Reload Users</Button>
+          <Retry
+            error={usersQueryResult.error}
+            refetch={usersQueryResult.refetch}
+          >
+            Reload Users
+          </Retry>
         </Box>
       )}
       <NjamForm
