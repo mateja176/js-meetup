@@ -21,7 +21,7 @@ export interface CreateNjamProps
   extends FormComponentProps<NjamFormValues>,
     RouteComponentProps {}
 
-const CreateNjam: React.FC<FormComponentProps> = ({ form }) => {
+const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
   const userId = useUserId();
 
   const disabled =
