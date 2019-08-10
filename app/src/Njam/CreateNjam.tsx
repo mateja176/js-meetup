@@ -6,15 +6,9 @@ import React from 'react';
 import { Mutation, Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import urlJoin from 'url-join';
-import { createNjamMutation, usersQuery } from '../apollo';
+import { createNjamMutation, CreateNjamMutation, usersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import {
-  CreateNjamMutation,
-  NjamFormValues,
-  routeName,
-  routePath,
-  UsersQuery,
-} from '../models';
+import { NjamFormValues, routeName, routePath, UsersQuery } from '../models';
 import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
 

@@ -2,7 +2,6 @@ import moment from 'moment';
 import urlJoin from 'url-join';
 import { Njam, Scalars } from '../../../api/src/models';
 
-export * from './mutations';
 export * from './queries';
 
 export interface NjamFormValues

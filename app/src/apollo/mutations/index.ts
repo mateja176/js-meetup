@@ -21,6 +21,10 @@ export const createNjamMutation = gql`
   ${CompleteNjam}
 `;
 
+export interface CreateNjamMutation {
+  createNjam: Njam;
+}
+
 export const leaveNjamMutation = gql`
   mutation($userId: ID!, $njamId: ID!) {
     leaveNjam(userId: $userId, njamId: $njamId) {
