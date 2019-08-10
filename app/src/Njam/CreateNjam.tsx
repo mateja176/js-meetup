@@ -58,7 +58,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
           location: '',
           ordered: false,
           time: moment().add(1, 'hour'),
-          organizerId: usersNotLoaded ? 'Could not load' : userId,
+          organizerId: usersNotLoaded ? '' : userId,
           participantIds: [],
           description: '',
         }}

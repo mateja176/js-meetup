@@ -50,64 +50,69 @@ const Njam: React.FC<NjamProps> = ({
     variables: { id },
   });
 
-  if (loading) {
-    return <Loading />;
-  } else {
-    const {
-      njam: { time, organizer, participants, ...njam },
-      users,
-    } = data!;
+  const {
+    njam: { time, organizer, participants, ...njam } = {
+      time: '0',
+      organizer: { id: '' },
+      participants: [],
+      id: '',
+      location: '',
+      description: '',
+      ordered: false,
+    },
+    users = [],
+  } = data!;
 
-    return (
-      <FormContainer>
-        {error && (
-          <Box my={3}>
-            <Err {...error} />
+  return (
+    <FormContainer>
+      {loading && <Loading />}
+      {error && (
+        <Box my={3}>
+          <Err {...error} />
+        </Box>
+      )}
+      <Flex justifyContent="flex-end">
+        {organizer.id === userId && !loading && !error && (
+          <Box mr={4}>
+            {readOnly ? (
+              <Button icon="edit" onClick={toggleReadOnly} />
+            ) : (
+              <Box>
+                <Button
+                  icon="close"
+                  onClick={() => {
+                    toggleReadOnly();
+
+                    form.resetFields();
+                  }}
+                  style={{ marginRight: 10 }}
+                />
+                <Button
+                  icon="check"
+                  onClick={() => {
+                    toggleReadOnly();
+
+                    save();
+                  }}
+                />
+              </Box>
+            )}
           </Box>
         )}
-        <Flex justifyContent="flex-end">
-          {organizer.id === userId && (
-            <Box mr={4}>
-              {readOnly ? (
-                <Button icon="edit" onClick={toggleReadOnly} />
-              ) : (
-                <Box>
-                  <Button
-                    icon="close"
-                    onClick={() => {
-                      toggleReadOnly();
-
-                      form.resetFields();
-                    }}
-                    style={{ marginRight: 10 }}
-                  />
-                  <Button
-                    icon="check"
-                    onClick={() => {
-                      toggleReadOnly();
-
-                      save();
-                    }}
-                  />
-                </Box>
-              )}
-            </Box>
-          )}
-        </Flex>
-        <NjamForm
-          readOnly={readOnly}
-          form={form}
-          initialValues={{
-            ...njam,
-            time: createMoment(time),
-            organizerId: organizer.id,
-            participantIds: participants.map(({ id }) => id),
-          }}
-          users={users}
-        />
-      </FormContainer>
-    );
-  }
+      </Flex>
+      <NjamForm
+        readOnly={readOnly}
+        form={form}
+        initialValues={{
+          ...njam,
+          time: createMoment(time),
+          organizerId: organizer.id,
+          participantIds: participants.map(({ id }) => id),
+        }}
+        users={users}
+      />
+    </FormContainer>
+  );
 };
 
 export default Form.create({ name: routeName.njams })(Njam);
