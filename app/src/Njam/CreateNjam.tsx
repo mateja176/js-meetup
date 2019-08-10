@@ -1,10 +1,9 @@
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
-import { any } from 'ramda';
+import { any, isEmpty } from 'ramda';
 import React from 'react';
-import { Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
@@ -34,34 +33,35 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
     CreateNjamMutation
   >(createNjamMutation);
 
+  const usersQueryResult = useQuery<UsersQuery>(usersQuery);
+
+  const { data: { users = [] } = { users: [] } } = usersQueryResult;
+
+  const usersNotLoaded = isEmpty(users);
+
   return (
     <FormContainer>
-      <Query<UsersQuery> query={usersQuery}>
-        {({ data, loading, error }) => {
-          if (loading) {
-            return <Loading />;
-          } else if (error) {
-            return <Err {...error} />;
-          } else {
-            const { users } = data!;
-            return (
-              <NjamForm
-                initialValues={{
-                  location: '',
-                  ordered: false,
-                  time: moment().add(1, 'hour'),
-                  organizerId: userId,
-                  participantIds: [],
-                  description: '',
-                }}
-                form={form}
-                users={users}
-                hideOrdered
-              />
-            );
-          }
+      {usersQueryResult.loading && <Loading />}
+      {usersQueryResult.error && (
+        <Box mb={3}>
+          <Err {...usersQueryResult.error} />
+          <Button onClick={() => usersQueryResult.refetch()}>Reload Users</Button>
+        </Box>
+      )}
+      <NjamForm
+        readOnly={usersNotLoaded}
+        initialValues={{
+          location: '',
+          ordered: false,
+          time: moment().add(1, 'hour'),
+          organizerId: usersNotLoaded ? 'Could not load' : userId,
+          participantIds: [],
+          description: '',
         }}
-      </Query>
+        form={form}
+        users={users}
+        hideOrdered
+      />
       <Button
         loading={loading}
         disabled={disabled}
