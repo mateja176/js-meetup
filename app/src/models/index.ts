@@ -15,16 +15,13 @@ export interface NjamFormValues
 
 export const routeNames = ['njams', 'createNjam'] as const;
 
-export type routeName = typeof routeNames[number];
-
-const routeObject = {} as { [name in routeName]: name };
+export type RouteName = typeof routeNames[number];
 
 export const routeName = routeNames.reduce(
   (route, name) => ({ ...route, [name]: name }),
-  routeObject,
+  {} as { [name in RouteName]: name },
 );
 
-export const routePath = routeNames.reduce(
-  (route, name) => ({ ...route, [name]: urlJoin('/', name) }),
-  routeObject,
-);
+export const routePath = Object.fromEntries(
+  routeNames.map(name => [name, urlJoin('/', name)]),
+) as Record<RouteName, string>;
