@@ -2,9 +2,8 @@ import { Button, Form, Typography } from 'antd';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
-import { usersQuery } from './apollo';
+import { usersQuery, UsersQuery } from './apollo';
 import { Err, FormContainer, Loading, UserSelect } from './components';
-import { UsersQuery } from './models';
 
 export interface SignInProps extends RouteComponentProps {}
 

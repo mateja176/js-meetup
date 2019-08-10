@@ -1,4 +1,6 @@
 import { gql } from 'apollo-boost';
+import { Njam } from '../../../../api/src/models';
+import { Njams, Users } from '../../models';
 import { CompleteNjam, CompleteUser, NjamSummary } from './fragments';
 
 export * from './fragments';
@@ -12,6 +14,10 @@ export const usersQuery = gql`
   ${CompleteUser}
 `;
 
+export interface UsersQuery {
+  users: Users;
+}
+
 export const njamsQuery = gql`
   query($page: Int, $pageSize: Int) {
     njams(page: $page, pageSize: $pageSize) {
@@ -20,6 +26,10 @@ export const njamsQuery = gql`
   }
   ${NjamSummary}
 `;
+
+export interface NjamsQuery {
+  njams: Njams;
+}
 
 export const myNjamsQuery = gql`
   query($userId: ID!, $page: Int, $pageSize: Int) {
@@ -30,6 +40,10 @@ export const myNjamsQuery = gql`
   ${NjamSummary}
 `;
 
+export interface MyNjamsQuery {
+  myNjams: Njams;
+}
+
 export const njamQuery = gql`
   query($id: ID!) {
     njam(id: $id) {
@@ -38,3 +52,7 @@ export const njamQuery = gql`
   }
   ${CompleteNjam}
 `;
+
+export interface NjamQuery {
+  njam: Njam;
+}

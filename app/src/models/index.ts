@@ -1,8 +1,10 @@
 import moment from 'moment';
 import urlJoin from 'url-join';
-import { Njam, Scalars } from '../../../api/src/models';
+import { Njam, Scalars, User } from '../../../api/src/models';
 
-export * from './queries';
+export type Users = User[];
+
+export type Njams = Njam[];
 
 export interface NjamFormValues
   extends Omit<Njam, 'id' | 'time' | 'organizer' | 'participants'> {

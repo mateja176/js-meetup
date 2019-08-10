@@ -17,9 +17,10 @@ import {
   myNjamsQuery,
   NjamActionParams,
   njamsQuery,
+  NjamsQuery,
 } from './apollo';
 import { Err, MutationResult, StatusCircle } from './components';
-import { Njams as INjams, NjamsQuery } from './models';
+import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
 const LeaveNjam: React.FC<NjamActionParams> = props => {

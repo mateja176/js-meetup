@@ -5,9 +5,9 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import { CompleteNjam, CompleteUser } from '../apollo';
+import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
 import { Err, FormContainer, Loading } from '../components';
-import { NjamFormValues, NjamQuery, routeName, UsersQuery } from '../models';
+import { NjamFormValues, routeName } from '../models';
 import { createMoment, mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
 

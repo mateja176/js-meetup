@@ -1,8 +1,7 @@
 import { Alert, Col, List, Row, Spin, Typography } from 'antd';
 import React from 'react';
 import { Query } from 'react-apollo';
-import { usersQuery } from './apollo';
-import { UsersQuery } from './models';
+import { usersQuery, UsersQuery } from './apollo';
 
 export interface UsersProps {}
 
