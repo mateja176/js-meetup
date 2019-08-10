@@ -89,6 +89,11 @@ export class NjamService {
   }
 
   async getMyNjamsCount(userId: string): Promise<number> {
+    const users: User[] = await this.db.exec(`SELECT TOP 1 * FROM users WHERE id='${userId}'`);
+    if (users.length === 0) {
+      throw new Error(`Could not find user with id: ${userId}`);
+    }
+
     const myNjams: Njam[] = await this.db.exec(`SELECT userId FROM participants LEFT JOIN njams ON participants.njamId = njams.id WHERE userId='${userId}'`);
     return myNjams.length;
   }
