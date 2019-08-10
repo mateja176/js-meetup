@@ -13,6 +13,8 @@ import {
   MutationJoinNjamArgs,
   MutationLeaveNjamArgs,
   Njam,
+  QueryMyNjamsArgs,
+  QueryNjamsArgs,
 } from '../../api/src/models';
 import {
   joinNjamMutation,
@@ -192,7 +194,10 @@ const Njams: React.FC<NjamsProps> = ({
 
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
-  const { error, data, loading, refetch } = useQuery<NjamsQuery>(query, {
+  const { error, data, loading, refetch } = useQuery<
+    NjamsQuery,
+    QueryNjamsArgs & QueryMyNjamsArgs
+  >(query, {
     pollInterval: 1000,
     variables: { userId, page, pageSize },
   });

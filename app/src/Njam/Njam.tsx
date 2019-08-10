@@ -5,6 +5,7 @@ import { gql } from 'apollo-boost';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
+import { Scalars } from '../../../api/src/models';
 import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
 import { Err, FormContainer } from '../components';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -46,7 +47,10 @@ const Njam: React.FC<NjamProps> = ({
     console.log(mapNjamFormValues(userId)(values));
   };
 
-  const { data, error, loading } = useQuery<NjamQuery & UsersQuery>(query, {
+  const { data, error, loading } = useQuery<
+    NjamQuery & UsersQuery,
+    { id: Scalars['ID'] }
+  >(query, {
     pollInterval: 1000,
     variables: { id },
   });
