@@ -2,6 +2,7 @@ import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
+import qs from 'query-string';
 import { always, equals } from 'ramda';
 import React from 'react';
 import { Mutation, Query } from 'react-apollo';
@@ -103,13 +104,11 @@ const Column: React.FC = ({ children }) => (
   </Col>
 );
 
-const initialFilter = always(true);
+type FilterValue = (njam: Njam) => boolean;
 
-type NjamFilter = (njam: Njam) => boolean;
-
-interface FilterType {
+interface Filter {
   name: string;
-  filter: NjamFilter;
+  value: FilterValue;
 }
 
 const oneHourInThePast = moment().subtract(1, 'hour');
@@ -123,12 +122,11 @@ const pageSize = 10;
 
 export interface NjamsProps extends RouteComponentProps {}
 
-const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
-  const [{ filter }, _setFilter] = React.useState<{ filter: NjamFilter }>({
-    filter: initialFilter,
-  });
-  const setFilter = (filter: NjamFilter) => _setFilter({ filter });
-
+const Njams: React.FC<NjamsProps> = ({
+  match: { path },
+  location: { search },
+  history,
+}) => {
   const userId = useUserId();
 
   const [loadedAll, setLoadedAll] = React.useState(initiallyLoadedAll);
@@ -146,35 +144,54 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
     _setQuery(newQuery);
   };
 
-  const filterTypes: FilterType[] = [
-    { name: 'all', filter: initialFilter },
+  const filterNames = [
+    'all',
+    'upcoming',
+    'inProgress',
+    'myNjams',
+    'past',
+  ] as const;
+
+  type FilterName = typeof filterNames[number];
+
+  const filterName = filterNames.reduce(
+    (_filterName, name) => ({ ..._filterName, [name]: name }),
+    {} as { [name in FilterName]: name },
+  );
+
+  const filters: Filter[] = [
+    { name: filterName.all, value: always(true) },
     {
-      name: 'upcoming',
-      filter: ({ time }) => createMoment(time).isAfter(moment()),
+      name: filterName.upcoming,
+      value: ({ time }) => createMoment(time).isAfter(moment()),
     },
     {
-      name: 'inProgress',
-      filter: ({ time }) => {
+      name: filterName.inProgress,
+      value: ({ time }) => {
         const momentTime = createMoment(time);
 
         return momentTime.isBetween(oneHourInThePast, moment());
       },
     },
     {
-      name: 'myNjams',
-      filter: ({ organizer: { id } }) => {
+      name: filterName.myNjams,
+      value: ({ organizer: { id } }) => {
         return id === userId;
       },
     },
     {
-      name: 'past',
-      filter: ({ time }) => {
+      name: filterName.past,
+      value: ({ time }) => {
         const momentTime = createMoment(time);
 
         return momentTime.isBefore(oneHourInThePast);
       },
     },
   ];
+
+  const filterQuery = qs.parse(search).filter as FilterName;
+
+  const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
   return (
     <Query<NjamsQuery>
@@ -209,13 +226,14 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
           <Box>
             <Flex>
               <Tabs
-                onChange={filterName =>
-                  setFilter(
-                    filterTypes.find(({ name }) => filterName === name)!.filter,
-                  )
-                }
+                activeKey={activeFilter}
+                onChange={filterName => {
+                  history.push({
+                    search: qs.stringify({ filter: filterName }),
+                  });
+                }}
               >
-                {filterTypes.map(({ name }) => (
+                {filters.map(({ name }) => (
                   <Tabs.TabPane
                     key={name}
                     tab={startCase(name)}
@@ -285,7 +303,9 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                 </>
               }
               bordered
-              dataSource={loadedNjams.filter(filter)}
+              dataSource={loadedNjams.filter(
+                filters.find(({ name }) => name === activeFilter)!.value,
+              )}
               renderItem={({
                 id,
                 location,
