@@ -228,8 +228,8 @@ const Njams: React.FC<NjamsProps> = ({ match: { path } }) => {
                   loading={loading}
                   checkedChildren="All Njams"
                   unCheckedChildren="My Njams"
-                  onChange={() => {
-                    setQuery(myNjamsQuery);
+                  onChange={on => {
+                    setQuery(on ? myNjamsQuery : njamsQuery);
                   }}
                 />
               </Box>
