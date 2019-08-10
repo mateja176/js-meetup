@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/react-hooks';
 import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
@@ -5,7 +6,7 @@ import moment from 'moment';
 import qs from 'query-string';
 import { always, equals } from 'ramda';
 import React from 'react';
-import { Mutation, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
@@ -25,65 +26,58 @@ import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
 const LeaveNjam: React.FC<NjamActionParams> = props => {
-  return (
-    <Mutation<LeaveNjamResult> mutation={leaveNjamMutation}>
-      {(leaveNjam, mutationResult) => {
-        const base = (
-          <Button
-            onClick={e => {
-              e.preventDefault();
+  const [leaveNjam, mutationResult] = useMutation<LeaveNjamResult>(
+    leaveNjamMutation,
+  );
 
-              leaveNjam({
-                variables: props,
-              });
-            }}
-          >
-            Leave
-          </Button>
-        );
-        return (
-          // @ts-ignore
-          <MutationResult
-            {...mutationResult}
-            Data={() => <JoinNjam {...props} />}
-          >
-            {base}
-          </MutationResult>
-        );
+  const base = (
+    <Button
+      onClick={e => {
+        e.preventDefault();
+
+        leaveNjam({
+          variables: props,
+        });
       }}
-    </Mutation>
+    >
+      Leave
+    </Button>
+  );
+
+  return (
+    // @ts-ignore
+    <MutationResult {...mutationResult} Data={() => <JoinNjam {...props} />}>
+      {base}
+    </MutationResult>
   );
 };
 
-const JoinNjam: React.FC<NjamActionParams> = props => (
-  <Mutation<JoinNjamResult> mutation={joinNjamMutation}>
-    {(joinNjam, mutationResult) => {
-      const base = (
-        <Button
-          onClick={e => {
-            e.preventDefault();
+const JoinNjam: React.FC<NjamActionParams> = props => {
+  const [joinNjam, mutationResult] = useMutation<JoinNjamResult>(
+    joinNjamMutation,
+  );
 
-            joinNjam({
-              variables: props,
-            });
-          }}
-        >
-          Join
-        </Button>
-      );
+  const base = (
+    <Button
+      onClick={e => {
+        e.preventDefault();
 
-      return (
-        // @ts-ignore
-        <MutationResult
-          {...mutationResult}
-          Data={() => <LeaveNjam {...props} />}
-        >
-          {base}
-        </MutationResult>
-      );
-    }}
-  </Mutation>
-);
+        joinNjam({
+          variables: props,
+        });
+      }}
+    >
+      Join
+    </Button>
+  );
+
+  return (
+    // @ts-ignore
+    <MutationResult {...mutationResult} Data={() => <LeaveNjam {...props} />}>
+      {base}
+    </MutationResult>
+  );
+};
 
 const keys = ['location', 'time', 'organizer', 'ordered', 'you'] as const;
 const columns = keys.map(capitalize);
