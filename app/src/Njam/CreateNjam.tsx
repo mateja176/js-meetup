@@ -6,6 +6,7 @@ import { any } from 'ramda';
 import React from 'react';
 import { Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
+import { Box } from 'rebass';
 import urlJoin from 'url-join';
 import {
   createNjamMutation,
@@ -32,23 +33,6 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
   const [createNjam, { data, loading, error }] = useMutation<
     CreateNjamMutation
   >(createNjamMutation);
-
-  const createNjamButton = (
-    <Button
-      disabled={disabled}
-      onClick={() => {
-        form.validateFieldsAndScroll((error, values) => {
-          if (!error) {
-            const variables = mapNjamFormValues(userId)(values);
-
-            createNjam({ variables });
-          }
-        });
-      }}
-    >
-      Create Njam
-    </Button>
-  );
 
   return (
     <FormContainer>
@@ -78,29 +62,27 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
           }
         }}
       </Query>
-      {(() => {
-        if (loading) {
-          return <Button loading />;
-        } else if (error) {
-          return (
-            <>
-              {createNjamButton}
-              <br />
-              <br />
-              <Err {...error} />
-            </>
-          );
-        }
-        if (data) {
-          const {
-            createNjam: { id },
-          } = data;
+      <Button
+        loading={loading}
+        disabled={disabled}
+        onClick={() => {
+          form.validateFieldsAndScroll((error, values) => {
+            if (!error) {
+              const variables = mapNjamFormValues(userId)(values);
 
-          return <Redirect to={urlJoin(routePath.njams, id)} />;
-        } else {
-          return createNjamButton;
-        }
-      })()}
+              createNjam({ variables });
+            }
+          });
+        }}
+      >
+        Create Njam
+      </Button>
+      {error && (
+        <Box mt={3}>
+          <Err {...error} />
+        </Box>
+      )}
+      {data && <Redirect to={urlJoin(routePath.njams, data.createNjam.id)} />}
     </FormContainer>
   );
 };
