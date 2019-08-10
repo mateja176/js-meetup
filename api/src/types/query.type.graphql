@@ -11,4 +11,6 @@ type Query {
     page: Int
     pageSize: Int
   ): [Njam]
+  njamsCount: Int
+  myNjamsCount(userId: ID!): Int
 }

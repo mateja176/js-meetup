@@ -66,6 +66,8 @@ export type Query = {
   njams?: Maybe<Array<Maybe<Njam>>>;
   njam?: Maybe<Njam>;
   myNjams?: Maybe<Array<Maybe<Njam>>>;
+  njamsCount?: Maybe<Scalars["Int"]>;
+  myNjamsCount?: Maybe<Scalars["Int"]>;
 };
 
 export type QueryUserArgs = {
@@ -85,6 +87,10 @@ export type QueryMyNjamsArgs = {
   userId: Scalars["ID"];
   page?: Maybe<Scalars["Int"]>;
   pageSize?: Maybe<Scalars["Int"]>;
+};
+
+export type QueryMyNjamsCountArgs = {
+  userId: Scalars["ID"];
 };
 
 export type User = {
