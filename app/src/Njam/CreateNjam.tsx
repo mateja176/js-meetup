@@ -1,9 +1,10 @@
+import { useMutation } from '@apollo/react-hooks';
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import { any } from 'ramda';
 import React from 'react';
-import { Mutation, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { Redirect, RouteComponentProps } from 'react-router';
 import urlJoin from 'url-join';
 import {
@@ -27,6 +28,27 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
   const disabled =
     !form.isFieldsTouched() ||
     any(Boolean)(Object.values(form.getFieldsError()));
+
+  const [createNjam, { data, loading, error }] = useMutation<
+    CreateNjamMutation
+  >(createNjamMutation);
+
+  const createNjamButton = (
+    <Button
+      disabled={disabled}
+      onClick={() => {
+        form.validateFieldsAndScroll((error, values) => {
+          if (!error) {
+            const variables = mapNjamFormValues(userId)(values);
+
+            createNjam({ variables });
+          }
+        });
+      }}
+    >
+      Create Njam
+    </Button>
+  );
 
   return (
     <FormContainer>
@@ -56,48 +78,29 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
           }
         }}
       </Query>
-      <Mutation<CreateNjamMutation> mutation={createNjamMutation}>
-        {(createNjam, { data, loading, error }) => {
-          const createNjamButton = (
-            <Button
-              disabled={disabled}
-              onClick={() => {
-                form.validateFieldsAndScroll((error, values) => {
-                  if (!error) {
-                    const variables = mapNjamFormValues(userId)(values);
-
-                    createNjam({ variables });
-                  }
-                });
-              }}
-            >
-              Create Njam
-            </Button>
+      {(() => {
+        if (loading) {
+          return <Button loading />;
+        } else if (error) {
+          return (
+            <>
+              {createNjamButton}
+              <br />
+              <br />
+              <Err {...error} />
+            </>
           );
+        }
+        if (data) {
+          const {
+            createNjam: { id },
+          } = data;
 
-          if (loading) {
-            return <Button loading />;
-          } else if (error) {
-            return (
-              <>
-                {createNjamButton}
-                <br />
-                <br />
-                <Err {...error} />
-              </>
-            );
-          }
-          if (data) {
-            const {
-              createNjam: { id },
-            } = data;
-
-            return <Redirect to={urlJoin(routePath.njams, id)} />;
-          } else {
-            return createNjamButton;
-          }
-        }}
-      </Mutation>
+          return <Redirect to={urlJoin(routePath.njams, id)} />;
+        } else {
+          return createNjamButton;
+        }
+      })()}
     </FormContainer>
   );
 };
