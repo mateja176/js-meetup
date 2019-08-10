@@ -13,6 +13,9 @@ export type Mutation = {
   createUser?: Maybe<User>;
   createNjam?: Maybe<Njam>;
   orderNjam?: Maybe<Njam>;
+  deleteNjam?: Maybe<Njam>;
+  joinNjam?: Maybe<Njam>;
+  leaveNjam?: Maybe<Njam>;
 };
 
 export type MutationCreateUserArgs = {
@@ -28,6 +31,20 @@ export type MutationCreateNjamArgs = {
 };
 
 export type MutationOrderNjamArgs = {
+  njamId: Scalars["ID"];
+};
+
+export type MutationDeleteNjamArgs = {
+  njamId: Scalars["ID"];
+};
+
+export type MutationJoinNjamArgs = {
+  userId: Scalars["ID"];
+  njamId: Scalars["ID"];
+};
+
+export type MutationLeaveNjamArgs = {
+  userId: Scalars["ID"];
   njamId: Scalars["ID"];
 };
 
@@ -48,14 +65,26 @@ export type Query = {
   user?: Maybe<User>;
   njams?: Maybe<Array<Maybe<Njam>>>;
   njam?: Maybe<Njam>;
+  myNjams?: Maybe<Array<Maybe<Njam>>>;
 };
 
 export type QueryUserArgs = {
   id: Scalars["ID"];
 };
 
+export type QueryNjamsArgs = {
+  page?: Maybe<Scalars["Int"]>;
+  pageSize?: Maybe<Scalars["Int"]>;
+};
+
 export type QueryNjamArgs = {
   id: Scalars["ID"];
+};
+
+export type QueryMyNjamsArgs = {
+  userId: Scalars["ID"];
+  page?: Maybe<Scalars["Int"]>;
+  pageSize?: Maybe<Scalars["Int"]>;
 };
 
 export type User = {
