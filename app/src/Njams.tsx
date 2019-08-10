@@ -22,7 +22,6 @@ import {
   leaveNjamMutation,
   LeaveNjamResult,
   myNjamsQuery,
-  NjamActionParams,
   njamsQuery,
   NjamsQuery,
 } from './apollo';
@@ -30,7 +29,7 @@ import { Err, MutationResult, StatusCircle } from './components';
 import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
-const LeaveNjam: React.FC<NjamActionParams> = props => {
+const LeaveNjam: React.FC<MutationLeaveNjamArgs> = props => {
   const [leaveNjam, mutationResult] = useMutation<
     LeaveNjamResult,
     MutationLeaveNjamArgs
@@ -58,7 +57,7 @@ const LeaveNjam: React.FC<NjamActionParams> = props => {
   );
 };
 
-const JoinNjam: React.FC<NjamActionParams> = props => {
+const JoinNjam: React.FC<MutationJoinNjamArgs> = props => {
   const [joinNjam, mutationResult] = useMutation<
     JoinNjamResult,
     MutationJoinNjamArgs
@@ -306,6 +305,10 @@ const Njams: React.FC<NjamsProps> = ({
           organizer,
           participants,
         }) => {
+          const isParticipating = participants
+            .map(({ id }) => id)
+            .includes(userId);
+
           return (
             <NavLink to={urlJoin(path, id)}>
               <List.Item
@@ -329,7 +332,7 @@ const Njams: React.FC<NjamsProps> = ({
                 <Col span={largerSpan}>
                   {organizer.id === userId ? (
                     <Typography.Text>Author</Typography.Text>
-                  ) : participants.map(({ id }) => id).includes(userId) ? (
+                  ) : isParticipating ? (
                     <LeaveNjam userId={userId} njamId={id} />
                   ) : (
                     <JoinNjam userId={userId} njamId={id} />
