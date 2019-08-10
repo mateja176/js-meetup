@@ -9,7 +9,11 @@ import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
-import { Njam } from '../../api/src/models';
+import {
+  MutationJoinNjamArgs,
+  MutationLeaveNjamArgs,
+  Njam,
+} from '../../api/src/models';
 import {
   joinNjamMutation,
   JoinNjamResult,
@@ -25,9 +29,10 @@ import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
 const LeaveNjam: React.FC<NjamActionParams> = props => {
-  const [leaveNjam, mutationResult] = useMutation<LeaveNjamResult>(
-    leaveNjamMutation,
-  );
+  const [leaveNjam, mutationResult] = useMutation<
+    LeaveNjamResult,
+    MutationLeaveNjamArgs
+  >(leaveNjamMutation);
 
   const base = (
     <Button
@@ -52,9 +57,10 @@ const LeaveNjam: React.FC<NjamActionParams> = props => {
 };
 
 const JoinNjam: React.FC<NjamActionParams> = props => {
-  const [joinNjam, mutationResult] = useMutation<JoinNjamResult>(
-    joinNjamMutation,
-  );
+  const [joinNjam, mutationResult] = useMutation<
+    JoinNjamResult,
+    MutationJoinNjamArgs
+  >(joinNjamMutation);
 
   const base = (
     <Button

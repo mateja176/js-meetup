@@ -7,6 +7,7 @@ import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
+import { MutationCreateNjamArgs } from '../../../api/src/models';
 import {
   createNjamMutation,
   CreateNjamMutation,
@@ -31,7 +32,8 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
     any(Boolean)(Object.values(form.getFieldsError()));
 
   const [createNjam, { data, loading, error }] = useMutation<
-    CreateNjamMutation
+    CreateNjamMutation,
+    MutationCreateNjamArgs
   >(createNjamMutation);
 
   const usersQueryResult = useQuery<UsersQuery>(usersQuery);
