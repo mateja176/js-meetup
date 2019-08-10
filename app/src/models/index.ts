@@ -13,7 +13,7 @@ export interface NjamFormValues
   participantIds: Scalars['ID'][];
 }
 
-export const routeNames = ['njams', 'createNjam'] as const;
+export const routeNames = ['njams', 'createNjam', 'users'] as const;
 
 export type RouteName = typeof routeNames[number];
 

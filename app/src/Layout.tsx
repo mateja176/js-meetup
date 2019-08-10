@@ -16,6 +16,7 @@ import { routeName, routePath } from './models';
 import Njam, { CreateNjam } from './Njam';
 import Njams from './Njams';
 import SignIn from './SignIn';
+import Users from './Users';
 
 type Icon = React.ComponentType<Omit<IconProps, 'type'>>;
 
@@ -36,6 +37,11 @@ const routes: IRoute[] = [
     text: routeName.createNjam,
     Icon: (props => <AntIcon {...props} type="plus-circle" />) as Icon,
     Component: CreateNjam as any,
+  },
+  {
+    text: routeName.users,
+    Icon: (props => <AntIcon {...props} type="user" />) as Icon,
+    Component: Users,
   },
 ].map(({ text, ...route }) => {
   return {
