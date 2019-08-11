@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
+import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
 import qs from 'query-string';
-import { always, equals } from 'ramda';
+import { always } from 'ramda';
 import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
@@ -21,13 +22,41 @@ import {
   JoinNjamResult,
   leaveNjamMutation,
   LeaveNjamResult,
-  myNjamsQuery,
-  njamsQuery,
+  MyNjamsQuery,
   NjamsQuery,
+  NjamSummaries,
+  NjamSummary,
 } from './apollo';
 import { Err, MutationResult, StatusCircle } from './components';
-import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
+
+const njamsAndCount = gql`
+  query($page: Int, $pageSize: Int) {
+    njams(page: $page, pageSize: $pageSize) {
+      ...NjamSummary
+    }
+    njamsCount
+  }
+  ${NjamSummary}
+`;
+
+interface NjamsAndCount extends NjamsQuery {
+  njamsCount: number;
+}
+
+const myNjamsAndCount = gql`
+  query($userId: ID!, $page: Int, $pageSize: Int) {
+    myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
+      ...NjamSummary
+    }
+    myNjamsCount(userId: $userId)
+  }
+  ${NjamSummary}
+`;
+
+interface MyNjamsAndCount extends MyNjamsQuery {
+  myNjamsCount: number;
+}
 
 const LeaveNjam: React.FC<MutationLeaveNjamArgs> = props => {
   const [leaveNjam, mutationResult] = useMutation<
@@ -113,12 +142,12 @@ interface Filter {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
-const initiallyLoadedAll = false;
-
 const initiallyLoaded: Record<string, NjamsQuery['njams'][0]> = {};
 
 const initialPage = 1;
 const pageSize = 10;
+
+const initialQuery = njamsAndCount;
 
 export interface NjamsProps extends RouteComponentProps {}
 
@@ -129,16 +158,13 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [loadedAll, setLoadedAll] = React.useState(initiallyLoadedAll);
-
   const [loaded, setLoaded] = React.useState(initiallyLoaded);
   const loadedNjams = Object.values(loaded);
 
   const [page, setPage] = React.useState(initialPage);
 
-  const [query, _setQuery] = React.useState(njamsQuery);
+  const [query, _setQuery] = React.useState(initialQuery);
   const setQuery = (newQuery: Parameters<typeof _setQuery>[0]) => {
-    setLoadedAll(initiallyLoadedAll);
     setLoaded(initiallyLoaded);
     setPage(initialPage);
     _setQuery(newQuery);
@@ -194,36 +220,39 @@ const Njams: React.FC<NjamsProps> = ({
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
   const { error, data, loading, refetch } = useQuery<
-    NjamsQuery,
+    NjamsAndCount & MyNjamsAndCount,
     QueryNjamsArgs & QueryMyNjamsArgs
   >(query, {
     pollInterval: 1000,
     variables: { userId, page, pageSize },
   });
 
-  const [njams] = Object.values(data!);
+  const [njams = [], count = 0] = Object.values(data!) as [
+    NjamSummaries,
+    number
+  ];
 
   React.useEffect(() => {
-    if (equals(njams, [])) {
-      setLoadedAll(true);
-    }
+    const newNjams = njams.filter(({ id }) => {
+      const loadedNjamsIds = loadedNjams.map(njam => njam.id);
 
-    const newNjams = (njams || []).filter(
-      ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
-    );
+      return !loadedNjamsIds.includes(id);
+    });
 
     if (newNjams.length) {
-      setLoaded(
-        newNjams.reduce(
-          (loadedNjams, njam) => ({
-            ...loadedNjams,
-            [njam.id]: njam,
-          }),
-          loaded,
-        ),
+      const newlyLoaded = newNjams.reduce(
+        (_loaded, njam) => ({
+          ..._loaded,
+          [njam.id]: njam,
+        }),
+        loaded,
       );
+
+      setLoaded(newlyLoaded);
     }
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [njams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadedAll = loadedNjams.length === count;
 
   return (
     <Box>
@@ -246,7 +275,7 @@ const Njams: React.FC<NjamsProps> = ({
             checkedChildren="All Njams"
             unCheckedChildren="My Njams"
             onChange={on => {
-              setQuery(on ? myNjamsQuery : njamsQuery);
+              setQuery(on ? myNjamsAndCount : initialQuery);
             }}
           />
         </Box>
