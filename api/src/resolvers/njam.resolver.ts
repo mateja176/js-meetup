@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { Njam } from '../models';
 
 export default {
   Query: {
@@ -36,6 +37,10 @@ export default {
     deleteNjam: async (root, args, context, info) => await context.njamService.deleteNjam(args.njamId),
     joinNjam: async (root, args, context, info) => await context.njamService.joinNjam(args.userId, args.njamId),
     leaveNjam: async (root, args, context, info) => await context.njamService.leaveNjam(args.userId, args.njamId),
+    editNjam: async (root, args, context, info) => {
+      const njam = { ...args } as Njam;
+      return await context.njamService.editNjam(njam);
+    }
   },
   Njam: {
     participants: async (root, args, context, info) => {
