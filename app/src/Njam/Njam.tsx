@@ -71,11 +71,14 @@ const Njam: React.FC<NjamProps> = ({
   >(editNjamMutation);
 
   const save = () => {
-    const values = form.getFieldsValue() as NjamFormValues;
+    form.validateFieldsAndScroll((error, values) => {
+      if (!error) {
+        const variables = mapNjamFormValues(userId)(values);
 
-    const variables = mapNjamFormValues(userId)(values);
-
-    editNjam({ variables: { ...variables, id } });
+        editNjam({ variables: { ...variables, id } });
+        toggleReadOnly();
+      }
+    });
   };
 
   const { data, error, loading } = useQuery<
@@ -133,14 +136,7 @@ const Njam: React.FC<NjamProps> = ({
                   }}
                   style={{ marginRight: 10 }}
                 />
-                <Button
-                  icon="check"
-                  onClick={() => {
-                    toggleReadOnly();
-
-                    save();
-                  }}
-                />
+                <Button icon="check" onClick={save} />
               </Box>
             )}
           </Box>
