@@ -37,7 +37,7 @@ import {
   NjamSummary,
 } from './apollo';
 import { Err } from './components';
-import { Njams } from './models';
+import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
 const toggleOrderedMutation = gql`
@@ -308,11 +308,11 @@ const Njams: React.FC<NjamsProps> = ({
                     updateQuery: (oldNjamsAndCount, { fetchMoreResult }) => {
                       const [[njamsKey, oldNjams], countEntry] = Object.entries(
                         oldNjamsAndCount,
-                      ) as [[string, Njams], [string, number]];
+                      ) as [[string, INjams], [string, number]];
 
                       const [newNjams] = Object.values(
                         fetchMoreResult!,
-                      ) as Njams[];
+                      ) as INjams[];
 
                       const existingIds = oldNjams.map(({ id }) => id);
 
