@@ -184,7 +184,7 @@ const Njams: React.FC<NjamsProps> = ({
     'all',
     'upcoming',
     'inProgress',
-    'myNjams',
+    'byYou',
     'past',
   ] as const;
 
@@ -210,7 +210,7 @@ const Njams: React.FC<NjamsProps> = ({
       },
     },
     {
-      name: filterName.myNjams,
+      name: filterName.byYou,
       value: ({ organizer: { id } }) => {
         return id === userId;
       },
@@ -283,7 +283,7 @@ const Njams: React.FC<NjamsProps> = ({
           <Switch
             loading={loading}
             checkedChildren="All Njams"
-            unCheckedChildren="My Njams"
+            unCheckedChildren="Going to"
             onChange={on => {
               setQuery(on ? myNjamsAndCount : initialQuery);
             }}
