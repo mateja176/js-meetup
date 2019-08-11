@@ -217,7 +217,13 @@ const Njams: React.FC<NjamsProps> = ({
 
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
-  const { error, data, loading, fetchMore } = useQuery<
+  const {
+    error,
+    data,
+    loading,
+    fetchMore,
+    // refetch,
+  } = useQuery<
     NjamsAndCount & MyNjamsAndCount,
     QueryNjamsArgs & QueryMyNjamsArgs
   >(query, {
@@ -231,6 +237,7 @@ const Njams: React.FC<NjamsProps> = ({
   ];
 
   const loadedAll = njams.length === count;
+  const page = Math.ceil(njams.length / pageSize);
 
   const [toggleOrdered, toggleOrderedResults] = useMutation<
     {},
@@ -263,6 +270,23 @@ const Njams: React.FC<NjamsProps> = ({
             }}
           />
         </Box>
+        {/* <Box ml={4} mt={1}>
+          <Button
+            icon="reload"
+            onClick={() => {
+              refetch({ userId, page });
+            }}
+          />
+        </Box> */}
+        {/* <Box>
+          <Button
+            onClick={() => {
+              refetch({ userId, pageSize: 100 });
+            }}
+          >
+            Load 100
+          </Button>
+        </Box> */}
       </Flex>
       <List
         loading={loading}
@@ -276,7 +300,7 @@ const Njams: React.FC<NjamsProps> = ({
                 onClick={() => {
                   fetchMore({
                     variables: {
-                      page: njams.length / pageSize + 1,
+                      page: page + 1,
                     },
                     updateQuery: (oldNjamsAndCount, { fetchMoreResult }) => {
                       const [[njamsKey, oldNjams], countEntry] = Object.entries(
