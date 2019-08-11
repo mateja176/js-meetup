@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost';
-import { Njam } from '../../../../api/src/models';
+import { Njam, Query } from '../../../../api/src/models';
 import { Users } from '../../models';
 import { CompleteNjam, CompleteUser, NjamSummary } from './fragments';
 
@@ -55,4 +55,24 @@ export const njamQuery = gql`
 
 export interface NjamQuery {
   njam: Njam;
+}
+
+export const njamsCountQuery = gql`
+  {
+    njamsCount
+  }
+`;
+
+export interface NjamsCountQuery {
+  njamsCount: Query['njamsCount'];
+}
+
+export const myNjamsCountQuery = gql`
+  query($userId: ID!) {
+    njamsCount(userId: $userId)
+  }
+`;
+
+export interface myNjamsCountQuery {
+  myNjamsCount: Query['myNjamsCount'];
 }
