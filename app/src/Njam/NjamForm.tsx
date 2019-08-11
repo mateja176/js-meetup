@@ -75,7 +75,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
       >
         {form.getFieldDecorator('ordered', {
           initialValue: ordered,
-          rules: [{ type: 'boolean' }],
+          valuePropName: 'checked',
         })(<Switch style={readOnlyStyle} />)}
       </Form.Item>
       <Form.Item label="Description">

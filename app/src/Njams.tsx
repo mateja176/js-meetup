@@ -35,8 +35,16 @@ import {
   NjamSummaries,
   NjamSummary,
 } from './apollo';
-import { Err, StatusCircle } from './components';
+import { Err } from './components';
 import { createMoment, useUserId } from './utils';
+
+const toggleOrderedMutation = gql`
+  mutation($id: ID!, $ordered: Boolean) {
+    editNjam(id: $id, ordered: $ordered) {
+      id
+    }
+  }
+`;
 
 const njamsAndCount = gql`
   query($page: Int, $pageSize: Int) {
@@ -145,7 +153,7 @@ interface Filter {
 const oneHourInThePast = moment().subtract(1, 'hour');
 
 const initialPage = 1;
-const pageSize = 1;
+const pageSize = 10;
 
 const initialQuery = njamsAndCount;
 
@@ -223,6 +231,12 @@ const Njams: React.FC<NjamsProps> = ({
   ];
 
   const loadedAll = njams.length === count;
+
+  const [toggleOrdered, toggleOrderedResults] = useMutation<
+    {},
+    Pick<Njam, 'id' | 'ordered'>
+  >(toggleOrderedMutation);
+  const toggleOrderedError = toggleOrderedResults.error || new Error('');
 
   return (
     <Box>
@@ -336,11 +350,24 @@ const Njams: React.FC<NjamsProps> = ({
                 <Column>{time}</Column>
                 <Column>{organizer.name}</Column>
                 <Col span={smallerSpan}>
-                  {ordered ? (
-                    <StatusCircle color="lightgreen">Yes</StatusCircle>
-                  ) : (
-                    <StatusCircle color="lightcoral">No</StatusCircle>
-                  )}
+                  <Popover
+                    visible={!!toggleOrderedResults.error}
+                    title={toggleOrderedError.name}
+                    content={toggleOrderedError.message}
+                  >
+                    <Switch
+                      checkedChildren="Yes"
+                      unCheckedChildren="No"
+                      disabled={userId !== organizer.id}
+                      loading={toggleOrderedResults.loading}
+                      defaultChecked={ordered}
+                      onChange={(_, e) => {
+                        e.preventDefault();
+
+                        toggleOrdered({ variables: { id, ordered: !ordered } });
+                      }}
+                    />
+                  </Popover>
                 </Col>
                 <Col span={largerSpan}>
                   {organizer.id === userId ? (
