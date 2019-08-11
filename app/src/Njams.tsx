@@ -26,6 +26,7 @@ import {
   QueryNjamsArgs,
 } from '../../api/src/models';
 import {
+  CompleteNjam,
   joinNjamMutation,
   JoinNjamResult,
   leaveNjamMutation,
@@ -41,9 +42,10 @@ import { createMoment, useUserId } from './utils';
 const toggleOrderedMutation = gql`
   mutation($id: ID!, $ordered: Boolean) {
     editNjam(id: $id, ordered: $ordered) {
-      id
+      ...CompleteNjam
     }
   }
+  ${CompleteNjam}
 `;
 
 const njamsAndCount = gql`

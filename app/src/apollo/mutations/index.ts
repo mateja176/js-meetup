@@ -30,9 +30,10 @@ export interface CreateNjamMutation {
 export const leaveNjamMutation = gql`
   mutation($userId: ID!, $njamId: ID!) {
     leaveNjam(userId: $userId, njamId: $njamId) {
-      id
+      ...CompleteNjam
     }
   }
+  ${CompleteNjam}
 `;
 
 export interface LeaveNjamResult {
@@ -42,9 +43,10 @@ export interface LeaveNjamResult {
 export const joinNjamMutation = gql`
   mutation($userId: ID!, $njamId: ID!) {
     joinNjam(userId: $userId, njamId: $njamId) {
-      id
+      ...CompleteNjam
     }
   }
+  ${CompleteNjam}
 `;
 
 export interface JoinNjamResult {
