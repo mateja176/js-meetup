@@ -32,9 +32,10 @@ const editNjamMutation = gql`
       time: $time
       ordered: $ordered
     ) {
-      id
+      ...CompleteNjam # https://www.apollographql.com/docs/react/advanced/caching/#automatic-cache-updates
     }
   }
+  ${CompleteNjam}
 `;
 
 const query = gql`
