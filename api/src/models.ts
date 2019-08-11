@@ -16,6 +16,7 @@ export type Mutation = {
   deleteNjam?: Maybe<Njam>;
   joinNjam?: Maybe<Njam>;
   leaveNjam?: Maybe<Njam>;
+  editNjam?: Maybe<Njam>;
 };
 
 export type MutationCreateUserArgs = {
@@ -28,6 +29,7 @@ export type MutationCreateNjamArgs = {
   description?: Maybe<Scalars["String"]>;
   time: Scalars["String"];
   organizerId: Scalars["ID"];
+  participantIds?: Maybe<Array<Scalars["ID"]>>;
 };
 
 export type MutationOrderNjamArgs = {
@@ -46,6 +48,14 @@ export type MutationJoinNjamArgs = {
 export type MutationLeaveNjamArgs = {
   userId: Scalars["ID"];
   njamId: Scalars["ID"];
+};
+
+export type MutationEditNjamArgs = {
+  id: Scalars["ID"];
+  location?: Maybe<Scalars["String"]>;
+  description?: Maybe<Scalars["String"]>;
+  time?: Maybe<Scalars["String"]>;
+  ordered?: Maybe<Scalars["Boolean"]>;
 };
 
 export type Njam = {

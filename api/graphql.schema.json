@@ -419,6 +419,20 @@
                   "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null
+              },
+              {
+                "name": "participantIds",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                  }
+                },
+                "defaultValue": null
               }
             ],
             "type": { "kind": "OBJECT", "name": "Njam", "ofType": null },
@@ -514,6 +528,49 @@
                   "name": null,
                   "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
+                "defaultValue": null
+              }
+            ],
+            "type": { "kind": "OBJECT", "name": "Njam", "ofType": null },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "editNjam",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "location",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+                "defaultValue": null
+              },
+              {
+                "name": "description",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+                "defaultValue": null
+              },
+              {
+                "name": "time",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+                "defaultValue": null
+              },
+              {
+                "name": "ordered",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": null
               }
             ],
