@@ -201,7 +201,7 @@ const Njams: React.FC<NjamsProps> = ({
     variables: { userId, page, pageSize },
   });
 
-  const [njams] = Object.values(data!) as INjams[];
+  const [njams] = Object.values(data!);
 
   React.useEffect(() => {
     if (equals(njams, [])) {
