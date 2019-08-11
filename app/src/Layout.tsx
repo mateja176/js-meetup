@@ -102,6 +102,7 @@ const Layout: React.FC<RouteComponentProps> = ({
           <Route exact key={path} path={path} component={Component} />
         ))}
         <Route path={urlJoin(routePath.njams, ':id')} component={Njam} />
+        <Route render={() => 'Not Found'} />
       </Switch>
     </>
   );

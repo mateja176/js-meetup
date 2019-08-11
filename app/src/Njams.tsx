@@ -1,17 +1,26 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  List,
+  Popover,
+  Row,
+  Switch,
+  Tabs,
+  Typography,
+} from 'antd';
+import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
 import qs from 'query-string';
-import { always, equals } from 'ramda';
+import { always } from 'ramda';
 import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
 import {
   MutationJoinNjamArgs,
-  MutationLeaveNjamArgs,
   Njam,
   QueryMyNjamsArgs,
   QueryNjamsArgs,
@@ -21,70 +30,91 @@ import {
   JoinNjamResult,
   leaveNjamMutation,
   LeaveNjamResult,
-  myNjamsQuery,
-  NjamActionParams,
-  njamsQuery,
+  MyNjamsQuery,
   NjamsQuery,
+  NjamSummaries,
+  NjamSummary,
 } from './apollo';
-import { Err, MutationResult, StatusCircle } from './components';
-import { Njams as INjams } from './models';
+import { Err, StatusCircle } from './components';
 import { createMoment, useUserId } from './utils';
 
-const LeaveNjam: React.FC<NjamActionParams> = props => {
-  const [leaveNjam, mutationResult] = useMutation<
-    LeaveNjamResult,
-    MutationLeaveNjamArgs
-  >(leaveNjamMutation);
+const njamsAndCount = gql`
+  query($page: Int, $pageSize: Int) {
+    njams(page: $page, pageSize: $pageSize) {
+      ...NjamSummary
+    }
+    njamsCount
+  }
+  ${NjamSummary}
+`;
 
-  const base = (
-    <Button
-      onClick={e => {
-        e.preventDefault();
+interface NjamsAndCount extends NjamsQuery {
+  njamsCount: number;
+}
 
-        leaveNjam({
-          variables: props,
-        });
-      }}
-    >
-      Leave
-    </Button>
-  );
+const myNjamsAndCount = gql`
+  query($userId: ID!, $page: Int, $pageSize: Int) {
+    myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
+      ...NjamSummary
+    }
+    myNjamsCount(userId: $userId)
+  }
+  ${NjamSummary}
+`;
 
-  return (
-    // @ts-ignore
-    <MutationResult {...mutationResult} Data={() => <JoinNjam {...props} />}>
-      {base}
-    </MutationResult>
-  );
-};
+interface MyNjamsAndCount extends MyNjamsQuery {
+  myNjamsCount: number;
+}
 
-const JoinNjam: React.FC<NjamActionParams> = props => {
-  const [joinNjam, mutationResult] = useMutation<
-    JoinNjamResult,
+const createNjamAction = ({
+  mutation,
+  getInverse,
+  text,
+}: {
+  mutation: Parameters<typeof useMutation>[0];
+  getInverse: () => React.ComponentType<MutationJoinNjamArgs>;
+  text: string;
+}): React.FC<MutationJoinNjamArgs> => variables => {
+  const [mutationFunction, { loading, error, data }] = useMutation<
+    JoinNjamResult & LeaveNjamResult,
     MutationJoinNjamArgs
-  >(joinNjamMutation);
+  >(mutation, { variables });
 
-  const base = (
-    <Button
-      onClick={e => {
-        e.preventDefault();
+  const { name, message } = error || new Error('');
 
-        joinNjam({
-          variables: props,
-        });
-      }}
-    >
-      Join
-    </Button>
-  );
+  const dataLoaded = Object.values(data || {}).length;
 
-  return (
-    // @ts-ignore
-    <MutationResult {...mutationResult} Data={() => <LeaveNjam {...props} />}>
-      {base}
-    </MutationResult>
+  const Inverse = getInverse();
+
+  return dataLoaded ? (
+    <Inverse {...variables} />
+  ) : (
+    <Popover visible={!!error} title={name} content={message}>
+      <Button
+        loading={loading}
+        onClick={e => {
+          e.preventDefault();
+
+          mutationFunction();
+        }}
+      >
+        {text}
+      </Button>
+    </Popover>
   );
 };
+
+const LeaveNjam = createNjamAction({
+  mutation: leaveNjamMutation,
+  text: 'Leave',
+  getInverse: () => JoinNjam,
+});
+
+const JoinNjam = createNjamAction({
+  mutation: joinNjamMutation,
+  text: 'Join',
+  getInverse: () => LeaveNjam,
+});
 
 const keys = ['location', 'time', 'organizer', 'ordered', 'you'] as const;
 const columns = keys.map(capitalize);
@@ -114,12 +144,12 @@ interface Filter {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
-const initiallyLoadedAll = false;
-
 const initiallyLoaded: Record<string, NjamsQuery['njams'][0]> = {};
 
 const initialPage = 1;
 const pageSize = 10;
+
+const initialQuery = njamsAndCount;
 
 export interface NjamsProps extends RouteComponentProps {}
 
@@ -130,16 +160,13 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [loadedAll, setLoadedAll] = React.useState(initiallyLoadedAll);
-
   const [loaded, setLoaded] = React.useState(initiallyLoaded);
   const loadedNjams = Object.values(loaded);
 
   const [page, setPage] = React.useState(initialPage);
 
-  const [query, _setQuery] = React.useState(njamsQuery);
+  const [query, _setQuery] = React.useState(initialQuery);
   const setQuery = (newQuery: Parameters<typeof _setQuery>[0]) => {
-    setLoadedAll(initiallyLoadedAll);
     setLoaded(initiallyLoaded);
     setPage(initialPage);
     _setQuery(newQuery);
@@ -149,7 +176,7 @@ const Njams: React.FC<NjamsProps> = ({
     'all',
     'upcoming',
     'inProgress',
-    'myNjams',
+    'byYou',
     'past',
   ] as const;
 
@@ -175,7 +202,7 @@ const Njams: React.FC<NjamsProps> = ({
       },
     },
     {
-      name: filterName.myNjams,
+      name: filterName.byYou,
       value: ({ organizer: { id } }) => {
         return id === userId;
       },
@@ -195,36 +222,39 @@ const Njams: React.FC<NjamsProps> = ({
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
   const { error, data, loading, refetch } = useQuery<
-    NjamsQuery,
+    NjamsAndCount & MyNjamsAndCount,
     QueryNjamsArgs & QueryMyNjamsArgs
   >(query, {
     pollInterval: 1000,
     variables: { userId, page, pageSize },
   });
 
-  const [njams] = Object.values(data!) as INjams[];
+  const [njams = [], count = 0] = Object.values(data!) as [
+    NjamSummaries,
+    number
+  ];
 
   React.useEffect(() => {
-    if (equals(njams, [])) {
-      setLoadedAll(true);
-    }
+    const newNjams = njams.filter(({ id }) => {
+      const loadedNjamsIds = loadedNjams.map(njam => njam.id);
 
-    const newNjams = (njams || []).filter(
-      ({ id }) => !loadedNjams.map(njam => njam.id).includes(id),
-    );
+      return !loadedNjamsIds.includes(id);
+    });
 
     if (newNjams.length) {
-      setLoaded(
-        newNjams.reduce(
-          (loadedNjams, njam) => ({
-            ...loadedNjams,
-            [njam.id]: njam,
-          }),
-          loaded,
-        ),
+      const newlyLoaded = newNjams.reduce(
+        (_loaded, njam) => ({
+          ..._loaded,
+          [njam.id]: njam,
+        }),
+        loaded,
       );
+
+      setLoaded(newlyLoaded);
     }
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [njams]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const loadedAll = loadedNjams.length === count;
 
   return (
     <Box>
@@ -245,9 +275,9 @@ const Njams: React.FC<NjamsProps> = ({
           <Switch
             loading={loading}
             checkedChildren="All Njams"
-            unCheckedChildren="My Njams"
+            unCheckedChildren="Going to"
             onChange={on => {
-              setQuery(on ? myNjamsQuery : njamsQuery);
+              setQuery(on ? myNjamsAndCount : initialQuery);
             }}
           />
         </Box>
@@ -306,6 +336,10 @@ const Njams: React.FC<NjamsProps> = ({
           organizer,
           participants,
         }) => {
+          const isParticipating = participants
+            .map(({ id }) => id)
+            .includes(userId);
+
           return (
             <NavLink to={urlJoin(path, id)}>
               <List.Item
@@ -329,7 +363,7 @@ const Njams: React.FC<NjamsProps> = ({
                 <Col span={largerSpan}>
                   {organizer.id === userId ? (
                     <Typography.Text>Author</Typography.Text>
-                  ) : participants.map(({ id }) => id).includes(userId) ? (
+                  ) : isParticipating ? (
                     <LeaveNjam userId={userId} njamId={id} />
                   ) : (
                     <JoinNjam userId={userId} njamId={id} />
