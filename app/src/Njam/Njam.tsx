@@ -116,6 +116,7 @@ const Njam: React.FC<NjamProps> = ({
           participantIds: participants.map(({ id }) => id),
         }}
         users={users}
+        userId={userId}
       />
     </FormContainer>
   );

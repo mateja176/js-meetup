@@ -16,6 +16,6 @@ export const mapNjamFormValues = (userId: User['id']) => ({
   return {
     ...values,
     time: time.toDate().toString(),
-    participantIds: participantIds.filter(id => id !== userId),
+    participantIds: participantIds.concat(userId),
   } as MutationCreateNjamArgs;
 };

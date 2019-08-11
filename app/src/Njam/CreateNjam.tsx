@@ -67,6 +67,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
         }}
         form={form}
         users={users}
+        userId={userId}
         hideOrdered
       />
       <Button
