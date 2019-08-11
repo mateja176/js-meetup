@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import { Njam } from '../models';
 
 export default {
   Query: {
@@ -10,6 +11,16 @@ export default {
   },
   Mutation: {
     createNjam: async (root, args, context, info) => {
+      let participants: string[] = [];
+
+      if(args.participantIds) {
+        participants = [...args.participantIds];
+      }
+
+      if (!participants.includes(args.organizerId)) {
+        participants.push(args.organizerId);
+      }
+
       const njam = {
         id: uuid(),
         location: args.location,
@@ -17,7 +28,7 @@ export default {
         time: args.time,
         ordered: false,
         organizer: args.organizerId,
-        participants: [args.organizerId]
+        participants: participants
       };
 
       return await context.njamService.createNjam(njam);
@@ -26,6 +37,10 @@ export default {
     deleteNjam: async (root, args, context, info) => await context.njamService.deleteNjam(args.njamId),
     joinNjam: async (root, args, context, info) => await context.njamService.joinNjam(args.userId, args.njamId),
     leaveNjam: async (root, args, context, info) => await context.njamService.leaveNjam(args.userId, args.njamId),
+    editNjam: async (root, args, context, info) => {
+      const njam = { ...args } as Njam;
+      return await context.njamService.editNjam(njam);
+    }
   },
   Njam: {
     participants: async (root, args, context, info) => {

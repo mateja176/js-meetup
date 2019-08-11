@@ -9,6 +9,7 @@ type Mutation {
     description: String
     time: String!
     organizerId: ID!
+    participantIds: [ID!]
   ): Njam
 
   orderNjam(
@@ -27,5 +28,13 @@ type Mutation {
   leaveNjam(
     userId: ID!
     njamId: ID!
+  ): Njam
+
+  editNjam(
+    id: ID!
+    location: String
+    description: String
+    time: String
+    ordered: Boolean
   ): Njam
 }
