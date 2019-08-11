@@ -13,6 +13,11 @@ export class NjamService {
   }
 
   async createNjam(njam: Njam): Promise<Njam> {
+    const users: User[] = await this.db.exec(`SELECT * FROM users WHERE id IN (${njam.participants.map(p => "'" + p + "'").join(", ")})`);
+    if (users.length < njam.participants.length) {
+      throw new Error(`Could not find either the organizer or one of the participants.`);
+    }
+
     await this.db.exec(`INSERT INTO njams (id, location, description, time, ordered, organizer) VALUES ('${njam.id}', '${njam.location}', '${njam.description}', '${njam.time}', ${njam.ordered}, '${njam.organizer}')`);
     njam.participants.forEach(async participant => {
       await this.db.exec(`INSERT INTO participants (id, userId, njamId) VALUES ('${uuid()}', '${participant}', '${njam.id}')`);

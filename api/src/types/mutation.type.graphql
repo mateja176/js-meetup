@@ -9,6 +9,7 @@ type Mutation {
     description: String
     time: String!
     organizerId: ID!
+    participantIds: [ID!]
   ): Njam
 
   orderNjam(

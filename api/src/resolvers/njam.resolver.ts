@@ -10,6 +10,16 @@ export default {
   },
   Mutation: {
     createNjam: async (root, args, context, info) => {
+      let participants: string[] = [];
+
+      if(args.participantIds) {
+        participants = [...args.participantIds];
+      }
+
+      if (!participants.includes(args.organizerId)) {
+        participants.push(args.organizerId);
+      }
+
       const njam = {
         id: uuid(),
         location: args.location,
@@ -17,7 +27,7 @@ export default {
         time: args.time,
         ordered: false,
         organizer: args.organizerId,
-        participants: [args.organizerId]
+        participants: participants
       };
 
       return await context.njamService.createNjam(njam);
