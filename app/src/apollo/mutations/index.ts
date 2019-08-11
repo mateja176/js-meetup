@@ -8,12 +8,14 @@ export const createNjamMutation = gql`
     $description: String
     $time: String!
     $organizerId: ID!
+    $participantIds: [ID!]
   ) {
     createNjam(
       location: $location
       description: $description
       time: $time
       organizerId: $organizerId
+      participantIds: $participantIds
     ) {
       ...CompleteNjam
     }
