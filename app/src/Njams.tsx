@@ -1,5 +1,14 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Button, Col, List, Row, Switch, Tabs, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  List,
+  Popover,
+  Row,
+  Switch,
+  Tabs,
+  Typography,
+} from 'antd';
 import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
@@ -27,8 +36,9 @@ import {
   NjamSummaries,
   NjamSummary,
 } from './apollo';
-import { Err, MutationResult, StatusCircle } from './components';
+import { Err, StatusCircle } from './components';
 import { createMoment, useUserId } from './utils';
+import { MutationResult } from 'react-apollo';
 
 const njamsAndCount = gql`
   query($page: Int, $pageSize: Int) {
@@ -58,59 +68,59 @@ interface MyNjamsAndCount extends MyNjamsQuery {
   myNjamsCount: number;
 }
 
-const LeaveNjam: React.FC<MutationLeaveNjamArgs> = props => {
-  const [leaveNjam, mutationResult] = useMutation<
+const LeaveNjam: React.FC<MutationLeaveNjamArgs> = variables => {
+  const [leaveNjam, { loading, error, data }] = useMutation<
     LeaveNjamResult,
     MutationLeaveNjamArgs
-  >(leaveNjamMutation);
+  >(leaveNjamMutation, { variables });
 
-  const base = (
-    <Button
-      onClick={e => {
-        e.preventDefault();
+  const { name, message } = error || new Error('');
 
-        leaveNjam({
-          variables: props,
-        });
-      }}
-    >
-      Leave
-    </Button>
-  );
+  const dataLoaded = Object.values(data || {}).length;
 
-  return (
-    // @ts-ignore
-    <MutationResult {...mutationResult} Data={() => <JoinNjam {...props} />}>
-      {base}
-    </MutationResult>
+  return dataLoaded ? (
+    <JoinNjam {...variables} />
+  ) : (
+    <Popover visible={!!error} title={name} content={message}>
+      <Button
+        loading={loading}
+        onClick={e => {
+          e.preventDefault();
+
+          leaveNjam();
+        }}
+      >
+        Leave
+      </Button>
+    </Popover>
   );
 };
 
-const JoinNjam: React.FC<MutationJoinNjamArgs> = props => {
-  const [joinNjam, mutationResult] = useMutation<
+const JoinNjam: React.FC<MutationJoinNjamArgs> = variables => {
+  const [joinNjam, { loading, error, data }] = useMutation<
     JoinNjamResult,
     MutationJoinNjamArgs
-  >(joinNjamMutation);
+  >(joinNjamMutation, { variables });
 
-  const base = (
-    <Button
-      onClick={e => {
-        e.preventDefault();
+  const { name, message } = error || new Error('');
 
-        joinNjam({
-          variables: props,
-        });
-      }}
-    >
-      Join
-    </Button>
-  );
+  const dataLoaded = Object.values(data || {}).length;
 
-  return (
-    // @ts-ignore
-    <MutationResult {...mutationResult} Data={() => <LeaveNjam {...props} />}>
-      {base}
-    </MutationResult>
+  return dataLoaded ? (
+    <LeaveNjam {...variables} />
+  ) : (
+    <Popover visible={!!error} title={name} content={message}>
+      <Button
+        loading={loading}
+        onClick={e => {
+          e.preventDefault();
+
+          joinNjam();
+        }}
+      >
+        Join
+      </Button>
+    </Popover>
   );
 };
 
