@@ -144,10 +144,8 @@ interface Filter {
 
 const oneHourInThePast = moment().subtract(1, 'hour');
 
-const initiallyLoaded: Record<string, NjamsQuery['njams'][0]> = {};
-
 const initialPage = 1;
-const pageSize = 10;
+const pageSize = 1;
 
 const initialQuery = njamsAndCount;
 
@@ -160,17 +158,7 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [loaded, setLoaded] = React.useState(initiallyLoaded);
-  const loadedNjams = Object.values(loaded);
-
-  const [page, setPage] = React.useState(initialPage);
-
-  const [query, _setQuery] = React.useState(initialQuery);
-  const setQuery = (newQuery: Parameters<typeof _setQuery>[0]) => {
-    setLoaded(initiallyLoaded);
-    setPage(initialPage);
-    _setQuery(newQuery);
-  };
+  const [query, setQuery] = React.useState(initialQuery);
 
   const filterNames = [
     'all',
@@ -221,12 +209,12 @@ const Njams: React.FC<NjamsProps> = ({
 
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
-  const { error, data, loading, refetch } = useQuery<
+  const { error, data, loading, fetchMore } = useQuery<
     NjamsAndCount & MyNjamsAndCount,
     QueryNjamsArgs & QueryMyNjamsArgs
   >(query, {
-    pollInterval: 1000,
-    variables: { userId, page, pageSize },
+    // pollInterval: 1000,
+    variables: { userId, page: initialPage, pageSize },
   });
 
   const [njams = [], count = 0] = Object.values(data!) as [
@@ -234,27 +222,7 @@ const Njams: React.FC<NjamsProps> = ({
     number
   ];
 
-  React.useEffect(() => {
-    const newNjams = njams.filter(({ id }) => {
-      const loadedNjamsIds = loadedNjams.map(njam => njam.id);
-
-      return !loadedNjamsIds.includes(id);
-    });
-
-    if (newNjams.length) {
-      const newlyLoaded = newNjams.reduce(
-        (_loaded, njam) => ({
-          ..._loaded,
-          [njam.id]: njam,
-        }),
-        loaded,
-      );
-
-      setLoaded(newlyLoaded);
-    }
-  }, [njams]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const loadedAll = loadedNjams.length === count;
+  const loadedAll = njams.length === count;
 
   return (
     <Box>
@@ -292,11 +260,25 @@ const Njams: React.FC<NjamsProps> = ({
               <Button
                 loading={loading}
                 onClick={() => {
-                  const newPage = page + 1;
+                  fetchMore({
+                    variables: {
+                      page: njams.length / pageSize + 1,
+                    },
+                    updateQuery: (oldNjamsAndCount, { fetchMoreResult }) => {
+                      const [[njamsKey, oldNjams], countEntry] = Object.entries(
+                        oldNjamsAndCount,
+                      );
 
-                  refetch({ userId, page: newPage, pageSize });
+                      const [newNjams] = Object.values(fetchMoreResult!);
 
-                  setPage(newPage);
+                      const newNjamsAndCount = Object.fromEntries([
+                        [njamsKey, oldNjams.concat(newNjams)],
+                        countEntry,
+                      ]);
+
+                      return newNjamsAndCount;
+                    },
+                  });
                 }}
               >
                 Load More
@@ -325,7 +307,7 @@ const Njams: React.FC<NjamsProps> = ({
           </>
         }
         bordered
-        dataSource={loadedNjams.filter(
+        dataSource={njams.filter(
           filters.find(({ name }) => name === activeFilter)!.value,
         )}
         renderItem={({
