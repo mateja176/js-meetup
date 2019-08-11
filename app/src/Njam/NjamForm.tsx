@@ -86,7 +86,6 @@ const NjamForm: React.FC<NjamFormProps> = ({
       <Form.Item label="Participants">
         {form.getFieldDecorator('participantIds', {
           initialValue: participantIds.filter(id => id !== userId),
-          rules: [{ required: true }],
         })(
           <UserSelect
             style={{

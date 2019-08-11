@@ -1,17 +1,41 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import { gql } from 'apollo-boost';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import { Scalars } from '../../../api/src/models';
+import {
+  MutationEditNjamArgs,
+  Njam as INjam,
+  Scalars,
+} from '../../../api/src/models';
 import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
 import { Err, FormContainer } from '../components';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { NjamFormValues, routeName } from '../models';
 import { createMoment, mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
+
+const editNjamMutation = gql`
+  mutation(
+    $id: ID!
+    $location: String
+    $description: String
+    $time: String
+    $ordered: Boolean
+  ) {
+    editNjam(
+      id: $id
+      location: $location
+      description: $description
+      time: $time
+      ordered: $ordered
+    ) {
+      id
+    }
+  }
+`;
 
 const query = gql`
   query($id: ID!) {
@@ -41,10 +65,17 @@ const Njam: React.FC<NjamProps> = ({
 
   const userId = useUserId();
 
+  const [editNjam, editNjamResult] = useMutation<
+    { editNjam: INjam['id'] },
+    MutationEditNjamArgs
+  >(editNjamMutation);
+
   const save = () => {
     const values = form.getFieldsValue() as NjamFormValues;
-    // TODO replace with set njam api call
-    console.log(mapNjamFormValues(userId)(values));
+
+    const variables = mapNjamFormValues(userId)(values);
+
+    editNjam({ variables: { ...variables, id } });
   };
 
   const { data, error, loading } = useQuery<
@@ -77,11 +108,20 @@ const Njam: React.FC<NjamProps> = ({
           <Err {...error} />
         </Box>
       )}
+      {editNjamResult.error && (
+        <Box my={3}>
+          <Err {...editNjamResult.error} />
+        </Box>
+      )}
       <Flex justifyContent="flex-end">
         {organizer.id === userId && !loading && !error && (
           <Box mr={4}>
             {readOnly ? (
-              <Button icon="edit" onClick={toggleReadOnly} />
+              <Button
+                icon="edit"
+                onClick={toggleReadOnly}
+                loading={editNjamResult.loading}
+              />
             ) : (
               <Box>
                 <Button
