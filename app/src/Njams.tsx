@@ -21,7 +21,6 @@ import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
 import {
   MutationJoinNjamArgs,
-  MutationLeaveNjamArgs,
   Njam,
   QueryMyNjamsArgs,
   QueryNjamsArgs,
@@ -38,7 +37,6 @@ import {
 } from './apollo';
 import { Err, StatusCircle } from './components';
 import { createMoment, useUserId } from './utils';
-import { MutationResult } from 'react-apollo';
 
 const njamsAndCount = gql`
   query($page: Int, $pageSize: Int) {
@@ -68,46 +66,28 @@ interface MyNjamsAndCount extends MyNjamsQuery {
   myNjamsCount: number;
 }
 
-const LeaveNjam: React.FC<MutationLeaveNjamArgs> = variables => {
-  const [leaveNjam, { loading, error, data }] = useMutation<
-    LeaveNjamResult,
-    MutationLeaveNjamArgs
-  >(leaveNjamMutation, { variables });
-
-  const { name, message } = error || new Error('');
-
-  const dataLoaded = Object.values(data || {}).length;
-
-  return dataLoaded ? (
-    <JoinNjam {...variables} />
-  ) : (
-    <Popover visible={!!error} title={name} content={message}>
-      <Button
-        loading={loading}
-        onClick={e => {
-          e.preventDefault();
-
-          leaveNjam();
-        }}
-      >
-        Leave
-      </Button>
-    </Popover>
-  );
-};
-
-const JoinNjam: React.FC<MutationJoinNjamArgs> = variables => {
-  const [joinNjam, { loading, error, data }] = useMutation<
-    JoinNjamResult,
+const createNjamAction = ({
+  mutation,
+  getInverse,
+  text,
+}: {
+  mutation: Parameters<typeof useMutation>[0];
+  getInverse: () => React.ComponentType<MutationJoinNjamArgs>;
+  text: string;
+}): React.FC<MutationJoinNjamArgs> => variables => {
+  const [mutationFunction, { loading, error, data }] = useMutation<
+    JoinNjamResult & LeaveNjamResult,
     MutationJoinNjamArgs
-  >(joinNjamMutation, { variables });
+  >(mutation, { variables });
 
   const { name, message } = error || new Error('');
 
   const dataLoaded = Object.values(data || {}).length;
 
+  const Inverse = getInverse();
+
   return dataLoaded ? (
-    <LeaveNjam {...variables} />
+    <Inverse {...variables} />
   ) : (
     <Popover visible={!!error} title={name} content={message}>
       <Button
@@ -115,14 +95,26 @@ const JoinNjam: React.FC<MutationJoinNjamArgs> = variables => {
         onClick={e => {
           e.preventDefault();
 
-          joinNjam();
+          mutationFunction();
         }}
       >
-        Join
+        {text}
       </Button>
     </Popover>
   );
 };
+
+const LeaveNjam = createNjamAction({
+  mutation: leaveNjamMutation,
+  text: 'Leave',
+  getInverse: () => JoinNjam,
+});
+
+const JoinNjam = createNjamAction({
+  mutation: joinNjamMutation,
+  text: 'Join',
+  getInverse: () => LeaveNjam,
+});
 
 const keys = ['location', 'time', 'organizer', 'ordered', 'you'] as const;
 const columns = keys.map(capitalize);
