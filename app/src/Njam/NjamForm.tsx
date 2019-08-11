@@ -15,6 +15,7 @@ export interface NjamFormProps extends FormComponentProps<NjamFormValues> {
   users: Users;
   userId: User['id'];
   hideOrdered?: boolean;
+  readOnlyParticipants?: boolean;
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
@@ -31,6 +32,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
   users,
   userId,
   hideOrdered = false,
+  readOnlyParticipants = false,
 }) => {
   const readOnlyStyle: React.CSSProperties = {
     pointerEvents: readOnly ? 'none' : 'initial',
@@ -87,8 +89,11 @@ const NjamForm: React.FC<NjamFormProps> = ({
           rules: [{ required: true }],
         })(
           <UserSelect
+            style={{
+              pointerEvents:
+                readOnly || readOnlyParticipants ? 'none' : 'initial',
+            }}
             mode="multiple"
-            style={readOnlyStyle}
             users={users.filter(({ id }) => id !== userId)}
           />,
         )}
