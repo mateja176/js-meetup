@@ -104,14 +104,12 @@ export class NjamService {
   }
 
   async editNjam(njam: Njam): Promise<Njam> {
-    var n: Njam = await this.getNjamById(njam.id);
+    let n: Njam = await this.getNjamById(njam.id);
     if (!n) {
       throw new Error(`Could not find njam with id: ${njam.id}`);
     }
-    n.location = njam.location ? njam.location : n.location;
-    n.description = njam.description ? njam.description : n.description;
-    n.time = njam.time ? njam.time : n.time;
-    n.ordered = njam.ordered ? njam.ordered : n.ordered;
+    n = Object.assign(n, njam);
+
     await this.db.exec(`UPDATE njams SET location='${n.location}', description='${n.description}', time='${n.time}', ordered=${n.ordered} WHERE id='${n.id}'`);
 
     return await this.getNjamById(njam.id);
