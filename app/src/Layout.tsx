@@ -1,5 +1,5 @@
 import { Drawer, Icon as AntIcon, Menu, PageHeader, Row } from 'antd';
-import { IconProps } from 'antd/lib/icon';
+import { IconProps as AntIconProps } from 'antd/lib/icon';
 import { kebabCase, startCase } from 'lodash';
 import React from 'react';
 import {
@@ -18,7 +18,9 @@ import Njams from './Njams';
 import SignIn from './SignIn';
 import Users from './Users';
 
-type Icon = React.ComponentType<Omit<IconProps, 'type'>>;
+type IconProps = Omit<AntIconProps, 'type'>;
+
+type Icon = React.FC<IconProps>;
 
 interface IRoute {
   text: string;
@@ -27,29 +29,31 @@ interface IRoute {
   Component: React.ComponentType<RouteComponentProps>;
 }
 
-const routes: IRoute[] = [
-  {
-    text: routeName.njams,
-    Icon: (props => <AntIcon {...props} type="unordered-list" />) as Icon,
-    Component: Njams,
-  },
-  {
-    text: routeName.createNjam,
-    Icon: (props => <AntIcon {...props} type="plus-circle" />) as Icon,
-    Component: CreateNjam as any,
-  },
-  {
-    text: routeName.users,
-    Icon: (props => <AntIcon {...props} type="user" />) as Icon,
-    Component: Users,
-  },
-].map(({ text, ...route }) => {
+const mapPartialRoute = ({ text, ...route }: Omit<IRoute, 'path'>): IRoute => {
   return {
     ...route,
     text: startCase(text),
     path: urlJoin('/', kebabCase(text)),
   };
-});
+};
+
+const routes: IRoute[] = [
+  {
+    text: routeName.njams,
+    Icon: (props: IconProps) => <AntIcon {...props} type="unordered-list" />,
+    Component: Njams,
+  },
+  {
+    text: routeName.createNjam,
+    Icon: (props: IconProps) => <AntIcon {...props} type="plus-circle" />,
+    Component: CreateNjam as any,
+  },
+  {
+    text: routeName.users,
+    Icon: (props: IconProps) => <AntIcon {...props} type="user" />,
+    Component: Users,
+  },
+].map(mapPartialRoute);
 
 const Layout: React.FC<RouteComponentProps> = ({
   location: { pathname },
