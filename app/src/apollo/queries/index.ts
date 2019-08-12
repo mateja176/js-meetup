@@ -71,7 +71,7 @@ export interface NjamsCountQuery {
 
 export const myNjamsCountQuery = gql`
   query($userId: ID!) {
-    njamsCount(userId: $userId)
+    myNjamsCount(userId: $userId)
   }
 `;
 
