@@ -312,7 +312,7 @@ const Njams: React.FC<NjamsProps> = ({
 
                       const [newNjams] = Object.values(
                         fetchMoreResult!,
-                      ) as INjams[];
+                      ) as [INjams];
 
                       const existingIds = oldNjams.map(({ id }) => id);
 
