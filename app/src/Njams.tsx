@@ -23,6 +23,7 @@ import {
   MutationJoinNjamArgs,
   Njam,
   QueryMyNjamsArgs,
+  QueryMyNjamsCountArgs,
   QueryNjamsArgs,
 } from '../../api/src/models';
 import {
@@ -31,13 +32,16 @@ import {
   JoinNjamResult,
   leaveNjamMutation,
   LeaveNjamResult,
+  myNjamsCountQuery,
+  MyNjamsCountQuery,
   MyNjamsQuery,
+  myNjamsQuery,
+  njamsCountQuery,
+  NjamsCountQuery,
   NjamsQuery,
-  NjamSummaries,
-  NjamSummary,
+  njamsQuery,
 } from './apollo';
 import { Err } from './components';
-import { Njams as INjams } from './models';
 import { createMoment, useUserId } from './utils';
 
 const toggleOrderedMutation = gql`
@@ -48,34 +52,6 @@ const toggleOrderedMutation = gql`
   }
   ${CompleteNjam}
 `;
-
-const njamsAndCount = gql`
-  query($page: Int, $pageSize: Int) {
-    njams(page: $page, pageSize: $pageSize) {
-      ...NjamSummary
-    }
-    njamsCount
-  }
-  ${NjamSummary}
-`;
-
-interface NjamsAndCount extends NjamsQuery {
-  njamsCount: number;
-}
-
-const myNjamsAndCount = gql`
-  query($userId: ID!, $page: Int, $pageSize: Int) {
-    myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
-      ...NjamSummary
-    }
-    myNjamsCount(userId: $userId)
-  }
-  ${NjamSummary}
-`;
-
-interface MyNjamsAndCount extends MyNjamsQuery {
-  myNjamsCount: number;
-}
 
 const createNjamAction = ({
   mutation,
@@ -158,7 +134,7 @@ const oneHourInThePast = moment().subtract(1, 'hour');
 const initialPage = 1;
 const pageSize = 10;
 
-const initialQuery = njamsAndCount;
+type NjamsQueryResult = NjamsQuery | MyNjamsQuery;
 
 export interface NjamsProps extends RouteComponentProps {}
 
@@ -169,7 +145,10 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [query, setQuery] = React.useState(initialQuery);
+  const [queries, setQueries] = React.useState({
+    njams: njamsQuery,
+    count: njamsCountQuery,
+  });
 
   const filterNames = [
     'all',
@@ -178,9 +157,7 @@ const Njams: React.FC<NjamsProps> = ({
     'byYou',
     'past',
   ] as const;
-
   type FilterName = typeof filterNames[number];
-
   const filterName = filterNames.reduce(
     (_filterName, name) => ({ ..._filterName, [name]: name }),
     {} as { [name in FilterName]: name },
@@ -215,9 +192,7 @@ const Njams: React.FC<NjamsProps> = ({
       },
     },
   ];
-
   const filterQuery = qs.parse(search).filter as FilterName;
-
   const activeFilter = filterNames.includes(filterQuery) ? filterQuery : 'all';
 
   const {
@@ -226,27 +201,32 @@ const Njams: React.FC<NjamsProps> = ({
     loading,
     fetchMore,
     // refetch,
-  } = useQuery<
-    NjamsAndCount & MyNjamsAndCount,
-    QueryNjamsArgs & QueryMyNjamsArgs
-  >(query, {
-    // pollInterval: 1000,
-    variables: { userId, page: initialPage, pageSize },
-  });
+  } = useQuery<NjamsQueryResult, QueryNjamsArgs & QueryMyNjamsArgs>(
+    queries.njams,
+    {
+      // pollInterval: 1000,
+      variables: { userId, page: initialPage, pageSize },
+    },
+  );
+  const [njams = []] = Object.values(data!);
 
-  const [njams = [], count = 0] = Object.values(data!) as [
-    NjamSummaries,
-    number
-  ];
-
-  const loadedAll = njams.length === count;
-  const page = Math.ceil(njams.length / pageSize);
+  const countResult = useQuery<
+    NjamsCountQuery | MyNjamsCountQuery,
+    QueryMyNjamsCountArgs
+  >(queries.count, { variables: { userId }, pollInterval: 1000 });
+  const [count = 0] = Object.values(countResult.data!);
 
   const [toggleOrdered, toggleOrderedResults] = useMutation<
     {},
     Pick<Njam, 'id' | 'ordered'>
   >(toggleOrderedMutation);
   const toggleOrderedError = toggleOrderedResults.error || new Error('');
+
+  const loadedAll = njams.length === count;
+
+  const page = Math.ceil(njams.length / pageSize);
+
+  const isONNewPage = njams.length % pageSize === 0;
 
   return (
     <Box>
@@ -269,7 +249,11 @@ const Njams: React.FC<NjamsProps> = ({
             checkedChildren="All Njams"
             unCheckedChildren="Going to"
             onChange={on => {
-              setQuery(on ? myNjamsAndCount : initialQuery);
+              setQueries(
+                on
+                  ? { njams: myNjamsQuery, count: myNjamsCountQuery }
+                  : { njams: njamsQuery, count: njamsCountQuery },
+              );
             }}
           />
         </Box>
@@ -303,32 +287,22 @@ const Njams: React.FC<NjamsProps> = ({
                 onClick={() => {
                   fetchMore({
                     variables: {
-                      page: page + 1,
+                      page: isONNewPage ? page + 1 : page,
                     },
-                    updateQuery: (oldNjamsAndCount, { fetchMoreResult }) => {
-                      const [[njamsKey, oldNjams], countEntry] = Object.entries(
-                        oldNjamsAndCount,
-                      ) as [[string, INjams], [string, number]];
+                    updateQuery: (oldResults, { fetchMoreResult }) => {
+                      const [[njamsKey, oldNjams]] = Object.entries(oldResults);
 
-                      const [newNjams] = Object.values(
-                        fetchMoreResult!,
-                      ) as [INjams];
+                      const [newNjams] = Object.values(fetchMoreResult!);
 
                       const existingIds = oldNjams.map(({ id }) => id);
 
-                      const newNjamsAndCount = Object.fromEntries([
-                        [
-                          njamsKey,
-                          oldNjams.concat(
-                            newNjams.filter(
-                              ({ id }) => !existingIds.includes(id),
-                            ),
-                          ),
-                        ],
-                        countEntry,
-                      ]);
+                      const filteredNjams = newNjams.filter(
+                        ({ id }) => !existingIds.includes(id),
+                      );
 
-                      return newNjamsAndCount;
+                      return {
+                        [njamsKey]: oldNjams.concat(filteredNjams),
+                      } as NjamsQueryResult;
                     },
                   });
                 }}
@@ -343,6 +317,11 @@ const Njams: React.FC<NjamsProps> = ({
             {error && (
               <Box mt={2} mb={3}>
                 <Err {...error} />
+              </Box>
+            )}
+            {countResult.error && (
+              <Box mt={2} mb={3}>
+                <Err {...countResult.error} />
               </Box>
             )}
             <Row>
