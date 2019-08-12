@@ -19,3 +19,13 @@ export const mapNjamFormValues = (userId: User['id']) => ({
     participantIds: participantIds.concat(userId),
   } as MutationCreateNjamArgs;
 };
+
+export const toMappedObject = <Key extends string, MappedKey extends string>(
+  mapKey: (key: Key) => MappedKey,
+) => <MappedValue>(mapValue: (value: Key) => MappedValue) => (
+  array: Array<Key>,
+) =>
+  array.reduce(
+    (object, key) => ({ ...object, [mapKey(key)]: mapValue(key) }),
+    {} as Record<MappedKey, MappedValue>,
+  );
