@@ -94,4 +94,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
     </FormContainer>
   );
 };
-export default Form.create({ name: routeName.createNjam })(CreateNjam);
+
+export default Form.create<CreateNjamProps>({ name: routeName.createNjam })(
+  CreateNjam,
+);

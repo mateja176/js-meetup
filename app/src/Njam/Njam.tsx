@@ -52,7 +52,7 @@ const query = gql`
 `;
 
 interface NjamProps
-  extends Pick<RouteComponentProps<{ id: string }>, 'match'>,
+  extends RouteComponentProps<{ id: string }>,
     FormComponentProps<NjamFormValues> {}
 
 const Njam: React.FC<NjamProps> = ({
@@ -160,4 +160,4 @@ const Njam: React.FC<NjamProps> = ({
   );
 };
 
-export default Form.create({ name: routeName.njams })(Njam);
+export default Form.create<NjamProps>({ name: routeName.njams })(Njam);

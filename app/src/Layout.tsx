@@ -46,7 +46,7 @@ const routes: IRoute[] = [
   {
     text: routeName.createNjam,
     Icon: (props: IconProps) => <AntIcon {...props} type="plus-circle" />,
-    Component: CreateNjam as any,
+    Component: CreateNjam,
   },
   {
     text: routeName.users,
