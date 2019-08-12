@@ -1,4 +1,11 @@
-import { Drawer, Icon as AntIcon, Menu, PageHeader, Row } from 'antd';
+import {
+  Drawer,
+  Icon as AntIcon,
+  Menu,
+  PageHeader,
+  Row,
+  Typography,
+} from 'antd';
 import { IconProps as AntIconProps } from 'antd/lib/icon';
 import { kebabCase, startCase } from 'lodash';
 import React from 'react';
@@ -87,10 +94,12 @@ const Layout: React.FC<RouteComponentProps> = ({
         <Menu onClick={toggleOpen} mode="inline" selectedKeys={[pathname]}>
           {routes.map(({ text, path, Icon }) => (
             <Menu.Item key={path}>
-              <Row>
-                <Icon style={{ marginRight: 10 }} />
-                <NavLink to={path}>{text}</NavLink>
-              </Row>
+              <NavLink to={path}>
+                <Row>
+                  <Icon style={{ marginRight: 10 }} />
+                  <Typography.Text>{text}</Typography.Text>
+                </Row>
+              </NavLink>
             </Menu.Item>
           ))}
         </Menu>
