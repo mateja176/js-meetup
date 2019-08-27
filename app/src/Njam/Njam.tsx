@@ -1,55 +1,14 @@
-import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
-import { gql } from 'apollo-boost';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import {
-  MutationEditNjamArgs,
-  Njam as INjam,
-  Scalars,
-} from '../../../api/src/models';
-import { CompleteNjam, CompleteUser, NjamQuery, UsersQuery } from '../apollo';
 import { Err, FormContainer } from '../components';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useEditNjamMutation, useNjamPageQuery } from '../generated/graphql';
 import { NjamFormValues, routeName } from '../models';
 import { createMoment, mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
-
-const editNjamMutation = gql`
-  mutation(
-    $id: ID!
-    $location: String
-    $description: String
-    $time: String
-    $ordered: Boolean
-  ) {
-    editNjam(
-      id: $id
-      location: $location
-      description: $description
-      time: $time
-      ordered: $ordered
-    ) {
-      ...CompleteNjam # https://www.apollographql.com/docs/react/advanced/caching/#automatic-cache-updates
-    }
-  }
-  ${CompleteNjam}
-`;
-
-const query = gql`
-  query($id: ID!) {
-    njam(id: $id) {
-      ...CompleteNjam
-    }
-    users {
-      ...CompleteUser
-    }
-  }
-  ${CompleteUser}
-  ${CompleteNjam}
-`;
 
 interface NjamProps
   extends RouteComponentProps<{ id: string }>,
@@ -66,10 +25,7 @@ const Njam: React.FC<NjamProps> = ({
 
   const userId = useUserId();
 
-  const [editNjam, editNjamResult] = useMutation<
-    { editNjam: INjam['id'] },
-    MutationEditNjamArgs
-  >(editNjamMutation);
+  const [editNjam, editNjamResult] = useEditNjamMutation();
 
   const save = () => {
     form.validateFieldsAndScroll((error, values) => {
@@ -82,10 +38,7 @@ const Njam: React.FC<NjamProps> = ({
     });
   };
 
-  const { data, error, loading } = useQuery<
-    NjamQuery & UsersQuery,
-    { id: Scalars['ID'] }
-  >(query, {
+  const { data, error, loading } = useNjamPageQuery({
     pollInterval: 1000,
     variables: { id },
   });

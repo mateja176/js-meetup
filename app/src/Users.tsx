@@ -1,13 +1,12 @@
-import { useQuery } from '@apollo/react-hooks';
 import { Col, List, Row, Typography } from 'antd';
 import React from 'react';
-import { usersQuery, UsersQuery } from './apollo';
 import { Err } from './components';
+import { useUsersQuery } from './generated/graphql';
 
 export interface UsersProps {}
 
 const Users: React.FC<UsersProps> = () => {
-  const { data, loading, error } = useQuery<UsersQuery>(usersQuery, {
+  const { data, loading, error } = useUsersQuery({
     pollInterval: 1000,
   });
 
