@@ -9,7 +9,6 @@ import {
   Tabs,
   Typography,
 } from 'antd';
-import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
@@ -27,7 +26,6 @@ import {
   QueryNjamsArgs,
 } from '../../api/src/models';
 import {
-  CompleteNjam,
   joinNjamMutation,
   JoinNjamResult,
   leaveNjamMutation,
@@ -42,16 +40,8 @@ import {
   njamsQuery,
 } from './apollo';
 import { Err } from './components';
+import { useToggleOrderedMutation } from './generated/graphql';
 import { createMoment, useUserId } from './utils';
-
-const toggleOrderedMutation = gql`
-  mutation($id: ID!, $ordered: Boolean) {
-    editNjam(id: $id, ordered: $ordered) {
-      ...CompleteNjam
-    }
-  }
-  ${CompleteNjam}
-`;
 
 const createNjamAction = ({
   mutation,
@@ -216,10 +206,7 @@ const Njams: React.FC<NjamsProps> = ({
   >(queries.count, { variables: { userId }, pollInterval: 1000 });
   const [count = 0] = Object.values(countResult.data!);
 
-  const [toggleOrdered, toggleOrderedResults] = useMutation<
-    {},
-    Pick<Njam, 'id' | 'ordered'>
-  >(toggleOrderedMutation);
+  const [toggleOrdered, toggleOrderedResults] = useToggleOrderedMutation();
   const toggleOrderedError = toggleOrderedResults.error || new Error('');
 
   const loadedAll = njams.length === count;
