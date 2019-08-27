@@ -29,3 +29,12 @@ query njamsCount {
 query myNjamsCount($userId: ID!) {
   myNjamsCount(userId: $userId)
 }
+
+query njamPage($id: ID!) {
+  njam(id: $id) {
+    ...CompleteNjam
+  }
+  users {
+    ...CompleteUser
+  }
+}
