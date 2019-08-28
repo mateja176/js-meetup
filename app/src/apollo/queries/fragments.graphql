@@ -1,0 +1,38 @@
+fragment CompleteUser on User {
+  id
+  name
+  lastname
+}
+
+fragment NjamBase on Njam {
+  id
+  location
+  time
+  ordered
+}
+
+fragment NjamSummary on Njam {
+  ...NjamBase
+  organizer {
+    id
+    name
+  }
+  participants {
+    id
+  }
+}
+
+fragment CompleteNjam on Njam {
+  ...NjamBase
+  description
+  organizer {
+    id
+    name
+    lastname
+  }
+  participants {
+    id
+    name
+    lastname
+  }
+}

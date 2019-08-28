@@ -2,7 +2,7 @@ type Mutation {
   createUser(
     name: String!
     lastname: String!
-  ): User
+  ): User!
 
   createNjam(
     location: String!
@@ -10,25 +10,25 @@ type Mutation {
     time: String!
     organizerId: ID!
     participantIds: [ID!]
-  ): Njam
+  ): Njam!
 
   orderNjam(
     njamId: ID!
-  ): Njam
+  ): Njam!
 
   deleteNjam(
     njamId: ID!
-  ): Njam
+  ): Njam!
 
   joinNjam(
     userId: ID!
     njamId: ID!
-  ): Njam
+  ): Njam!
 
   leaveNjam(
     userId: ID!
     njamId: ID!
-  ): Njam
+  ): Njam!
 
   editNjam(
     id: ID!
@@ -36,5 +36,5 @@ type Mutation {
     description: String
     time: String
     ordered: Boolean
-  ): Njam
+  ): Njam!
 }

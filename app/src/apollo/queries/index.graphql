@@ -1,0 +1,40 @@
+query users {
+  users {
+    ...CompleteUser
+  }
+}
+
+query njams($page: Int, $pageSize: Int) {
+  njams(page: $page, pageSize: $pageSize) {
+    ...NjamSummary
+  }
+}
+
+query myNjams($userId: ID!, $page: Int, $pageSize: Int) {
+  myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
+    ...NjamSummary
+  }
+}
+
+query njam($id: ID!) {
+  njam(id: $id) {
+    ...CompleteNjam
+  }
+}
+
+query njamsCount {
+  njamsCount
+}
+
+query myNjamsCount($userId: ID!) {
+  myNjamsCount(userId: $userId)
+}
+
+query njamPage($id: ID!) {
+  njam(id: $id) {
+    ...CompleteNjam
+  }
+  users {
+    ...CompleteUser
+  }
+}

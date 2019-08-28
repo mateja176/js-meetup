@@ -1,16 +1,16 @@
 type Query {
-  users: [User]
-  user(id: ID!): User
+  users: [User!]!
+  user(id: ID!): User!
   njams(
     page: Int
     pageSize: Int
-  ): [Njam]
-  njam(id: ID!): Njam
+  ): [Njam!]!
+  njam(id: ID!): Njam!
   myNjams(
     userId: ID!
     page: Int
     pageSize: Int
-  ): [Njam]
-  njamsCount: Int
-  myNjamsCount(userId: ID!): Int
+  ): [Njam!]!
+  njamsCount: Int!
+  myNjamsCount(userId: ID!): Int!
 }

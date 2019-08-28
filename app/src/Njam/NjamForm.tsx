@@ -3,8 +3,8 @@ import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
 import { range } from 'ramda';
 import React from 'react';
-import { User } from '../../../api/src/models';
 import { UserSelect } from '../components';
+import { User } from '../generated/graphql';
 import { NjamFormValues, Users } from '../models';
 
 const momentFormat = 'HH:mm';

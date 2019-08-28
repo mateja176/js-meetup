@@ -1,0 +1,53 @@
+mutation createNjam(
+  $location: String!
+  $description: String
+  $time: String!
+  $organizerId: ID!
+  $participantIds: [ID!]
+) {
+  createNjam(
+    location: $location
+    description: $description
+    time: $time
+    organizerId: $organizerId
+    participantIds: $participantIds
+  ) {
+    ...CompleteNjam
+  }
+}
+
+mutation leaveNjam($userId: ID!, $njamId: ID!) {
+  leaveNjam(userId: $userId, njamId: $njamId) {
+    ...CompleteNjam
+  }
+}
+
+mutation joinNjam($userId: ID!, $njamId: ID!) {
+  joinNjam(userId: $userId, njamId: $njamId) {
+    ...CompleteNjam
+  }
+}
+
+mutation toggleOrdered($id: ID!, $ordered: Boolean) {
+  editNjam(id: $id, ordered: $ordered) {
+    ...CompleteNjam
+  }
+}
+
+mutation editNjam(
+  $id: ID!
+  $location: String
+  $description: String
+  $time: String
+  $ordered: Boolean
+) {
+  editNjam(
+    id: $id
+    location: $location
+    description: $description
+    time: $time
+    ordered: $ordered
+  ) {
+    ...CompleteNjam # https://www.apollographql.com/docs/react/advanced/caching/#automatic-cache-updates
+  }
+}

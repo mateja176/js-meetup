@@ -1,7 +1,7 @@
 import faker from 'faker';
 import { range } from 'ramda';
 import { Optional } from 'utility-types';
-import { Njam, User } from '../../../api/src/models';
+import { Njam, User } from '../generated/graphql';
 
 export const generateUser = (): User => ({
   id: faker.random.uuid(),

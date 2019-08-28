@@ -30,10 +30,12 @@
     "url-join": "^4.0.1"
   },
   "scripts": {
+    "prestart": "npm run generate",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -51,7 +53,13 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.6.1",
+    "@graphql-codegen/introspection": "1.6.1",
+    "@graphql-codegen/typescript": "1.6.1",
+    "@graphql-codegen/typescript-operations": "1.6.1",
+    "@graphql-codegen/typescript-react-apollo": "1.6.1",
     "@types/faker": "^4.1.5",
+    "@types/graphql": "^14.5.0",
     "@types/lodash": "^4.14.136",
     "@types/ramda": "^0.26.18",
     "@types/react-hot-loader": "^4.1.0",

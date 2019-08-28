@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { MutationCreateNjamArgs, User } from '../../../api/src/models';
+import { MutationCreateNjamArgs, User } from '../generated/graphql';
 import { NjamFormValues } from '../models';
 
 export * from './generators';

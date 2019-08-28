@@ -9,7 +9,6 @@ import {
   Tabs,
   Typography,
 } from 'antd';
-import { gql } from 'apollo-boost';
 import { css } from 'emotion';
 import { capitalize, startCase } from 'lodash';
 import moment from 'moment';
@@ -19,39 +18,27 @@ import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
-import {
-  MutationJoinNjamArgs,
-  Njam,
-  QueryMyNjamsArgs,
-  QueryMyNjamsCountArgs,
-  QueryNjamsArgs,
-} from '../../api/src/models';
-import {
-  CompleteNjam,
-  joinNjamMutation,
-  JoinNjamResult,
-  leaveNjamMutation,
-  LeaveNjamResult,
-  myNjamsCountQuery,
-  MyNjamsCountQuery,
-  MyNjamsQuery,
-  myNjamsQuery,
-  njamsCountQuery,
-  NjamsCountQuery,
-  NjamsQuery,
-  njamsQuery,
-} from './apollo';
 import { Err } from './components';
+import {
+  JoinNjamDocument,
+  JoinNjamMutationResult,
+  JoinNjamMutationVariables,
+  LeaveNjamDocument,
+  LeaveNjamMutationResult,
+  MyNjamsCountDocument,
+  MyNjamsCountQueryResult,
+  MyNjamsCountQueryVariables,
+  MyNjamsDocument,
+  MyNjamsQueryVariables,
+  Njam,
+  NjamsCountDocument,
+  NjamsCountQueryResult,
+  NjamsDocument,
+  NjamsQueryVariables,
+  NjamSummaryFragment,
+  useToggleOrderedMutation,
+} from './generated/graphql';
 import { createMoment, useUserId } from './utils';
-
-const toggleOrderedMutation = gql`
-  mutation($id: ID!, $ordered: Boolean) {
-    editNjam(id: $id, ordered: $ordered) {
-      ...CompleteNjam
-    }
-  }
-  ${CompleteNjam}
-`;
 
 const createNjamAction = ({
   mutation,
@@ -59,12 +46,12 @@ const createNjamAction = ({
   text,
 }: {
   mutation: Parameters<typeof useMutation>[0];
-  getInverse: () => React.ComponentType<MutationJoinNjamArgs>;
+  getInverse: () => React.ComponentType<JoinNjamMutationVariables>;
   text: string;
-}): React.FC<MutationJoinNjamArgs> => variables => {
+}): React.FC<JoinNjamMutationVariables> => variables => {
   const [mutationFunction, { loading, error, data }] = useMutation<
-    JoinNjamResult & LeaveNjamResult,
-    MutationJoinNjamArgs
+    JoinNjamMutationResult & LeaveNjamMutationResult,
+    JoinNjamMutationVariables
   >(mutation, { variables });
 
   const { name, message } = error || new Error('');
@@ -92,13 +79,13 @@ const createNjamAction = ({
 };
 
 const LeaveNjam = createNjamAction({
-  mutation: leaveNjamMutation,
+  mutation: LeaveNjamDocument,
   text: 'Leave',
   getInverse: () => JoinNjam,
 });
 
 const JoinNjam = createNjamAction({
-  mutation: joinNjamMutation,
+  mutation: JoinNjamDocument,
   text: 'Join',
   getInverse: () => LeaveNjam,
 });
@@ -109,7 +96,7 @@ const columns = keys.map(capitalize);
 const smallerSpan = 4;
 const largerSpan = 5;
 
-const Column: React.FC = ({ children }) => (
+const Column: React.FC<{ children: string }> = ({ children }) => (
   <Col
     span={largerSpan}
     style={{
@@ -117,6 +104,7 @@ const Column: React.FC = ({ children }) => (
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
     }}
+    title={children}
   >
     <Typography.Text>{children}</Typography.Text>
   </Col>
@@ -134,7 +122,13 @@ const oneHourInThePast = moment().subtract(1, 'hour');
 const initialPage = 1;
 const pageSize = 10;
 
-type NjamsQueryResult = NjamsQuery | MyNjamsQuery;
+enum CollectionQueryKey {
+  njams = 'njams',
+  myNjams = 'myNjams',
+}
+type CollectionQueryResult = {
+  [key in CollectionQueryKey]: NjamSummaryFragment[];
+};
 
 export interface NjamsProps extends RouteComponentProps {}
 
@@ -145,9 +139,12 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [queries, setQueries] = React.useState({
-    njams: njamsQuery,
-    count: njamsCountQuery,
+  const [queries, setQueries] = React.useState<{
+    njams: typeof NjamsDocument;
+    count: typeof NjamsCountDocument;
+  }>({
+    njams: NjamsDocument,
+    count: NjamsCountDocument,
   });
 
   const filterNames = [
@@ -201,28 +198,25 @@ const Njams: React.FC<NjamsProps> = ({
     loading,
     fetchMore,
     // refetch,
-  } = useQuery<NjamsQueryResult, QueryNjamsArgs & QueryMyNjamsArgs>(
-    queries.njams,
-    {
-      // pollInterval: 1000,
-      variables: { userId, page: initialPage, pageSize },
-    },
-  );
-  const [njams = []] = Object.values(data!);
+  } = useQuery<
+    CollectionQueryResult,
+    NjamsQueryVariables & MyNjamsQueryVariables
+  >(queries.njams, {
+    // pollInterval: 1000,
+    variables: { userId, page: initialPage, pageSize },
+  });
+  const [njams = []] = Object.values(data!) as [NjamSummaryFragment[]];
 
   const countResult = useQuery<
-    NjamsCountQuery | MyNjamsCountQuery,
-    QueryMyNjamsCountArgs
+    NjamsCountQueryResult | MyNjamsCountQueryResult,
+    MyNjamsCountQueryVariables
   >(queries.count, { variables: { userId }, pollInterval: 1000 });
   const [count = 0] = Object.values(countResult.data!);
 
-  const [toggleOrdered, toggleOrderedResults] = useMutation<
-    {},
-    Pick<Njam, 'id' | 'ordered'>
-  >(toggleOrderedMutation);
+  const [toggleOrdered, toggleOrderedResults] = useToggleOrderedMutation();
   const toggleOrderedError = toggleOrderedResults.error || new Error('');
 
-  const loadedAll = njams.length === count;
+  const loadedAll = njams.length >= count;
 
   const page = Math.ceil(njams.length / pageSize);
 
@@ -251,8 +245,8 @@ const Njams: React.FC<NjamsProps> = ({
             onChange={on => {
               setQueries(
                 on
-                  ? { njams: myNjamsQuery, count: myNjamsCountQuery }
-                  : { njams: njamsQuery, count: njamsCountQuery },
+                  ? { njams: MyNjamsDocument, count: MyNjamsCountDocument }
+                  : { njams: NjamsDocument, count: NjamsCountDocument },
               );
             }}
           />
@@ -290,7 +284,9 @@ const Njams: React.FC<NjamsProps> = ({
                       page: isONNewPage ? page + 1 : page,
                     },
                     updateQuery: (oldResults, { fetchMoreResult }) => {
-                      const [[njamsKey, oldNjams]] = Object.entries(oldResults);
+                      const [[njamsKey, oldNjams]] = Object.entries(
+                        oldResults,
+                      ) as [[CollectionQueryKey, NjamSummaryFragment[]]];
 
                       const [newNjams] = Object.values(fetchMoreResult!);
 
@@ -299,10 +295,10 @@ const Njams: React.FC<NjamsProps> = ({
                       const filteredNjams = newNjams.filter(
                         ({ id }) => !existingIds.includes(id),
                       );
-
-                      return {
+                      const updatedResult = {
                         [njamsKey]: oldNjams.concat(filteredNjams),
-                      } as NjamsQueryResult;
+                      } as CollectionQueryResult;
+                      return updatedResult;
                     },
                   });
                 }}
@@ -338,9 +334,16 @@ const Njams: React.FC<NjamsProps> = ({
           </>
         }
         bordered
-        dataSource={njams.filter(
-          filters.find(({ name }) => name === activeFilter)!.value,
-        )}
+        dataSource={njams
+          .filter(filters.find(({ name }) => name === activeFilter)!.value)
+          .filter(
+            njams.length > count &&
+              queries.njams.definitions[0].name.value ===
+                CollectionQueryKey.myNjams
+              ? ({ participants }) =>
+                  participants.map(({ id }) => id).includes(userId)
+              : always(true),
+          )}
         renderItem={({
           id,
           location,
@@ -365,7 +368,7 @@ const Njams: React.FC<NjamsProps> = ({
               >
                 <Column>{location}</Column>
                 <Column>{time}</Column>
-                <Column>{organizer.name}</Column>
+                <Column>{organizer.name!}</Column>
                 <Col span={smallerSpan}>
                   <Popover
                     visible={!!toggleOrderedResults.error}

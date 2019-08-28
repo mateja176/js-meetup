@@ -1,7 +1,7 @@
 import { kebabCase } from 'lodash';
 import moment from 'moment';
 import urlJoin from 'url-join';
-import { Njam, Scalars, User } from '../../../api/src/models';
+import { Njam, Scalars, User } from '../generated/graphql';
 
 export type Users = User[];
 

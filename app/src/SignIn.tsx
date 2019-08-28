@@ -1,16 +1,15 @@
-import { useQuery } from '@apollo/react-hooks';
 import { Button, Form, Typography } from 'antd';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { usersQuery, UsersQuery } from './apollo';
 import { FormContainer, Loading, Retry, UserSelect } from './components';
+import { useUsersQuery } from './generated/graphql';
 
 export interface SignInProps extends RouteComponentProps {}
 
 const SignIn: React.FC<SignInProps> = ({ history }) => {
   const [userId, setUserId] = React.useState('');
 
-  const usersQueryResult = useQuery<UsersQuery>(usersQuery);
+  const usersQueryResult = useUsersQuery();
 
   const { data, loading, error, refetch } = usersQueryResult;
 

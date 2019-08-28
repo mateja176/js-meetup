@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
@@ -7,15 +6,9 @@ import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
-import { MutationCreateNjamArgs } from '../../../api/src/models';
-import {
-  createNjamMutation,
-  CreateNjamMutation,
-  usersQuery,
-  UsersQuery,
-} from '../apollo';
 import { Err, FormContainer, Retry } from '../components';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useCreateNjamMutation, useUsersQuery } from '../generated/graphql';
 import { NjamFormValues, routeName, routePath } from '../models';
 import { mapNjamFormValues, useUserId } from '../utils';
 import NjamForm from './NjamForm';
@@ -31,12 +24,9 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
     !form.isFieldsTouched() ||
     any(Boolean)(Object.values(form.getFieldsError()));
 
-  const [createNjam, { data, loading, error }] = useMutation<
-    CreateNjamMutation,
-    MutationCreateNjamArgs
-  >(createNjamMutation);
+  const [createNjam, { data, loading, error }] = useCreateNjamMutation();
 
-  const usersQueryResult = useQuery<UsersQuery>(usersQuery);
+  const usersQueryResult = useUsersQuery();
 
   const { data: { users = [] } = { users: [] } } = usersQueryResult;
 
