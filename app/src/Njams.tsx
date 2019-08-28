@@ -29,13 +29,11 @@ import {
   MyNjamsCountQueryResult,
   MyNjamsCountQueryVariables,
   MyNjamsDocument,
-  MyNjamsQuery,
   MyNjamsQueryVariables,
   Njam,
   NjamsCountDocument,
   NjamsCountQueryResult,
   NjamsDocument,
-  NjamsQuery,
   NjamsQueryVariables,
   NjamSummaryFragment,
   useToggleOrderedMutation,
@@ -123,7 +121,13 @@ const oneHourInThePast = moment().subtract(1, 'hour');
 const initialPage = 1;
 const pageSize = 10;
 
-type NjamsQueryResult = NjamsQuery | MyNjamsQuery;
+enum CollectionQueryKey {
+  njams = 'njams',
+  myNjams = 'myNjams',
+}
+type CollectionQueryResult = {
+  [key in CollectionQueryKey]: NjamSummaryFragment[];
+};
 
 export interface NjamsProps extends RouteComponentProps {}
 
@@ -193,13 +197,13 @@ const Njams: React.FC<NjamsProps> = ({
     loading,
     fetchMore,
     // refetch,
-  } = useQuery<NjamsQueryResult, NjamsQueryVariables & MyNjamsQueryVariables>(
-    queries.njams,
-    {
-      // pollInterval: 1000,
-      variables: { userId, page: initialPage, pageSize },
-    },
-  );
+  } = useQuery<
+    CollectionQueryResult,
+    NjamsQueryVariables & MyNjamsQueryVariables
+  >(queries.njams, {
+    // pollInterval: 1000,
+    variables: { userId, page: initialPage, pageSize },
+  });
   const [njams = []] = Object.values(data!) as [NjamSummaryFragment[]];
 
   const countResult = useQuery<
@@ -211,7 +215,7 @@ const Njams: React.FC<NjamsProps> = ({
   const [toggleOrdered, toggleOrderedResults] = useToggleOrderedMutation();
   const toggleOrderedError = toggleOrderedResults.error || new Error('');
 
-  const loadedAll = njams.length === count;
+  const loadedAll = njams.length >= count;
 
   const page = Math.ceil(njams.length / pageSize);
 
@@ -281,21 +285,19 @@ const Njams: React.FC<NjamsProps> = ({
                     updateQuery: (oldResults, { fetchMoreResult }) => {
                       const [[njamsKey, oldNjams]] = Object.entries(
                         oldResults,
-                      ) as [[keyof typeof queries, NjamSummaryFragment[]]];
+                      ) as [[CollectionQueryKey, NjamSummaryFragment[]]];
 
-                      const [newNjams] = Object.values(fetchMoreResult!) as [
-                        NjamSummaryFragment[],
-                      ];
+                      const [newNjams] = Object.values(fetchMoreResult!);
 
                       const existingIds = oldNjams.map(({ id }) => id);
 
                       const filteredNjams = newNjams.filter(
                         ({ id }) => !existingIds.includes(id),
                       );
-
-                      return {
+                      const updatedResult = {
                         [njamsKey]: oldNjams.concat(filteredNjams),
-                      } as NjamsQueryResult;
+                      } as CollectionQueryResult;
+                      return updatedResult;
                     },
                   });
                 }}
@@ -331,9 +333,16 @@ const Njams: React.FC<NjamsProps> = ({
           </>
         }
         bordered
-        dataSource={njams.filter(
-          filters.find(({ name }) => name === activeFilter)!.value,
-        )}
+        dataSource={njams
+          .filter(filters.find(({ name }) => name === activeFilter)!.value)
+          .filter(
+            njams.length > count &&
+              queries.njams.definitions[0].name.value ===
+                CollectionQueryKey.myNjams
+              ? ({ participants }) =>
+                  participants.map(({ id }) => id).includes(userId)
+              : always(true),
+          )}
         renderItem={({
           id,
           location,
