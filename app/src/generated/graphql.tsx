@@ -153,13 +153,13 @@ export type LeaveNjamMutation = (
    }
 );
 
-export type JoinNjamMutationMutationVariables = {
+export type JoinNjamMutationVariables = {
   userId: Scalars['ID'],
   njamId: Scalars['ID']
 };
 
 
-export type JoinNjamMutationMutation = (
+export type JoinNjamMutation = (
   { __typename?: 'Mutation' }
   & { joinNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
@@ -385,21 +385,21 @@ export type LeaveNjamMutationFn = ApolloReactCommon.MutationFunction<LeaveNjamMu
 export type LeaveNjamMutationHookResult = ReturnType<typeof useLeaveNjamMutation>;
 export type LeaveNjamMutationResult = ApolloReactCommon.MutationResult<LeaveNjamMutation>;
 export type LeaveNjamMutationOptions = ApolloReactCommon.BaseMutationOptions<LeaveNjamMutation, LeaveNjamMutationVariables>;
-export const JoinNjamMutationDocument = gql`
-    mutation joinNjamMutation($userId: ID!, $njamId: ID!) {
+export const JoinNjamDocument = gql`
+    mutation joinNjam($userId: ID!, $njamId: ID!) {
   joinNjam(userId: $userId, njamId: $njamId) {
     ...CompleteNjam
   }
 }
     ${CompleteNjamFragmentDoc}`;
-export type JoinNjamMutationMutationFn = ApolloReactCommon.MutationFunction<JoinNjamMutationMutation, JoinNjamMutationMutationVariables>;
+export type JoinNjamMutationFn = ApolloReactCommon.MutationFunction<JoinNjamMutation, JoinNjamMutationVariables>;
 
-    export function useJoinNjamMutationMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<JoinNjamMutationMutation, JoinNjamMutationMutationVariables>) {
-      return ApolloReactHooks.useMutation<JoinNjamMutationMutation, JoinNjamMutationMutationVariables>(JoinNjamMutationDocument, baseOptions);
+    export function useJoinNjamMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<JoinNjamMutation, JoinNjamMutationVariables>) {
+      return ApolloReactHooks.useMutation<JoinNjamMutation, JoinNjamMutationVariables>(JoinNjamDocument, baseOptions);
     };
-export type JoinNjamMutationMutationHookResult = ReturnType<typeof useJoinNjamMutationMutation>;
-export type JoinNjamMutationMutationResult = ApolloReactCommon.MutationResult<JoinNjamMutationMutation>;
-export type JoinNjamMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<JoinNjamMutationMutation, JoinNjamMutationMutationVariables>;
+export type JoinNjamMutationHookResult = ReturnType<typeof useJoinNjamMutation>;
+export type JoinNjamMutationResult = ApolloReactCommon.MutationResult<JoinNjamMutation>;
+export type JoinNjamMutationOptions = ApolloReactCommon.BaseMutationOptions<JoinNjamMutation, JoinNjamMutationVariables>;
 export const ToggleOrderedDocument = gql`
     mutation toggleOrdered($id: ID!, $ordered: Boolean) {
   editNjam(id: $id, ordered: $ordered) {

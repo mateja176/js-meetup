@@ -22,7 +22,7 @@ mutation leaveNjam($userId: ID!, $njamId: ID!) {
   }
 }
 
-mutation joinNjamMutation($userId: ID!, $njamId: ID!) {
+mutation joinNjam($userId: ID!, $njamId: ID!) {
   joinNjam(userId: $userId, njamId: $njamId) {
     ...CompleteNjam
   }
