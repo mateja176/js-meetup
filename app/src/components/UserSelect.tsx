@@ -1,7 +1,7 @@
 import { Select } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 import React from 'react';
-import { User } from '../../../api/src/models';
+import { User } from '../generated/graphql';
 import { Users } from '../models';
 import UserOption from './UserOption';
 

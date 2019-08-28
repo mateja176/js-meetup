@@ -1,6 +1,6 @@
 import { Select } from 'antd';
 import React from 'react';
-import { User } from '../../../api/src/models';
+import { User } from '../generated/graphql';
 
 const UserOption: React.FC<User> = ({ id, name, lastname }) => (
   <Select.Option key={id} value={id}>
