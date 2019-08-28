@@ -18,29 +18,28 @@ import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
-import {
-  MutationJoinNjamArgs,
-  Njam,
-  QueryMyNjamsArgs,
-  QueryMyNjamsCountArgs,
-  QueryNjamsArgs,
-} from '../../api/src/models';
-import {
-  joinNjamMutation,
-  JoinNjamResult,
-  leaveNjamMutation,
-  LeaveNjamResult,
-  myNjamsCountQuery,
-  MyNjamsCountQuery,
-  MyNjamsQuery,
-  myNjamsQuery,
-  njamsCountQuery,
-  NjamsCountQuery,
-  NjamsQuery,
-  njamsQuery,
-} from './apollo';
 import { Err } from './components';
-import { useToggleOrderedMutation } from './generated/graphql';
+import {
+  JoinNjamDocument,
+  JoinNjamMutationResult,
+  JoinNjamMutationVariables,
+  LeaveNjamDocument,
+  LeaveNjamMutationResult,
+  MyNjamsCountDocument,
+  MyNjamsCountQueryResult,
+  MyNjamsCountQueryVariables,
+  MyNjamsDocument,
+  MyNjamsQuery,
+  MyNjamsQueryVariables,
+  Njam,
+  NjamsCountDocument,
+  NjamsCountQueryResult,
+  NjamsDocument,
+  NjamsQuery,
+  NjamsQueryVariables,
+  NjamSummaryFragment,
+  useToggleOrderedMutation,
+} from './generated/graphql';
 import { createMoment, useUserId } from './utils';
 
 const createNjamAction = ({
@@ -49,12 +48,12 @@ const createNjamAction = ({
   text,
 }: {
   mutation: Parameters<typeof useMutation>[0];
-  getInverse: () => React.ComponentType<MutationJoinNjamArgs>;
+  getInverse: () => React.ComponentType<JoinNjamMutationVariables>;
   text: string;
-}): React.FC<MutationJoinNjamArgs> => variables => {
+}): React.FC<JoinNjamMutationVariables> => variables => {
   const [mutationFunction, { loading, error, data }] = useMutation<
-    JoinNjamResult & LeaveNjamResult,
-    MutationJoinNjamArgs
+    JoinNjamMutationResult & LeaveNjamMutationResult,
+    JoinNjamMutationVariables
   >(mutation, { variables });
 
   const { name, message } = error || new Error('');
@@ -82,13 +81,13 @@ const createNjamAction = ({
 };
 
 const LeaveNjam = createNjamAction({
-  mutation: leaveNjamMutation,
+  mutation: LeaveNjamDocument,
   text: 'Leave',
   getInverse: () => JoinNjam,
 });
 
 const JoinNjam = createNjamAction({
-  mutation: joinNjamMutation,
+  mutation: JoinNjamDocument,
   text: 'Join',
   getInverse: () => LeaveNjam,
 });
@@ -135,9 +134,12 @@ const Njams: React.FC<NjamsProps> = ({
 }) => {
   const userId = useUserId();
 
-  const [queries, setQueries] = React.useState({
-    njams: njamsQuery,
-    count: njamsCountQuery,
+  const [queries, setQueries] = React.useState<{
+    njams: typeof NjamsDocument;
+    count: typeof NjamsCountDocument;
+  }>({
+    njams: NjamsDocument,
+    count: NjamsCountDocument,
   });
 
   const filterNames = [
@@ -191,18 +193,18 @@ const Njams: React.FC<NjamsProps> = ({
     loading,
     fetchMore,
     // refetch,
-  } = useQuery<NjamsQueryResult, QueryNjamsArgs & QueryMyNjamsArgs>(
+  } = useQuery<NjamsQueryResult, NjamsQueryVariables & MyNjamsQueryVariables>(
     queries.njams,
     {
       // pollInterval: 1000,
       variables: { userId, page: initialPage, pageSize },
     },
   );
-  const [njams = []] = Object.values(data!);
+  const [njams = []] = Object.values(data!) as [NjamSummaryFragment[]];
 
   const countResult = useQuery<
-    NjamsCountQuery | MyNjamsCountQuery,
-    QueryMyNjamsCountArgs
+    NjamsCountQueryResult | MyNjamsCountQueryResult,
+    MyNjamsCountQueryVariables
   >(queries.count, { variables: { userId }, pollInterval: 1000 });
   const [count = 0] = Object.values(countResult.data!);
 
@@ -238,8 +240,8 @@ const Njams: React.FC<NjamsProps> = ({
             onChange={on => {
               setQueries(
                 on
-                  ? { njams: myNjamsQuery, count: myNjamsCountQuery }
-                  : { njams: njamsQuery, count: njamsCountQuery },
+                  ? { njams: MyNjamsDocument, count: MyNjamsCountDocument }
+                  : { njams: NjamsDocument, count: NjamsCountDocument },
               );
             }}
           />
@@ -277,9 +279,13 @@ const Njams: React.FC<NjamsProps> = ({
                       page: isONNewPage ? page + 1 : page,
                     },
                     updateQuery: (oldResults, { fetchMoreResult }) => {
-                      const [[njamsKey, oldNjams]] = Object.entries(oldResults);
+                      const [[njamsKey, oldNjams]] = Object.entries(
+                        oldResults,
+                      ) as [[keyof typeof queries, NjamSummaryFragment[]]];
 
-                      const [newNjams] = Object.values(fetchMoreResult!);
+                      const [newNjams] = Object.values(fetchMoreResult!) as [
+                        NjamSummaryFragment[],
+                      ];
 
                       const existingIds = oldNjams.map(({ id }) => id);
 
