@@ -96,7 +96,7 @@ const columns = keys.map(capitalize);
 const smallerSpan = 4;
 const largerSpan = 5;
 
-const Column: React.FC = ({ children }) => (
+const Column: React.FC<{ children: string }> = ({ children }) => (
   <Col
     span={largerSpan}
     style={{
@@ -104,6 +104,7 @@ const Column: React.FC = ({ children }) => (
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
     }}
+    title={children}
   >
     <Typography.Text>{children}</Typography.Text>
   </Col>
@@ -367,7 +368,7 @@ const Njams: React.FC<NjamsProps> = ({
               >
                 <Column>{location}</Column>
                 <Column>{time}</Column>
-                <Column>{organizer.name}</Column>
+                <Column>{organizer.name!}</Column>
                 <Col span={smallerSpan}>
                   <Popover
                     visible={!!toggleOrderedResults.error}
