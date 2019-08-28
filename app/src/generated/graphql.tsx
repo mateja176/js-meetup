@@ -13,13 +13,13 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: 'Mutation',
-  createUser?: Maybe<User>,
-  createNjam?: Maybe<Njam>,
-  orderNjam?: Maybe<Njam>,
-  deleteNjam?: Maybe<Njam>,
-  joinNjam?: Maybe<Njam>,
-  leaveNjam?: Maybe<Njam>,
-  editNjam?: Maybe<Njam>,
+  createUser: User,
+  createNjam: Njam,
+  orderNjam: Njam,
+  deleteNjam: Njam,
+  joinNjam: Njam,
+  leaveNjam: Njam,
+  editNjam: Njam,
 };
 
 
@@ -81,13 +81,13 @@ export type Njam = {
 
 export type Query = {
   __typename?: 'Query',
-  users?: Maybe<Array<Maybe<User>>>,
-  user?: Maybe<User>,
-  njams?: Maybe<Array<Maybe<Njam>>>,
-  njam?: Maybe<Njam>,
-  myNjams?: Maybe<Array<Maybe<Njam>>>,
-  njamsCount?: Maybe<Scalars['Int']>,
-  myNjamsCount?: Maybe<Scalars['Int']>,
+  users: Array<User>,
+  user: User,
+  njams: Array<Njam>,
+  njam: Njam,
+  myNjams: Array<Njam>,
+  njamsCount: Scalars['Int'],
+  myNjamsCount: Scalars['Int'],
 };
 
 
@@ -135,9 +135,9 @@ export type CreateNjamMutationVariables = {
 
 export type CreateNjamMutation = (
   { __typename?: 'Mutation' }
-  & { createNjam: Maybe<{ __typename?: 'Njam' }
+  & { createNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type LeaveNjamMutationVariables = {
@@ -148,9 +148,9 @@ export type LeaveNjamMutationVariables = {
 
 export type LeaveNjamMutation = (
   { __typename?: 'Mutation' }
-  & { leaveNjam: Maybe<{ __typename?: 'Njam' }
+  & { leaveNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type JoinNjamMutationMutationVariables = {
@@ -161,9 +161,9 @@ export type JoinNjamMutationMutationVariables = {
 
 export type JoinNjamMutationMutation = (
   { __typename?: 'Mutation' }
-  & { joinNjam: Maybe<{ __typename?: 'Njam' }
+  & { joinNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type ToggleOrderedMutationVariables = {
@@ -174,9 +174,9 @@ export type ToggleOrderedMutationVariables = {
 
 export type ToggleOrderedMutation = (
   { __typename?: 'Mutation' }
-  & { editNjam: Maybe<{ __typename?: 'Njam' }
+  & { editNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type EditNjamMutationVariables = {
@@ -190,9 +190,9 @@ export type EditNjamMutationVariables = {
 
 export type EditNjamMutation = (
   { __typename?: 'Mutation' }
-  & { editNjam: Maybe<{ __typename?: 'Njam' }
+  & { editNjam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type CompleteUserFragment = (
@@ -237,9 +237,9 @@ export type UsersQueryVariables = {};
 
 export type UsersQuery = (
   { __typename?: 'Query' }
-  & { users: Maybe<Array<Maybe<{ __typename?: 'User' }
+  & { users: Array<{ __typename?: 'User' }
     & CompleteUserFragment
-  >>> }
+  > }
 );
 
 export type NjamsQueryVariables = {
@@ -250,9 +250,9 @@ export type NjamsQueryVariables = {
 
 export type NjamsQuery = (
   { __typename?: 'Query' }
-  & { njams: Maybe<Array<Maybe<{ __typename?: 'Njam' }
+  & { njams: Array<{ __typename?: 'Njam' }
     & NjamSummaryFragment
-  >>> }
+  > }
 );
 
 export type MyNjamsQueryVariables = {
@@ -264,9 +264,9 @@ export type MyNjamsQueryVariables = {
 
 export type MyNjamsQuery = (
   { __typename?: 'Query' }
-  & { myNjams: Maybe<Array<Maybe<{ __typename?: 'Njam' }
+  & { myNjams: Array<{ __typename?: 'Njam' }
     & NjamSummaryFragment
-  >>> }
+  > }
 );
 
 export type NjamQueryVariables = {
@@ -276,9 +276,9 @@ export type NjamQueryVariables = {
 
 export type NjamQuery = (
   { __typename?: 'Query' }
-  & { njam: Maybe<{ __typename?: 'Njam' }
+  & { njam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  > }
+   }
 );
 
 export type NjamsCountQueryVariables = {};
@@ -306,11 +306,11 @@ export type NjamPageQueryVariables = {
 
 export type NjamPageQuery = (
   { __typename?: 'Query' }
-  & { njam: Maybe<{ __typename?: 'Njam' }
+  & { njam: { __typename?: 'Njam' }
     & CompleteNjamFragment
-  >, users: Maybe<Array<Maybe<{ __typename?: 'User' }
+  , users: Array<{ __typename?: 'User' }
     & CompleteUserFragment
-  >>> }
+  > }
 );
 export const CompleteUserFragmentDoc = gql`
     fragment CompleteUser on User {
