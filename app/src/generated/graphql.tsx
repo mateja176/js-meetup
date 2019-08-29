@@ -124,6 +124,43 @@ export type User = {
   name?: Maybe<Scalars['String']>,
   lastname?: Maybe<Scalars['String']>,
 };
+export type CompleteUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'name' | 'lastname'>
+);
+
+export type NjamBaseFragment = (
+  { __typename?: 'Njam' }
+  & Pick<Njam, 'id' | 'location' | 'time' | 'ordered'>
+);
+
+export type NjamSummaryFragment = (
+  { __typename?: 'Njam' }
+  & { organizer: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name'>
+  ), participants: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  )> }
+)
+  & NjamBaseFragment
+;
+
+export type CompleteNjamFragment = (
+  { __typename?: 'Njam' }
+  & Pick<Njam, 'description'>
+  & { organizer: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'lastname'>
+  ), participants: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'name' | 'lastname'>
+  )> }
+)
+  & NjamBaseFragment
+;
+
 export type CreateNjamMutationVariables = {
   location: Scalars['String'],
   description?: Maybe<Scalars['String']>,
@@ -194,43 +231,6 @@ export type EditNjamMutation = (
     & CompleteNjamFragment
    }
 );
-
-export type CompleteUserFragment = (
-  { __typename?: 'User' }
-  & Pick<User, 'id' | 'name' | 'lastname'>
-);
-
-export type NjamBaseFragment = (
-  { __typename?: 'Njam' }
-  & Pick<Njam, 'id' | 'location' | 'time' | 'ordered'>
-);
-
-export type NjamSummaryFragment = (
-  { __typename?: 'Njam' }
-  & { organizer: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name'>
-  ), participants: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )> }
-)
-  & NjamBaseFragment
-;
-
-export type CompleteNjamFragment = (
-  { __typename?: 'Njam' }
-  & Pick<Njam, 'description'>
-  & { organizer: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'lastname'>
-  ), participants: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'name' | 'lastname'>
-  )> }
-)
-  & NjamBaseFragment
-;
 
 export type UsersQueryVariables = {};
 
