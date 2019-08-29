@@ -1,9 +1,13 @@
+import { kebabCase } from 'lodash';
 import moment from 'moment';
+import urlJoin from 'url-join';
 import { MutationCreateNjamArgs, User } from '../generated/graphql';
 import { NjamFormValues } from '../models';
 
 export * from './generators';
 export * from './hooks';
+
+export const toAbsolutePath = (s: string) => urlJoin('/', kebabCase(s));
 
 // https://stackoverflow.com/questions/39969570/deprecation-warning-in-moment-js/51238958
 export const createMoment = (time: string) => moment(new Date(time));
@@ -19,13 +23,3 @@ export const mapNjamFormValues = (userId: User['id']) => ({
     participantIds: participantIds.concat(userId),
   } as MutationCreateNjamArgs;
 };
-
-export const toMappedObject = <Key extends string, MappedKey extends string>(
-  mapKey: (key: Key) => MappedKey,
-) => <MappedValue>(mapValue: (value: Key) => MappedValue) => (
-  array: Array<Key>,
-) =>
-  array.reduce(
-    (object, key) => ({ ...object, [mapKey(key)]: mapValue(key) }),
-    {} as Record<MappedKey, MappedValue>,
-  );
