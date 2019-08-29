@@ -74,7 +74,7 @@ const Layout: React.FC<RouteComponentProps> = ({
 
   const userId = useUserId();
 
-  const userIdsQueryResult = useUserIdsQuery({ fetchPolicy: 'network-only' });
+  const userIdsQueryResult = useUserIdsQuery();
   const { data } = userIdsQueryResult;
 
   React.useEffect(() => {
