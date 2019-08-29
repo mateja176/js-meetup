@@ -4,6 +4,12 @@ query users {
   }
 }
 
+query userIds {
+  users {
+    id
+  }
+}
+
 query njams($page: Int, $pageSize: Int) {
   njams(page: $page, pageSize: $pageSize) {
     ...NjamSummary

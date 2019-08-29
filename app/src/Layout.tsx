@@ -8,6 +8,7 @@ import {
 } from 'antd';
 import { IconProps as AntIconProps } from 'antd/lib/icon';
 import { kebabCase, startCase } from 'lodash';
+import { isEmpty } from 'ramda';
 import React from 'react';
 import {
   NavLink,
@@ -19,11 +20,13 @@ import {
 } from 'react-router-dom';
 import urlJoin from 'url-join';
 import env from './env';
-import { routeName, routePath } from './models';
+import { useUserIdsQuery } from './generated/graphql';
+import { publicRoutePath, routeName, routePath } from './models';
 import Njam, { CreateNjam } from './Njam';
 import Njams from './Njams';
 import SignIn from './SignIn';
 import Users from './Users';
+import { useUserId } from './utils';
 
 type IconProps = Omit<AntIconProps, 'type'>;
 
@@ -69,13 +72,23 @@ const Layout: React.FC<RouteComponentProps> = ({
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => setOpen(!open);
 
-  React.useEffect(() => {
-    const userId = localStorage.getItem('userId');
+  const userId = useUserId();
 
+  const userIdsQueryResult = useUserIdsQuery({ fetchPolicy: 'network-only' });
+  const { data } = userIdsQueryResult;
+
+  React.useEffect(() => {
     if (!userId) {
-      history.push('/sign-in');
+      history.push(publicRoutePath.signIn);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!isEmpty(data)) {
+      const { users } = data!;
+
+      if (!users.some(({ id }) => id === userId)) {
+        history.push(publicRoutePath.signIn);
+      }
+    }
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -105,7 +118,7 @@ const Layout: React.FC<RouteComponentProps> = ({
         </Menu>
       </Drawer>
       <Switch>
-        <Route path="/sign-in" component={SignIn} />
+        <Route path={publicRoutePath.signIn} component={SignIn} />
         <Route
           exact
           path="/"

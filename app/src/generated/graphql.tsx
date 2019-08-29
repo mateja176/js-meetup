@@ -242,6 +242,17 @@ export type UsersQuery = (
   > }
 );
 
+export type UserIdsQueryVariables = {};
+
+
+export type UserIdsQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'User' }
+    & Pick<User, 'id'>
+  )> }
+);
+
 export type NjamsQueryVariables = {
   page?: Maybe<Scalars['Int']>,
   pageSize?: Maybe<Scalars['Int']>
@@ -447,6 +458,23 @@ export const UsersDocument = gql`
       
 export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
 export type UsersQueryResult = ApolloReactCommon.QueryResult<UsersQuery, UsersQueryVariables>;
+export const UserIdsDocument = gql`
+    query userIds {
+  users {
+    id
+  }
+}
+    `;
+
+    export function useUserIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserIdsQuery, UserIdsQueryVariables>) {
+      return ApolloReactHooks.useQuery<UserIdsQuery, UserIdsQueryVariables>(UserIdsDocument, baseOptions);
+    };
+      export function useUserIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserIdsQuery, UserIdsQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<UserIdsQuery, UserIdsQueryVariables>(UserIdsDocument, baseOptions);
+      };
+      
+export type UserIdsQueryHookResult = ReturnType<typeof useUserIdsQuery>;
+export type UserIdsQueryResult = ApolloReactCommon.QueryResult<UserIdsQuery, UserIdsQueryVariables>;
 export const NjamsDocument = gql`
     query njams($page: Int, $pageSize: Int) {
   njams(page: $page, pageSize: $pageSize) {
