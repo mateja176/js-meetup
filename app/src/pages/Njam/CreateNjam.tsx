@@ -5,7 +5,6 @@ import { any, isEmpty } from 'ramda';
 import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Box } from 'rebass';
-import urlJoin from 'url-join';
 import { Err, FormContainer, Retry } from '../../components';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { useCreateNjamMutation, useUsersQuery } from '../../generated/graphql';
@@ -80,7 +79,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
           <Err {...error} />
         </Box>
       )}
-      {data && <Redirect to={urlJoin(routePath.njams, data.createNjam.id)} />}
+      {data && <Redirect to={routePath.njams} />}
     </FormContainer>
   );
 };

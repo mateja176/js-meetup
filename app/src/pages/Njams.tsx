@@ -202,8 +202,9 @@ const Njams: React.FC<NjamsProps> = ({
     CollectionQueryResult,
     NjamsQueryVariables & MyNjamsQueryVariables
   >(queries.njams, {
-    // pollInterval: 1000,
     variables: { userId, page: initialPage, pageSize },
+    // pollInterval: 1000,
+    fetchPolicy: 'cache-and-network',
   });
   const [njams = []] = Object.values(data!) as [NjamSummaryFragment[]];
 
