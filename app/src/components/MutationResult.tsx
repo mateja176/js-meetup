@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import { isEmpty } from 'ramda';
 import React from 'react';
 import { MutationResult as ApolloMutationResult } from 'react-apollo';
 import Err from './Err';
@@ -18,18 +19,19 @@ const MutationResult = <D extends {}>({
 }: MutationResultProps<D>) => {
   if (loading) {
     return <Button loading />;
-  } else if (error) {
+  }
+  if (error) {
     return (
       <>
         {children}
         <Err {...error} />
       </>
     );
-  } else if (data) {
-    return <Data {...data} />;
-  } else {
-    return children;
   }
+  if (!isEmpty(data)) {
+    return <Data {...data!} />;
+  }
+  return children;
 };
 
 export default MutationResult;

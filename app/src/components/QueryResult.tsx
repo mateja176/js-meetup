@@ -16,11 +16,11 @@ const QueryResult = <D extends {}>({
 }: QueryResultProps<D>) => {
   if (loading) {
     return <Loading />;
-  } else if (error) {
-    return <Err {...error} />;
-  } else {
-    return <Data {...data!} />;
   }
+  if (error) {
+    return <Err {...error} />;
+  }
+  return <Data {...data!} />;
 };
 
 export default QueryResult;
