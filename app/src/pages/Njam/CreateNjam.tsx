@@ -6,11 +6,11 @@ import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { Box } from 'rebass';
 import urlJoin from 'url-join';
-import { Err, FormContainer, Retry } from '../components';
-import LoadingOverlay from '../components/LoadingOverlay';
-import { useCreateNjamMutation, useUsersQuery } from '../generated/graphql';
-import { NjamFormValues, routeName, routePath } from '../models';
-import { mapNjamFormValues, useUserId } from '../utils';
+import { Err, FormContainer, Retry } from '../../components';
+import LoadingOverlay from '../../components/LoadingOverlay';
+import { useCreateNjamMutation, useUsersQuery } from '../../generated/graphql';
+import { NjamFormValues, routeName, routePath } from '../../models';
+import { mapNjamFormValues, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
 
 export interface CreateNjamProps

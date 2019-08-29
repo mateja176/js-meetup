@@ -18,7 +18,7 @@ import React from 'react';
 import { NavLink, RouteComponentProps } from 'react-router-dom';
 import { Box, Flex } from 'rebass';
 import urlJoin from 'url-join';
-import { Err } from './components';
+import { Err } from '../components';
 import {
   JoinNjamDocument,
   JoinNjamMutationResult,
@@ -37,8 +37,8 @@ import {
   NjamsQueryVariables,
   NjamSummaryFragment,
   useToggleOrderedMutation,
-} from './generated/graphql';
-import { createMoment, useUserId } from './utils';
+} from '../generated/graphql';
+import { createMoment, useUserId } from '../utils';
 
 const createNjamAction = ({
   mutation,

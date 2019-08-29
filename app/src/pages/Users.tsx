@@ -1,7 +1,7 @@
 import { Col, List, Row, Typography } from 'antd';
 import React from 'react';
-import { Err } from './components';
-import { useUsersQuery } from './generated/graphql';
+import { Err } from '../components';
+import { useUsersQuery } from '../generated/graphql';
 
 export interface UsersProps {}
 

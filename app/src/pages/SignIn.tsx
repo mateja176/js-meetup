@@ -1,8 +1,8 @@
 import { Button, Form, Typography } from 'antd';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { FormContainer, Loading, Retry, UserSelect } from './components';
-import { useUsersQuery } from './generated/graphql';
+import { FormContainer, Loading, Retry, UserSelect } from '../components';
+import { useUsersQuery } from '../generated/graphql';
 
 export interface SignInProps extends RouteComponentProps {}
 

@@ -3,11 +3,11 @@ import { FormComponentProps } from 'antd/lib/form';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
-import { Err, FormContainer } from '../components';
-import LoadingOverlay from '../components/LoadingOverlay';
-import { useEditNjamMutation, useNjamPageQuery } from '../generated/graphql';
-import { NjamFormValues, routeName } from '../models';
-import { createMoment, mapNjamFormValues, useUserId } from '../utils';
+import { Err, FormContainer } from '../../components';
+import LoadingOverlay from '../../components/LoadingOverlay';
+import { useEditNjamMutation, useNjamPageQuery } from '../../generated/graphql';
+import { NjamFormValues, routeName } from '../../models';
+import { createMoment, mapNjamFormValues, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
 
 interface NjamProps

@@ -19,14 +19,14 @@ import {
   withRouter,
 } from 'react-router-dom';
 import urlJoin from 'url-join';
-import env from './env';
-import { useUserIdsQuery } from './generated/graphql';
-import { publicRoutePath, routeName, routePath } from './models';
-import Njam, { CreateNjam } from './Njam';
-import Njams from './Njams';
-import SignIn from './SignIn';
-import Users from './Users';
-import { useUserId } from './utils';
+import env from '../env';
+import { useUserIdsQuery } from '../generated/graphql';
+import { publicRoutePath, routeName, routePath } from '../models';
+import Njam, { CreateNjam } from '../pages/Njam';
+import Njams from '../pages/Njams';
+import SignIn from '../pages/SignIn';
+import Users from '../pages/Users';
+import { useUserId } from '../utils';
 
 type IconProps = Omit<AntIconProps, 'type'>;
 
