@@ -1,7 +1,7 @@
-import { kebabCase } from 'lodash';
+import { mapValues } from 'lodash';
 import moment from 'moment';
-import urlJoin from 'url-join';
 import { Njam, Scalars, User } from '../generated/graphql';
+import { toAbsolutePath } from '../utils';
 
 export type Users = User[];
 
@@ -14,29 +14,16 @@ export interface NjamFormValues
   participantIds: Scalars['ID'][];
 }
 
-export const routeNames = ['njams', 'createNjam', 'users'] as const;
+export const routeName = {
+  njams: 'njams',
+  createNjam: 'createNjam',
+  users: 'users',
+};
 
-export type RouteName = typeof routeNames[number];
+export const routePath = mapValues(routeName, toAbsolutePath);
 
-export const routeName = routeNames.reduce(
-  (route, name) => ({ ...route, [name]: name }),
-  {} as { [name in RouteName]: name },
-);
+export const publicRouteName = {
+  signIn: 'signIn',
+};
 
-export const routePath = Object.fromEntries(
-  routeNames.map(name => [name, urlJoin('/', kebabCase(name))]),
-) as Record<RouteName, string>;
-
-export const publicRouteNames = ['signIn'] as const;
-
-export type PublicRouteName = typeof publicRouteNames[number];
-
-export const publicRouteName = publicRouteNames.reduce(
-  (route, name) => ({ ...route, [name]: name }),
-  {} as { [name in PublicRouteName]: name },
-);
-
-export const publicRoutePath = publicRouteNames.reduce(
-  (route, name) => ({ ...route, [name]: urlJoin('/', kebabCase(name)) }),
-  {} as Record<PublicRouteName, string>,
-);
+export const publicRoutePath = mapValues(publicRouteName, toAbsolutePath);
