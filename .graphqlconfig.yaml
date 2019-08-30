@@ -1,6 +1,6 @@
 projects:
   app:
-    schemaPath: api/src/types/query.type.graphql
+    schemaPath: schema.graphql
     includes: ["**/*.graphql"]
     extensions:
       endpoints:

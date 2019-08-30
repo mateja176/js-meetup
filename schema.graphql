@@ -1,0 +1,36 @@
+type Mutation {
+  createUser(name: String!, lastname: String!): User!
+  createNjam(location: String!, description: String, time: String!, organizerId: ID!, participantIds: [ID!]): Njam!
+  orderNjam(njamId: ID!): Njam!
+  deleteNjam(njamId: ID!): Njam!
+  joinNjam(userId: ID!, njamId: ID!): Njam!
+  leaveNjam(userId: ID!, njamId: ID!): Njam!
+  editNjam(id: ID!, location: String, description: String, time: String, ordered: Boolean): Njam!
+}
+
+type Njam {
+  id: ID!
+  location: String!
+  description: String
+  time: String!
+  participants: [User!]!
+  organizer: User!
+  ordered: Boolean!
+}
+
+type Query {
+  users: [User!]!
+  user(id: ID!): User!
+  njams(page: Int, pageSize: Int): [Njam!]!
+  njam(id: ID!): Njam!
+  myNjams(userId: ID!, page: Int, pageSize: Int): [Njam!]!
+  njamsCount: Int!
+  myNjamsCount(userId: ID!): Int!
+}
+
+type User {
+  id: ID!
+  name: String
+  lastname: String
+}
+
