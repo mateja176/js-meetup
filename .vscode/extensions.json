@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "prisma.vscode-graphql",
+    "apollographql.vscode-apollo",
+    "kumar-harsh.graphql-for-vscode"
+  ]
+}
