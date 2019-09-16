@@ -16,6 +16,24 @@ query njams($page: Int, $pageSize: Int) {
   }
 }
 
+# fragment NjamBase on Njam {
+#   id
+#   location
+#   time
+#   ordered
+# }
+
+# fragment NjamSummary on Njam {
+#   ...NjamBase
+#   organizer {
+#     id
+#     name
+#   }
+#   participants {
+#     id
+#   }
+# }
+
 query myNjams($userId: ID!, $page: Int, $pageSize: Int) {
   myNjams(userId: $userId, page: $page, pageSize: $pageSize) {
     ...NjamSummary
