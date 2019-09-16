@@ -7,6 +7,7 @@ import {
   Row,
   Switch,
   Tabs,
+  Tooltip,
   Typography,
 } from 'antd';
 import { css } from 'emotion';
@@ -239,18 +240,20 @@ const Njams: React.FC<NjamsProps> = ({
           ))}
         </Tabs>
         <Box ml={4} mt={10}>
-          <Switch
-            loading={loading}
-            checkedChildren="All Njams"
-            unCheckedChildren="Going to"
-            onChange={on => {
-              setQueries(
-                on
-                  ? { njams: MyNjamsDocument, count: MyNjamsCountDocument }
-                  : { njams: NjamsDocument, count: NjamsCountDocument },
-              );
-            }}
-          />
+          <Tooltip title="Switch between all the njams and just the njams you are going to">
+            <Switch
+              loading={loading}
+              checkedChildren="Going to"
+              unCheckedChildren="All Njams"
+              onChange={on => {
+                setQueries(
+                  on
+                    ? { njams: MyNjamsDocument, count: MyNjamsCountDocument }
+                    : { njams: NjamsDocument, count: NjamsCountDocument },
+                );
+              }}
+            />
+          </Tooltip>
         </Box>
         {/* <Box ml={4} mt={1}>
           <Button
