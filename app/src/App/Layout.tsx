@@ -26,7 +26,6 @@ import Njam, { CreateNjam } from '../pages/Njam';
 import Njams from '../pages/Njams';
 import SignIn from '../pages/SignIn';
 import Users from '../pages/Users';
-import { useUserId } from '../utils';
 
 type IconProps = Omit<AntIconProps, 'type'>;
 
@@ -72,19 +71,20 @@ const Layout: React.FC<RouteComponentProps> = ({
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => setOpen(!open);
 
-  const userId = useUserId();
-
   const userIdsQueryResult = useUserIdsQuery();
   const { data } = userIdsQueryResult;
 
   React.useEffect(() => {
+    // not using `useUserId` because the value is `''` initially and as such is falsy
+    const userId = localStorage.getItem('userId') || '';
+
     if (!userId) {
       history.push(publicRoutePath.signIn);
     }
     if (!isEmpty(data)) {
       const { users } = data!;
 
-      if (!users.some(({ id }) => id === userId)) {
+      if (!users.map(({ id }) => id).includes(userId)) {
         history.push(publicRoutePath.signIn);
       }
     }
