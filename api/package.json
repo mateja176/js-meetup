@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsnd src/server.ts",
     "codegen-init": "graphql-codegen init",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml --watch"
   },
   "author": "Milos Tomsik",
   "license": "ISC",

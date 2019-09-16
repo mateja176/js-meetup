@@ -10,13 +10,13 @@ export type Scalars = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  createUser?: Maybe<User>;
-  createNjam?: Maybe<Njam>;
-  orderNjam?: Maybe<Njam>;
-  deleteNjam?: Maybe<Njam>;
-  joinNjam?: Maybe<Njam>;
-  leaveNjam?: Maybe<Njam>;
-  editNjam?: Maybe<Njam>;
+  createUser: User;
+  createNjam: Njam;
+  orderNjam: Njam;
+  deleteNjam: Njam;
+  joinNjam: Njam;
+  leaveNjam: Njam;
+  editNjam: Njam;
 };
 
 export type MutationCreateUserArgs = {
@@ -71,13 +71,13 @@ export type Njam = {
 
 export type Query = {
   __typename?: "Query";
-  users?: Maybe<Array<Maybe<User>>>;
-  user?: Maybe<User>;
-  njams?: Maybe<Array<Maybe<Njam>>>;
-  njam?: Maybe<Njam>;
-  myNjams?: Maybe<Array<Maybe<Njam>>>;
-  njamsCount?: Maybe<Scalars["Int"]>;
-  myNjamsCount?: Maybe<Scalars["Int"]>;
+  users: Array<User>;
+  user: User;
+  njams: Array<Njam>;
+  njam: Njam;
+  myNjams: Array<Njam>;
+  njamsCount: Scalars["Int"];
+  myNjamsCount: Scalars["Int"];
 };
 
 export type QueryUserArgs = {
