@@ -19,6 +19,7 @@ import {
   withRouter,
 } from 'react-router-dom';
 import urlJoin from 'url-join';
+import { Err } from '../components';
 import env from '../env';
 import { useUserIdsQuery } from '../generated/graphql';
 import { publicRoutePath, routeName, routePath } from '../models';
@@ -71,8 +72,9 @@ const Layout: React.FC<RouteComponentProps> = ({
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => setOpen(!open);
 
-  const userIdsQueryResult = useUserIdsQuery();
-  const { data } = userIdsQueryResult;
+  const { data, error, stopPolling } = useUserIdsQuery({
+    pollInterval: 1000,
+  });
 
   React.useEffect(() => {
     // not using `useUserId` because the value is `''` initially and as such is falsy
@@ -82,7 +84,9 @@ const Layout: React.FC<RouteComponentProps> = ({
       history.push(publicRoutePath.signIn);
     }
     // use of isEmpty is explained here https://github.com/apollographql/react-apollo/issues/3192
-    if (!isEmpty(data)) {
+    if (data && !isEmpty(data)) {
+      stopPolling();
+
       const { users } = data!;
 
       if (!users.map(({ id }) => id).includes(userId)) {
@@ -93,6 +97,7 @@ const Layout: React.FC<RouteComponentProps> = ({
 
   return (
     <>
+      {error && <Err {...error}></Err>}
       <PageHeader
         onBack={toggleOpen}
         title={<NavLink to="/">{env.appName}</NavLink>}

@@ -7,7 +7,7 @@ import { Err, FormContainer } from '../../components';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { useEditNjamMutation, useNjamPageQuery } from '../../generated/graphql';
 import { NjamFormValues, routeName } from '../../models';
-import { createMoment, mapNjamFormValues, useUserId } from '../../utils';
+import { formValuesToNjam, njamToFormValues, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
 
 interface NjamProps
@@ -30,7 +30,7 @@ const Njam: React.FC<NjamProps> = ({
   const save = () => {
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
-        const { organizerId, participantIds, ...variables } = mapNjamFormValues(
+        const { organizerId, participantIds, ...variables } = formValuesToNjam(
           userId,
         )(values);
 
@@ -45,42 +45,31 @@ const Njam: React.FC<NjamProps> = ({
     variables: { id },
   });
 
-  const {
-    // ? default value is not type checked
-    njam: { time, organizer, participants, ...njam } = {
-      time: '0',
-      organizer: { id: '' },
-      participants: [],
-      id: '',
-      location: '',
-      description: '',
-      ordered: false,
-    },
-    users = [],
-  } = data!;
+  if (loading) {
+    return <LoadingOverlay />;
+  }
 
-  const formValues: NjamFormValues = {
-    ...njam,
-    time: createMoment(time),
-    organizerId: organizer.id,
-    participantIds: participants.map(({ id }) => id),
-  };
+  if (error) {
+    return (
+      <Box my={3}>
+        <Err {...error} />
+      </Box>
+    );
+  }
+
+  const { njam, users } = data!;
+
+  const formValues = njamToFormValues(njam);
 
   return (
     <FormContainer>
-      {loading && <LoadingOverlay />}
-      {error && (
-        <Box my={3}>
-          <Err {...error} />
-        </Box>
-      )}
       {editNjamResult.error && (
         <Box my={3}>
           <Err {...editNjamResult.error} />
         </Box>
       )}
       <Flex justifyContent="flex-end">
-        {organizer.id === userId && !loading && !error && (
+        {formValues.organizerId === userId && !loading && !error && (
           <Box mr={4}>
             {readOnly ? (
               <Button
