@@ -11,8 +11,8 @@ export const Seed = (db: any) => {
   CreateUser(db, user2);
   CreateUser(db, user3);
 
-  const njam1: Njam = { id: '1a914c91-e4c7-4227-a381-710816d6ba91', location: 'LaForza', description: "Pica u LF", time: new Date(Date.now()).toUTCString(), ordered: false, organizer: user1, participants: [user1, user2]}
-  const njam2: Njam = { id: uuid(), location: 'Fresh', description: "Salata", time: new Date(Date.now()).toUTCString(), ordered: false, organizer: user3, participants: [user1, user3]}
+  const njam1: Njam = { id: '1a914c91-e4c7-4227-a381-710816d6ba91', location: 'LaForza', description: "Pica u LF", time: new Date(Date.now()).toUTCString(), ordered: false, organizer: user2, participants: [user1, user3]}
+  const njam2: Njam = { id: uuid(), location: 'Fresh', description: "Salata", time: new Date(Date.now()).toUTCString(), ordered: false, organizer: user3, participants: [user1, user2]}
   CreateNjam(db, njam1);
   CreateNjam(db, njam2);
 }
