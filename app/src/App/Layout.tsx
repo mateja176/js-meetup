@@ -81,6 +81,7 @@ const Layout: React.FC<RouteComponentProps> = ({
     if (!userId) {
       history.push(publicRoutePath.signIn);
     }
+    // use of isEmpty is explained here https://github.com/apollographql/react-apollo/issues/3192
     if (!isEmpty(data)) {
       const { users } = data!;
 
