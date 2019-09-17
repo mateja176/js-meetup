@@ -107,6 +107,7 @@ const Njam: React.FC<NjamProps> = ({
         }}
         users={users}
         userId={userId}
+        readOnlyParticipants
       />
     </FormContainer>
   );
