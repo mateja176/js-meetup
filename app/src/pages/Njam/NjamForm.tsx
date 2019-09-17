@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { Form, Input, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
@@ -44,9 +46,12 @@ const NjamForm: React.FC<NjamFormProps> = ({
   // form field values will not update in the original tab
   React.useEffect(() => {
     form.setFieldsValue({
+      location,
+      time,
       ordered,
+      description,
     });
-  }, [ordered]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ordered, location, time.toString(), description]);
 
   return (
     <Form
