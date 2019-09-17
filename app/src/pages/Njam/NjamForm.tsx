@@ -42,17 +42,6 @@ const NjamForm: React.FC<NjamFormProps> = ({
     ordered,
   } = initialValues;
 
-  // when running an apollo mutation from the dev-tools client
-  // form field values will not update in the original tab
-  React.useEffect(() => {
-    form.setFieldsValue({
-      location,
-      time,
-      ordered,
-      description,
-    });
-  }, [ordered, location, time.toString(), description]);
-
   return (
     <Form
       onSubmit={e => {

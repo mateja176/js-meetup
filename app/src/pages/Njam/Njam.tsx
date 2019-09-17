@@ -46,6 +46,15 @@ const Njam: React.FC<NjamProps> = ({
     variables: { id },
   });
 
+  // updating initial values does not update ant form field values
+  // hence the reset
+  // the downside of which is that it can interrupt a user in edit mode
+  React.useEffect(() => {
+    if (data && data.njam) {
+      form.resetFields();
+    }
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (loading) {
     return <LoadingOverlay />;
   }
