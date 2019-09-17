@@ -30,7 +30,9 @@ const Njam: React.FC<NjamProps> = ({
   const save = () => {
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
-        const variables = mapNjamFormValues(userId)(values);
+        const { organizerId, participantIds, ...variables } = mapNjamFormValues(
+          userId,
+        )(values);
 
         editNjam({ variables: { ...variables, id } });
         toggleReadOnly();
@@ -56,6 +58,13 @@ const Njam: React.FC<NjamProps> = ({
     },
     users = [],
   } = data!;
+
+  const formValues: NjamFormValues = {
+    ...njam,
+    time: createMoment(time),
+    organizerId: organizer.id,
+    participantIds: participants.map(({ id }) => id),
+  };
 
   return (
     <FormContainer>
@@ -99,14 +108,10 @@ const Njam: React.FC<NjamProps> = ({
       <NjamForm
         readOnly={readOnly}
         form={form}
-        initialValues={{
-          ...njam,
-          time: createMoment(time),
-          organizerId: organizer.id,
-          participantIds: participants.map(({ id }) => id),
-        }}
+        initialValues={formValues}
         users={users}
         userId={userId}
+        readOnlyParticipants
       />
     </FormContainer>
   );

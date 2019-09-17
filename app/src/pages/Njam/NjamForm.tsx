@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { Form, Input, Switch, TimePicker } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import moment from 'moment';
@@ -15,26 +17,41 @@ export interface NjamFormProps extends FormComponentProps<NjamFormValues> {
   users: Users;
   userId: User['id'];
   hideOrdered?: boolean;
+  readOnlyParticipants?: boolean;
 }
 
 const NjamForm: React.FC<NjamFormProps> = ({
   readOnly = false,
   form,
-  initialValues: {
+  initialValues,
+  users,
+  userId,
+  hideOrdered = false,
+  readOnlyParticipants = false,
+}) => {
+  const readOnlyStyle: React.CSSProperties = {
+    pointerEvents: readOnly ? 'none' : 'initial',
+  };
+
+  const {
     location,
     time,
     description,
     organizerId,
     participantIds,
     ordered,
-  },
-  users,
-  userId,
-  hideOrdered = false,
-}) => {
-  const readOnlyStyle: React.CSSProperties = {
-    pointerEvents: readOnly ? 'none' : 'initial',
-  };
+  } = initialValues;
+
+  // when running an apollo mutation from the dev-tools client
+  // form field values will not update in the original tab
+  React.useEffect(() => {
+    form.setFieldsValue({
+      location,
+      time,
+      ordered,
+      description,
+    });
+  }, [ordered, location, time.toString(), description]);
 
   return (
     <Form
@@ -88,7 +105,7 @@ const NjamForm: React.FC<NjamFormProps> = ({
           <UserSelect
             style={{
               pointerEvents:
-                readOnly ? 'none' : 'initial',
+                readOnly || readOnlyParticipants ? 'none' : 'initial',
             }}
             mode="multiple"
             users={users.filter(({ id }) => id !== userId)}
