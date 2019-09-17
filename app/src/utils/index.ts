@@ -12,7 +12,7 @@ export const toAbsolutePath = (s: string) => urlJoin('/', kebabCase(s));
 // https://stackoverflow.com/questions/39969570/deprecation-warning-in-moment-js/51238958
 export const createMoment = (time: string) => moment(new Date(time));
 
-export const mapNjamFormValues = (userId: User['id']) => ({
+export const formValuesToNjam = (userId: User['id']) => ({
   time,
   participantIds,
   ...values

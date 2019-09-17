@@ -7,7 +7,7 @@ import { Err, FormContainer } from '../../components';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { useEditNjamMutation, useNjamPageQuery } from '../../generated/graphql';
 import { NjamFormValues, routeName } from '../../models';
-import { createMoment, mapNjamFormValues, useUserId } from '../../utils';
+import { formValuesToNjam, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
 
 interface NjamProps
@@ -30,7 +30,7 @@ const Njam: React.FC<NjamProps> = ({
   const save = () => {
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
-        const { organizerId, participantIds, ...variables } = mapNjamFormValues(
+        const { organizerId, participantIds, ...variables } = formValuesToNjam(
           userId,
         )(values);
 

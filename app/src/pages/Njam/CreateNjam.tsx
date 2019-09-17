@@ -9,7 +9,7 @@ import { Err, FormContainer, Retry } from '../../components';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { useCreateNjamMutation, useUsersQuery } from '../../generated/graphql';
 import { NjamFormValues, routeName, routePath } from '../../models';
-import { mapNjamFormValues, useUserId } from '../../utils';
+import { formValuesToNjam, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
 
 export interface CreateNjamProps
@@ -65,7 +65,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
         onClick={() => {
           form.validateFieldsAndScroll((error, values) => {
             if (!error) {
-              const variables = mapNjamFormValues(userId)(values);
+              const variables = formValuesToNjam(userId)(values);
 
               createNjam({ variables });
             }
