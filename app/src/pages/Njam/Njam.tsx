@@ -30,7 +30,9 @@ const Njam: React.FC<NjamProps> = ({
   const save = () => {
     form.validateFieldsAndScroll((error, values) => {
       if (!error) {
-        const variables = mapNjamFormValues(userId)(values);
+        const { organizerId, participantIds, ...variables } = mapNjamFormValues(
+          userId,
+        )(values);
 
         editNjam({ variables: { ...variables, id } });
         toggleReadOnly();
