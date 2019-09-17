@@ -40,7 +40,8 @@ const Njam: React.FC<NjamProps> = ({
     });
   };
 
-  const { data, error, loading } = useNjamPageQuery({
+  // alternatively use initial data locally or though a initial global cache
+  const { loading, error, data } = useNjamPageQuery({
     pollInterval: 1000,
     variables: { id },
   });
