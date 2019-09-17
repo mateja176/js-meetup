@@ -59,12 +59,12 @@ const Njam: React.FC<NjamProps> = ({
     users = [],
   } = data!;
 
-  // // when running an apollo mutation from the dev-tools client
-  // // location form field value would not update in the original tab
-  // // presumably, the following effects busts the form values cache
-  // React.useEffect(() => {
-  //   form.getFieldsValue();
-  // }, [njam.location]); // eslint-disable-line react-hooks/exhaustive-deps
+  const formValues: NjamFormValues = {
+    ...njam,
+    time: createMoment(time),
+    organizerId: organizer.id,
+    participantIds: participants.map(({ id }) => id),
+  };
 
   return (
     <FormContainer>
@@ -108,12 +108,7 @@ const Njam: React.FC<NjamProps> = ({
       <NjamForm
         readOnly={readOnly}
         form={form}
-        initialValues={{
-          ...njam,
-          time: createMoment(time),
-          organizerId: organizer.id,
-          participantIds: participants.map(({ id }) => id),
-        }}
+        initialValues={formValues}
         users={users}
         userId={userId}
         readOnlyParticipants

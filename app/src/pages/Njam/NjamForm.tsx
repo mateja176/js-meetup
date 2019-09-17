@@ -21,14 +21,7 @@ export interface NjamFormProps extends FormComponentProps<NjamFormValues> {
 const NjamForm: React.FC<NjamFormProps> = ({
   readOnly = false,
   form,
-  initialValues: {
-    location,
-    time,
-    description,
-    organizerId,
-    participantIds,
-    ordered,
-  },
+  initialValues,
   users,
   userId,
   hideOrdered = false,
@@ -37,6 +30,23 @@ const NjamForm: React.FC<NjamFormProps> = ({
   const readOnlyStyle: React.CSSProperties = {
     pointerEvents: readOnly ? 'none' : 'initial',
   };
+
+  const {
+    location,
+    time,
+    description,
+    organizerId,
+    participantIds,
+    ordered,
+  } = initialValues;
+
+  // when running an apollo mutation from the dev-tools client
+  // form field values will not update in the original tab
+  React.useEffect(() => {
+    form.setFieldsValue({
+      ordered,
+    });
+  }, [ordered]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Form
