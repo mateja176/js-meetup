@@ -22,28 +22,6 @@ mutation leaveNjam($userId: ID!, $njamId: ID!) {
   }
 }
 
-# fragment NjamBase on Njam {
-#   id
-#   location
-#   time
-#   ordered
-# }
-
-# fragment CompleteNjam on Njam {
-#   ...NjamBase
-#   description
-#   organizer {
-#     id
-#     name
-#     lastname
-#   }
-#   participants {
-#     id
-#     name
-#     lastname
-#   }
-# }
-
 mutation joinNjam($userId: ID!, $njamId: ID!) {
   joinNjam(userId: $userId, njamId: $njamId) {
     ...CompleteNjam
