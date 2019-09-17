@@ -27,7 +27,7 @@ const CreateNjam: React.FC<CreateNjamProps> = ({ form }) => {
 
   const usersQueryResult = useUsersQuery();
 
-  const { data: { users = [] } = { users: [] } } = usersQueryResult;
+  const { data: { users } = { users: [] } } = usersQueryResult;
 
   const usersNotLoaded = isEmpty(users);
 
