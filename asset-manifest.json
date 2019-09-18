@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/njam-njam/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/njam-njam/static/js/main.71a26dcc.chunk.js",
+    "main.js.map": "/njam-njam/static/js/main.71a26dcc.chunk.js.map",
+    "runtime~main.js": "/njam-njam/static/js/runtime~main.6e252458.js",
+    "runtime~main.js.map": "/njam-njam/static/js/runtime~main.6e252458.js.map",
+    "static/css/2.a317ec87.chunk.css": "/njam-njam/static/css/2.a317ec87.chunk.css",
+    "static/js/2.f9482a40.chunk.js": "/njam-njam/static/js/2.f9482a40.chunk.js",
+    "static/js/2.f9482a40.chunk.js.map": "/njam-njam/static/js/2.f9482a40.chunk.js.map",
+    "index.html": "/njam-njam/index.html",
+    "precache-manifest.c258bf41f49837e5cc3e915f58886051.js": "/njam-njam/precache-manifest.c258bf41f49837e5cc3e915f58886051.js",
+    "service-worker.js": "/njam-njam/service-worker.js",
+    "static/css/2.a317ec87.chunk.css.map": "/njam-njam/static/css/2.a317ec87.chunk.css.map",
+    "static/css/main.5ecd60fb.chunk.css.map": "/njam-njam/static/css/main.5ecd60fb.chunk.css.map"
+  }
+}
