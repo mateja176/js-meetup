@@ -2,6 +2,15 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://mateja176.github.io/njam-njam",
+  "scripts": {
+    "prestart": "npm run generate",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "generate": "graphql-codegen --config codegen.yml"
+  },
   "dependencies": {
     "@apollo/react-hooks": "^3.0.0",
     "@types/jest": "24.0.15",
@@ -28,14 +37,6 @@
     "styled-components": "^4.3.2",
     "typescript": "3.5.3",
     "url-join": "^4.0.1"
-  },
-  "scripts": {
-    "prestart": "npm run generate",
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": "react-app"
