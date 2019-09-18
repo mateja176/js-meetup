@@ -15,7 +15,7 @@ export interface ProviderProps {
 }
 
 const Provider: React.FC<ProviderProps> = ({ children }) => (
-  <BrowserRouter basename="/njam-njam">
+  <BrowserRouter basename={env.basename}>
     <ApolloProvider client={client}>
       <ReactApolloProvider client={client}>{children}</ReactApolloProvider>
     </ApolloProvider>
