@@ -9,7 +9,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "deploy": "surge build"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.0.0",
@@ -35,6 +36,7 @@
     "react-scripts": "3.0.1",
     "rebass": "^3.1.2",
     "styled-components": "^4.3.2",
+    "surge": "^0.21.3",
     "typescript": "3.5.3",
     "url-join": "^4.0.1"
   },

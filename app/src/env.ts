@@ -6,7 +6,10 @@ const development = {
 
 const envs: Record<typeof process.env.NODE_ENV, typeof development> = {
   development,
-  production: { ...development, basename: '/njam-njam' },
+  production: {
+    ...development,
+    // basename: '/njam-njam'
+  },
   test: development,
 };
 
