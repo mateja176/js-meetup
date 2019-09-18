@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import { Button, Form } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import React from 'react';
@@ -5,7 +7,12 @@ import { RouteComponentProps } from 'react-router';
 import { Box, Flex } from 'rebass';
 import { Err, FormContainer } from '../../components';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { useEditNjamMutation, useNjamPageQuery } from '../../generated/graphql';
+import {
+  Maybe,
+  Njam as INjam,
+  useEditNjamMutation,
+  useNjamPageQuery,
+} from '../../generated/graphql';
 import { NjamFormValues, routeName } from '../../models';
 import { formValuesToNjam, njamToFormValues, useUserId } from '../../utils';
 import NjamForm from './NjamForm';
@@ -46,14 +53,27 @@ const Njam: React.FC<NjamProps> = ({
     variables: { id },
   });
 
+  const [beforeEditSnapshot, setBeforeEditSnapshot] = React.useState<
+    Maybe<INjam>
+  >(null);
+
+  React.useEffect(() => {
+    if (readOnly && data) {
+      setBeforeEditSnapshot(data.njam);
+    }
+  }, [readOnly]);
+
   // updating initial values does not update ant form field values
   // hence the reset
   // the downside of which is that it can interrupt a user in edit mode
   React.useEffect(() => {
     if (data && data.njam) {
-      form.resetFields();
+      form.setFieldsValue({
+        ...data.njam,
+        ...{ ...form.getFieldsValue(), ...beforeEditSnapshot },
+      });
     }
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data]);
 
   if (loading) {
     return <LoadingOverlay />;
