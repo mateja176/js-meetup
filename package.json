@@ -9,7 +9,6 @@
     "start:app": "npm run start --prefix app",
     "playground": "ts-node scripts/openPlayground",
     "get-schema": "get-graphql-schema http://localhost:4000/graphql > test.graphql",
-    "deploy:app": "gh-pages -d app/build"
   },
   "repository": {
     "type": "git",

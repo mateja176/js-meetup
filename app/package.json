@@ -2,7 +2,7 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://mateja176.github.io/njam-njam",
+  "homepage": "https://njam-njam.surge.sh",
   "scripts": {
     "prestart": "npm run generate",
     "start": "react-app-rewired start",
@@ -10,7 +10,7 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "generate": "graphql-codegen --config codegen.yml",
-    "deploy": "surge build"
+    "deploy": "surge build --domain https://njam-njam.surge.sh"
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.0.0",
