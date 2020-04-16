@@ -1,6 +1,5 @@
 const development = {
   api: 'http://localhost:4000',
-  appName: 'Njam njam',
   basename: '/',
 };
 

@@ -20,9 +20,8 @@ import {
 } from 'react-router-dom';
 import urlJoin from 'url-join';
 import { Err } from '../components';
-import env from '../env';
 import { useUserIdsQuery } from '../generated/graphql';
-import { publicRoutePath, routeName, routePath } from '../models';
+import { appName, publicRoutePath, routeName, routePath } from '../models';
 import Njam, { CreateNjam } from '../pages/Njam';
 import Njams from '../pages/Njams';
 import SignIn from '../pages/SignIn';
@@ -100,7 +99,7 @@ const Layout: React.FC<RouteComponentProps> = ({
       {error && <Err {...error}></Err>}
       <PageHeader
         onBack={toggleOpen}
-        title={<NavLink to="/">{env.appName}</NavLink>}
+        title={<NavLink to="/">{appName}</NavLink>}
         backIcon={<AntIcon type="menu" />}
       />
       <Drawer

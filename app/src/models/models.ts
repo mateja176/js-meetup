@@ -3,6 +3,8 @@ import moment from 'moment';
 import { Njam, Scalars, User } from '../generated/graphql';
 import { toAbsolutePath } from '../utils';
 
+export const appName = 'Njam njam';
+
 export type Users = User[];
 
 export type Njams = Njam[];
