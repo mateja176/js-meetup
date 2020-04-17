@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "postbuild": "cpx src/types/**/*.graphql build/types && cpx src/db/**/*.csv build/db",
+    "postbuild": "cpx src/types/**/*.graphql build/types && cpx src/db/**/*.csv build/db --update",
     "start": "node build/server.js",
     "dev": "tsnd src/server.ts",
     "codegen-init": "graphql-codegen init",
