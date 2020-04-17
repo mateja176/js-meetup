@@ -41,6 +41,12 @@ import {
 } from '../generated/graphql';
 import { createMoment, useUserId } from '../utils';
 
+const withEllipsis: React.CSSProperties = {
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+};
+
 const createNjamAction = ({
   mutation,
   getInverse,
@@ -98,15 +104,7 @@ const smallerSpan = 4;
 const largerSpan = 5;
 
 const Column: React.FC<{ children: string }> = ({ children }) => (
-  <Col
-    span={largerSpan}
-    style={{
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-    }}
-    title={children}
-  >
+  <Col span={largerSpan} style={withEllipsis} title={children}>
     <Typography.Text>{children}</Typography.Text>
   </Col>
 );
@@ -327,8 +325,15 @@ const Njams: React.FC<NjamsProps> = ({
             <Row>
               {columns.map((key, i) => {
                 return (
-                  <Col span={i === 3 ? smallerSpan : largerSpan} key={key}>
-                    <Typography.Title level={2} style={{ margin: 0 }}>
+                  <Col
+                    span={i === 3 ? smallerSpan : largerSpan}
+                    key={key}
+                    title={key}
+                  >
+                    <Typography.Title
+                      level={2}
+                      style={{ ...withEllipsis, margin: 0 }}
+                    >
                       {key}
                     </Typography.Title>
                   </Col>
