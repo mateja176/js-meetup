@@ -5,7 +5,7 @@
   "description": "GraphQL Demo App",
   "scripts": {
     "install": "npm install --prefix api && npm install --prefix app",
-    "start:api": "npm run start --prefix api",
+    "start:api": "npm run dev --prefix api",
     "start:app": "npm run start --prefix app",
     "playground": "ts-node scripts/openPlayground",
     "get-schema": "get-graphql-schema http://localhost:4000/graphql > test.graphql"

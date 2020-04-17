@@ -5,7 +5,10 @@
   "main": "src/server.ts",
   "private": true,
   "scripts": {
-    "start": "tsnd src/server.ts",
+    "build": "tsc",
+    "postbuild": "cpx src/types/**/*.graphql build/types && cpx src/db/**/*.csv build/db",
+    "start": "node build/server.js",
+    "dev": "tsnd src/server.ts",
     "codegen-init": "graphql-codegen init",
     "codegen": "graphql-codegen --config codegen.yml --watch"
   },
@@ -28,6 +31,7 @@
     "@types/graphql": "^14.2.3",
     "@types/node": "^13.11.1",
     "@types/uuid": "^3.4.5",
+    "cpx": "^1.5.0",
     "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "^3.5.3"
   }
