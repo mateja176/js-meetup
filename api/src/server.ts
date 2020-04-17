@@ -12,7 +12,11 @@ const context = {
   njamService: new NjamService(db),
 };
 
-const server = new ApolloServer({ schema, context });
+const server = new ApolloServer({
+  schema,
+  context,
+  cors: { origin: ['http://localhost:3000', 'https://njam-njam.web.app'] },
+});
 
 const port = process.env.PORT || 4000;
 
