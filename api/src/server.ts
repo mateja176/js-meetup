@@ -16,6 +16,7 @@ const server = new ApolloServer({
   schema,
   context,
   cors: { origin: ['http://localhost:3000', 'https://njam-njam.web.app'] },
+  introspection: true,
 });
 
 const port = process.env.PORT || 4000;
